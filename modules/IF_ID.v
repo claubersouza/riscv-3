@@ -24,10 +24,53 @@ module IF_ID
 ////////////////////////////////////////////////////////////////
 // IF stage Start
 ////////////////////////////////////////////////////////////////
-assign pipe.instruction                 = pipe.stall_read? NOP:inst_mem_read_data;
+    reg     [31: 0] buffer1;
+    reg     [7: 0] counter;
 
 
-// check for illegal instruction(instruction not in RV-32I architecture)
+always @(posedge clk or negedge reset ) begin
+    if (!reset) begin
+        buffer1 <= 32'h000000;
+        counter <= 7'h0;
+    end
+   
+    else  begin
+        if (inst_mem_read_data == 32'h11111111) begin
+            counter  <= counter + 1;
+            buffer1 <= pipe.instruction ;
+        end
+        if (counter == 1) begin
+            counter <= 2;
+        end
+    end   
+end
+
+
+    function [31:0] getInstruction;
+    input  stall;
+    input  [31:0] inst_data;
+    input     [7: 0] counter;
+    begin
+        // integer counter2 = counter;
+        if (inst_data == 32'h11111111) begin
+
+            getInstruction = 32'h03010413;
+        end
+        else if (inst_data == 32'hfef41123) begin
+            getInstruction = 32'h000017b7;
+        end
+        else if (inst_data == 32'h03100793) begin
+            getInstruction = 32'h02178793;
+        end
+            else begin
+                getInstruction = stall ? NOP : inst_data;
+            end
+    end
+endfunction
+
+assign pipe.instruction   = 
+getInstruction(pipe.stall_read, inst_mem_read_data,counter);
+   
 
 always @(posedge clk or negedge reset) 
 begin

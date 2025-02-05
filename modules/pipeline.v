@@ -83,7 +83,7 @@
     wire                    branch_stall;
     wire            [31:0] alu_operand1;
     wire            [31:0] alu_operand2;
-
+    
     // Write Back 
     
     reg                    wb_alu_to_reg;

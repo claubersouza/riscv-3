@@ -129,7 +129,7 @@ end
 
     memory # (
         .SIZE(IMEMSIZE),
-        .FILE("../mem_generator/imem_dmem/imem.hex")
+        .FILE("../mem_generator/imem_dmem/imem2.hex")
         
     ) inst_mem (
         .clk   (clk),

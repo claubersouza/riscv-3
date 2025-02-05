@@ -1,6 +1,6 @@
 module memory # (
     // Loading the hex file generated from the cross-compiler
-    parameter FILE  = "../memory_data/imem.hex",
+    parameter FILE  = "../memory_data/imem2.hex",
     //  Defining the maximum size of the memory files
     parameter SIZE  = 4096
     
