@@ -29,7 +29,7 @@ module IF_ID
     reg     [7: 0] counter;
     reg     [2: 0] flag;
 
-always @(posedge clk or negedge reset ) begin
+always @(posedge clk) begin
     if (!reset) begin
         buffer1 <= 32'h000000;
         counter <= 7'h0;
@@ -37,17 +37,16 @@ always @(posedge clk or negedge reset ) begin
    
     else  begin
         if (inst_mem_read_data == 32'h11111111) begin
-            counter  <= counter + 1;
             buffer1 <= inst_mem_read_data ;
-            flag <= 1'h1;
+            flag <= 2'h1;
         end
-        else if (flag == 1'h1) begin
+        else if (flag == 2'h1) begin
             buffer2 <= inst_mem_read_data ;
-            flag <= 1'h2;
+            flag <= 2'h2;
         end
-        else if (flag == 1'h2) begin
+        else if (flag == 2'h2) begin
             buffer1 <= inst_mem_read_data ;
-            flag <= 1'h1;
+            flag <= 2'h1;
         end
     end   
 end
@@ -56,11 +55,12 @@ end
     function [31:0] getInstruction;
     input  stall;
     input  [31:0] inst_data;
-    input     [7: 0] counter;
+    input  [31:0] buffer1;
+    input  [31:0] buffer2;
+    input [2:0] flag;
     begin
         // integer counter2 = counter;
         if (inst_data == 32'h11111111) begin
-
             getInstruction = 32'h03010413;
         end
         else if (inst_data == 32'hfef41123) begin
@@ -69,6 +69,12 @@ end
         else if (inst_data == 32'h03100793) begin
             getInstruction = 32'h02178793;
         end
+        else if (flag == 2'h1) begin
+            getInstruction = buffer2;
+        end
+        else if (flag == 2'h2) begin
+            getInstruction = buffer1;
+        end
             else begin
                 getInstruction = stall ? NOP : inst_data;
             end
@@ -76,7 +82,7 @@ end
 endfunction
 
 assign pipe.instruction   = 
-getInstruction(pipe.stall_read, inst_mem_read_data,counter);
+getInstruction(pipe.stall_read, inst_mem_read_data,buffer1,buffer2,flag);
    
 
 always @(posedge clk or negedge reset) 
