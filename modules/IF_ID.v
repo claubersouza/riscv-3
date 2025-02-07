@@ -28,6 +28,7 @@ module IF_ID
     reg     [31: 0] buffer2;
     reg     [7: 0] counter;
     reg     [2: 0] flag;
+    reg     [2: 0] teste;
 
 always @(posedge clk) begin
     if (!reset) begin
@@ -39,13 +40,28 @@ always @(posedge clk) begin
         if (inst_mem_read_data == 32'h11111111) begin
             buffer1 <= inst_mem_read_data ;
             flag <= 2'h1;
+         
         end
+
+
         else if (flag == 2'h1) begin
-            buffer2 <= inst_mem_read_data ;
+            if (inst_mem_read_data == 32'h11111111) begin
+                buffer1 = 32'h03010413;
+            end
+            else begin
+                buffer1 <= inst_mem_read_data ;
+            end
             flag <= 2'h2;
         end
+
+
         else if (flag == 2'h2) begin
-            buffer1 <= inst_mem_read_data ;
+            if (inst_mem_read_data == 32'h11111111) begin
+                buffer2 = 32'h03010413;
+            end
+            else begin
+                buffer2 <= inst_mem_read_data ;
+            end
             flag <= 2'h1;
         end
     end   
@@ -70,9 +86,17 @@ end
             getInstruction = 32'h02178793;
         end
         else if (flag == 2'h1) begin
-            getInstruction = buffer2;
+            if (buffer2 == 32'h11111111) begin
+                getInstruction = 32'h03010413;
+            end else begin
+                 getInstruction = buffer2;
+            end           
+
         end
         else if (flag == 2'h2) begin
+            if (buffer1 == 32'h11111111) begin
+                getInstruction = 32'h03010413;
+            end
             getInstruction = buffer1;
         end
             else begin
