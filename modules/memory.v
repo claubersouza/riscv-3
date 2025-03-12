@@ -20,9 +20,7 @@ module memory # (
     wire        [ADDR-1: 0] read_addr;
     wire        [ADDR-1: 0] write_addr;
     reg         [31: 0] memory [(SIZE/4)-1: 0];
-    reg         [31: 0] memory2 [(SIZE/4)-1: 0];
     integer                 i;
-    integer i2;
 
 assign read_addr[ADDR-1: 0] = read_address[ADDR+1: 2];
 assign write_addr[ADDR-1: 0] = write_address[ADDR+1: 2];
@@ -32,14 +30,6 @@ initial begin
     if ($test$plusargs("meminit")) begin
         for (i=0; i<SIZE/4; i=i+1) memory[i] = 32'h0;
     end
-
-    for (i2 = 0 ; i2 < SIZE/4 ; i2 = i2 + 1) begin
-        if (memory[i2] == 32'h11111111) begin
-            memory[i2] = 32'hfef41123;
-            memory[i2 + 1 ] = 32'h03100793;
-        end
-    end
-
 // Reading and storing data in bytes, the stan read_data <= memory[read_addr];
     $readmemh(FILE, memory, 0, SIZE/4-1);
 end

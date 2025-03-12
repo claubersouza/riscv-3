@@ -58,10 +58,11 @@ xor:
 	make clean
 	
 crc: 
-	cd ../mem_generator && 	$(MAKE) crc -C ../mem_generator
+	cd ../mem_generator && $(MAKE) clean
+	$(MAKE) crc -C ../mem_generator
 	iverilog $(BFLAGS) -o riscv_output
 	vvp riscv_output
-		
+	make clean	
 
 	
 

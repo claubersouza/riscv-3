@@ -13,10 +13,30 @@ module execute
 
 `include "opcode.vh"
     
+
+function [31:0]  set_operand;
+    input [31:0] data;
+    input [ 7:0] value;
+begin
+    if (value  == 'd8) begin
+        set_operand =  'd8;
+    end
+    else begin
+        set_operand = data;
+    end
+end
+
+
+    
+endfunction    
+    
 // Selecting the first and second operands of ALU unit
 
 assign pipe.alu_operand1         = pipe.reg_rdata1;                     //First operand gets data from register file
-assign pipe.alu_operand2         = (pipe.immediate_sel) ? pipe.execute_immediate : pipe.reg_rdata2;     //Second operand gats data either from immediate or register file
+assign pipe.alu_operand2         = pipe.immediate_sel ? pipe.execute_immediate : pipe.reg_rdata2;     //Second operand gats data either from immediate or register file
+
+
+
 assign pipe.result_subs[32: 0]   = {pipe.alu_operand1[31], pipe.alu_operand1} - {pipe.alu_operand2[31], pipe.alu_operand2};     //Substraction Signed
 assign pipe.result_subu[32: 0]   = {1'b0, pipe.alu_operand1} - {1'b0, pipe.alu_operand2};           //Substraction Unsigned
 assign pipe.write_address        = pipe.alu_operand1 + pipe.execute_immediate;          //Calculating write address for data memory
@@ -28,9 +48,25 @@ always @(*)
 begin
     pipe.next_pc      = pipe.fetch_pc + 4;
     pipe.branch_taken = !pipe.branch_stall;
+    pipe.teste =  1'b0;
         case(1'b1)
         pipe.jal   : pipe.next_pc = pipe.pc + pipe.execute_immediate;
         pipe.jalr  : pipe.next_pc = pipe.alu_operand1 + pipe.execute_immediate;
+     
+        pipe.branch_custom: begin
+            case(pipe.alu_operation) 
+            BNE_CUSTOM: begin
+                pipe.teste = 1'b1;
+                pipe.next_pc = !pipe.result_subs[32] ? pipe.pc + pipe.execute_immediate : pipe.fetch_pc + 4;
+                if (pipe.result_subs[32]) 
+                    pipe.branch_taken = 1'b0;
+            end 
+            default: begin
+                pipe.next_pc    = pipe.fetch_pc;
+                end
+            endcase
+        end            
+
         pipe.branch: begin
             case(pipe.alu_operation) 
                 BEQ : begin
@@ -49,6 +85,7 @@ begin
                                 pipe.branch_taken = 1'b0;
                          end
                 BGE : begin
+                    
                             pipe.next_pc = !pipe.result_subs[32] ? pipe.pc + pipe.execute_immediate : pipe.fetch_pc + 4;
                             if (pipe.result_subs[32]) 
                                 pipe.branch_taken = 1'b0;
@@ -63,6 +100,7 @@ begin
                             if (pipe.result_subu[32]) 
                                 pipe.branch_taken = 1'b0;
                          end
+                        
                 default: begin
                          pipe.next_pc    = pipe.fetch_pc;
                          end
@@ -84,6 +122,12 @@ begin
         pipe.jal:         pipe.result          = pipe.pc + 4;
         pipe.jalr:        pipe.result          = pipe.pc + 4;
         pipe.lui:         pipe.result          = pipe.execute_immediate;
+        pipe.custom:
+            case(pipe.alu_operation)
+                ADD_CUSTOM : pipe.result  = (pipe.alu_operand1 + pipe.alu_operand2) * 2 ;
+            endcase
+            default: pipe.result = 'hx;
+        
         pipe.alu:
             case(pipe.alu_operation)
                 ADD : if (pipe.arithsubtype == 1'b0)
@@ -100,6 +144,7 @@ begin
                             pipe.result  = $signed(pipe.alu_operand1) >>> pipe.alu_operand2;
                 OR  : pipe.result     = pipe.alu_operand1 | pipe.alu_operand2;
                 AND : pipe.result     = pipe.alu_operand1 & pipe.alu_operand2;
+                ADD_CUSTOM : pipe.result  = pipe.alu_operand1 + pipe.alu_operand2  ;
                 default: pipe.result     = 'hx;
             endcase
         default: pipe.result = 'hx;
@@ -138,7 +183,7 @@ begin
     begin
         pipe.wb_result               <= pipe.result;
         pipe.wb_mem_write            <= pipe.mem_write && !pipe.branch_stall;
-        pipe.wb_alu_to_reg           <= pipe.alu | pipe.lui | pipe.jal | pipe.jalr | pipe.mem_to_reg;
+        pipe.wb_alu_to_reg           <= pipe.alu | pipe.lui | pipe.jal | pipe.jalr | pipe.mem_to_reg | pipe.custom;
         pipe.wb_dest_reg_sel         <= pipe.dest_reg_sel;
         pipe.wb_branch               <= pipe.branch_taken;
         pipe.wb_branch_nxt           <= pipe.wb_branch;

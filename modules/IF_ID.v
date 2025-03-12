@@ -24,90 +24,10 @@ module IF_ID
 ////////////////////////////////////////////////////////////////
 // IF stage Start
 ////////////////////////////////////////////////////////////////
-    reg     [31: 0] buffer1;
-    reg     [31: 0] buffer2;
-    reg     [7: 0] counter;
-    reg     [2: 0] flag;
-    reg     [2: 0] teste;
-
-always @(posedge clk) begin
-    if (!reset) begin
-        buffer1 <= 32'h000000;
-        counter <= 7'h0;
-    end
-   
-    else  begin
-        if (inst_mem_read_data == 32'h11111111) begin
-            buffer1 <= inst_mem_read_data ;
-            flag <= 2'h1;
-         
-        end
+assign pipe.instruction                 = pipe.stall_read? NOP:inst_mem_read_data;
 
 
-        else if (flag == 2'h1) begin
-            if (inst_mem_read_data == 32'h11111111) begin
-                buffer1 = 32'h03010413;
-            end
-            else begin
-                buffer1 <= inst_mem_read_data ;
-            end
-            flag <= 2'h2;
-        end
-
-
-        else if (flag == 2'h2) begin
-            if (inst_mem_read_data == 32'h11111111) begin
-                buffer2 = 32'h03010413;
-            end
-            else begin
-                buffer2 <= inst_mem_read_data ;
-            end
-            flag <= 2'h1;
-        end
-    end   
-end
-
-
-    function [31:0] getInstruction;
-    input  stall;
-    input  [31:0] inst_data;
-    input  [31:0] buffer1;
-    input  [31:0] buffer2;
-    input [2:0] flag;
-    begin
-        // integer counter2 = counter;
-        if (inst_data == 32'h11111111) begin
-            getInstruction = 32'h03010413;
-        end
-        else if (inst_data == 32'hfef41123) begin
-            getInstruction = 32'h000017b7;
-        end
-        else if (inst_data == 32'h03100793) begin
-            getInstruction = 32'h02178793;
-        end
-        else if (flag == 2'h1) begin
-            if (buffer2 == 32'h11111111) begin
-                getInstruction = 32'h03010413;
-            end else begin
-                 getInstruction = buffer2;
-            end           
-
-        end
-        else if (flag == 2'h2) begin
-            if (buffer1 == 32'h11111111) begin
-                getInstruction = 32'h03010413;
-            end
-            getInstruction = buffer1;
-        end
-            else begin
-                getInstruction = stall ? NOP : inst_data;
-            end
-    end
-endfunction
-
-assign pipe.instruction   = 
-getInstruction(pipe.stall_read, inst_mem_read_data,buffer1,buffer2,flag);
-   
+// check for illegal instruction(instruction not in RV-32I architecture)
 
 always @(posedge clk or negedge reset) 
 begin
@@ -153,6 +73,10 @@ begin
         ARITHR: pipe.immediate      = 'd0; // R-type
         LUI   : pipe.immediate      = {pipe.instruction[31:12], 12'd0}; // U-type
         JAL   : pipe.immediate      = {{12{pipe.instruction[31]}}, pipe.instruction[19:12], pipe.instruction[20], pipe.instruction[30:21], 1'b0}; // J-type
+
+        CUSTOM: pipe.immediate      =  'd0;
+        CUSTOM_BRANCH: pipe.immediate = {{20{pipe.instruction[31]}}, pipe.instruction[7], pipe.instruction[30:25], pipe.instruction[11:8], 1'b0}; // B-type
+
         default: begin // illegal instruction
             pipe.illegal_inst    = 1'b1;
         end
@@ -172,6 +96,8 @@ begin
         pipe.jal                    <= 1'b0;
         pipe.jalr                   <= 1'b0;
         pipe.branch                 <= 1'b0;
+        pipe.custom                 <= 1'b0;
+        pipe.branch_custom          <= 1'b0;
         pipe.pc                     <= RESET;
         pipe.src1_select            <= 5'h0;
         pipe.src2_select            <= 5'h0;
@@ -185,12 +111,16 @@ begin
     begin                      // else take the values from the IF stage and decode it to pass values to corresponding wires
         pipe.execute_immediate      <= pipe.immediate;
         pipe.immediate_sel          <= (pipe.instruction[`OPCODE] == JALR  ) || (pipe.instruction[`OPCODE] == LOAD  ) ||
-                                        (pipe.instruction[`OPCODE] == ARITHI);
-        pipe.alu                    <= (pipe.instruction[`OPCODE] == ARITHI) || (pipe.instruction[`OPCODE] == ARITHR);
+                                        (pipe.instruction[`OPCODE] == ARITHI) ;
+       
+       
+       pipe.alu                    <= (pipe.instruction[`OPCODE] == ARITHI) || (pipe.instruction[`OPCODE] == ARITHR) || (pipe.instruction[`OPCODE] == CUSTOM);
+        pipe.custom                 <= pipe.instruction[`OPCODE] == CUSTOM;
         pipe.lui                    <= pipe.instruction[`OPCODE] == LUI;
         pipe.jal                    <= pipe.instruction[`OPCODE] == JAL;
         pipe.jalr                   <= pipe.instruction[`OPCODE] == JALR;
         pipe.branch                 <= pipe.instruction[`OPCODE] == BRANCH;
+        pipe.branch_custom          <= pipe.instruction[`OPCODE] == CUSTOM_BRANCH;
         pipe.pc                     <= pipe.inst_fetch_pc;
         pipe.src1_select            <= pipe.instruction[`RS1];
         pipe.src2_select            <= pipe.instruction[`RS2];

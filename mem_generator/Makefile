@@ -42,14 +42,14 @@ sort: $(SRC_SORT)
 	$(OBJCOPY) -O binary $(TARGET) ./imem_dmem/imem.bin
 	$(OBJCOPY) -j .data -O binary $(TARGET) ./imem_dmem/dmem.bin
 	$(OBJDUMP) -d $(TARGET) > ./imem_dmem/code.dis
-	cd imem_dmem && python3 bin2hex.py
+	cd imem_dmem && python bin2hex.py
 
 fibonacci: $(SRC_FIBONACCI)
 	$(CC) -c  $(SRC_FIBONACCI) -o $(TARGET) $(CFLAGS)
 	$(OBJCOPY) -O binary $(TARGET) ./imem_dmem/imem.bin
 	$(OBJCOPY) -j .data -O binary $(TARGET) ./imem_dmem/dmem.bin
 	$(OBJDUMP) -d $(TARGET) > ./imem_dmem/code.dis
-	cd imem_dmem && python3 bin2hex.py
+	cd imem_dmem && python bin2hex.py
 
 shifting: $(SRC_SHIFTING)
 	$(CC) -c  $(SRC_SHIFTING) -o $(TARGET) $(CFLAGS)

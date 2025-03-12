@@ -11,16 +11,23 @@
 localparam  [31: 0] NOP        = 32'h0000_0013;     // addi x0, x0, 0
 
 // OPCODE, INST[6:0]
-localparam  [ 6: 0] LUI     = 7'b0110111,        // U-type
+localparam  [ 7: 0] LUI     = 7'b0110111,        // U-type
                     JAL     = 7'b1101111,        // J-type
                     JALR    = 7'b1100111,        // I-type
                     BRANCH  = 7'b1100011,        // B-type
                     LOAD    = 7'b0000011,        // I-type
                     STORE   = 7'b0100011,        // S-type
                     ARITHI  = 7'b0010011,        // I-type
-                    ARITHR  = 7'b0110011;        // R-type
+                    ARITHR  = 7'b0110011,        // R-type
+                    CUSTOM =  7'b0001111,        // CUSTOM-type
+                    CUSTOM_BRANCH = 7'b0110101; // CUSTOM Branch
 
 
+                    //00000000111001111101011000110101
+                    
+                    
+// FUNC3, INST[14:12], INST[6:0] = 7'b1100011
+localparam  [ 2: 0] BNE_CUSTOM     = 3'b101;
 
 // FUNC3, INST[14:12], INST[6:0] = 7'b1100011
 localparam  [ 2: 0] BEQ     = 3'b000,
@@ -51,4 +58,8 @@ localparam  [ 2: 0] ADD     = 3'b000,    // inst[30] == 0: ADD, inst[31] == 1: S
                     SR      = 3'b101,    // inst[30] == 0: SRL, inst[31] == 1: SRA
                     OR      = 3'b110,
                     AND     = 3'b111;
+
+// FUNC3, INST[14:12], INST[6:0] = 7'b0110011, 7'b0010011
+localparam  [ 2: 0]  ADD_CUSTOM     = 3'b000 ;   // inst[30] == 0: ADD, inst[31] == 1: SUB
+                    
 

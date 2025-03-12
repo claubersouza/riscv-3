@@ -52,13 +52,16 @@
     reg                   lui;
     reg                   jal;
     reg                   jalr;
+    reg                    branch_custom;    //  
+    reg                    teste;              
+    reg                   custom;
     reg                   branch;
     reg                   stall_read;
     wire          [31: 0] instruction;
     wire          [31: 0] reg_rdata2 ; 
     wire          [31: 0] reg_rdata1;
     reg           [31: 0] regs [31: 1];
-    reg           [31: 0] teste;
+    // reg           [31: 0] teste;
     // PC
 
     reg            [31: 0] pc;
@@ -83,7 +86,7 @@
     wire                    branch_stall;
     wire            [31:0] alu_operand1;
     wire            [31:0] alu_operand2;
-    
+
     // Write Back 
     
     reg                    wb_alu_to_reg;
