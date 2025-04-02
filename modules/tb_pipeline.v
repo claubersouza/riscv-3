@@ -14,10 +14,13 @@ module testbench();
     reg             stall;
     wire            exception;
     wire    [31: 0] inst_mem_read_data;
+    wire    [31: 0] future_read_data;
     wire            inst_mem_is_valid;
     wire            dmem_write_valid;
     wire            dmem_read_valid;
     wire    [31: 0] dmem_read_data_temp;
+
+    wire      ok_read;   
     
 
 assign dmem_write_valid    = 1'b1;
@@ -32,17 +35,18 @@ begin
 end
 
 initial begin
-    if (pipe.regs[15] == 32'd10673) begin
-        // Mensagem informando que o valor foi encontrado
-        $display("ACHOU!");
-        $display("Time: %t, Result = %d", $time, pipe.regs[15]);
+    
+    // if (pipe.regs[15] == 32'd10673) begin
+    //     // Mensagem informando que o valor foi encontrado
+    //     $display("ACHOU!");
+    //     $display("Time: %t, Result = %d", $time, pipe.regs[15]);
         
-        // Finaliza a simulação
-        $finish(2);
-    end else begin
-        // Mensagem para quando o valor não for encontrado (opcional)
-        $display("Valor não encontrado em pipe.regs[15].");
-    end
+    //     // Finaliza a simulação
+    //     $finish(2);
+    // end else begin
+    //     // Mensagem para quando o valor não for encontrado (opcional)
+    //     $display("Valor não encontrado em pipe.regs[15].");
+    // end
 end
 
 
@@ -59,6 +63,7 @@ begin
     clk            <= 1'b1;
     reset          <= 1'b0;
     stall          <= 1'b1;
+    // ok_read <= 1'b1;    
 
     repeat (10) @(posedge clk);
     reset          <= 1'b1;
@@ -70,6 +75,14 @@ end
 
 always #10 clk      <= ~clk;
 
+
+// always @(posedge clk or negedge reset) begin
+//     if (~reset) begin
+//       ok_read <= 1'b0;
+//     end else begin
+//       ok_read <= 1'b1;
+//     end
+// end
 
 // check timeout if the PC do not change anymore
 always @(posedge clk or negedge reset) 
@@ -139,7 +152,9 @@ end
         .read_address (pipe.inst_mem_address[31:2]),
         .write_address (30'h0),
         .write_data (32'h0),
-        .write_byte (4'h0)
+        .write_byte (4'h0),
+        .read_data_future(future_read_data),
+        .ok_read (ok_read)
     );
 
 ///////////////////////////////////////////////////////////
@@ -155,12 +170,15 @@ pipe pipe(
     .inst_mem_is_valid (inst_mem_is_valid),
     .dmem_read_data_temp(dmem_read_data_temp),
     .dmem_write_valid(dmem_write_valid),
-    .dmem_read_valid(dmem_read_valid)
+    .dmem_read_valid(dmem_read_valid),
+    .read_data_future(future_read_data),
+    .ok_read (ok_read)
 );
 
 //check memory range
 always @(posedge clk) 
 begin
+    
     if (pipe.inst_mem_is_ready && pipe.inst_mem_address[31:$clog2(IMEMSIZE)] != 'd0) 
     begin
         $display("IMEM address %x out of range", pipe.inst_mem_address);

@@ -13,19 +13,41 @@ module IF_ID
     
     // interface of instruction Memory
     input                   inst_mem_is_valid,
-    input           [31: 0] inst_mem_read_data
-    
+    input           [31: 0] inst_mem_read_data,
+    input                   [31: 0] inst_data_future,
+    output  reg  ok_read
     );
 
 //////////////// Including OPCODES ////////////////////////////
 `include "opcode.vh"
 
+function [31:0]  set_operand;
+    input [31:0] data;
+begin
+    $display("Na função: ",counter );  
+    if (counter  == 'd24) begin
+        $display("Na função: ",counter );  
+        set_operand =  32'hfef42223;
+    end
+    else begin
+        set_operand = data;
+    end
+end
+endfunction
 
 ////////////////////////////////////////////////////////////////
 // IF stage Start
 ////////////////////////////////////////////////////////////////
-assign pipe.instruction                 = pipe.stall_read? NOP:inst_mem_read_data;
+// assign pipe.instruction  = pipe.stall_read? NOP:inst_mem_read_data; //aqui recebe a instrução
+assign pipe.instruction_future = inst_data_future;
 
+integer counter;
+integer counter2;
+integer flag_decode;
+integer flag;
+integer aux;
+integer flag_aux;
+// reg teste4 [31:0];
 
 // check for illegal instruction(instruction not in RV-32I architecture)
 
@@ -39,6 +61,8 @@ begin
 end
 
 
+
+
 // Stall read assignment for stalling while reading 
 
 always @(posedge clk or negedge reset) 
@@ -49,6 +73,72 @@ begin
     end else 
     begin
         pipe.stall_read             <= stall;
+       
+        //  teste4[0] = inst_data_future;
+    end
+end
+
+
+
+
+always @(*) 
+begin
+    // if (counter2 == 12)begin
+    //     pipe.save_instruction[12] = 32'h00f71663;
+    // end
+  
+    // aux = counter2 ;
+    if (pipe.save_instruction[counter2] == 32'h0780078F) begin
+        pipe.save_instruction[14] = 32'h00f71663;
+        pipe.save_instruction[16] = 32'h07800793;
+        for (i = 0; i < 25; i = i + 1) begin
+            $display("my_array[%0d] = %h", i, pipe.save_instruction[i]);
+          end
+        pipe.save_instruction[counter2] = 32'h00f71663;
+        // pipe.save_instruction[counter2] = 32'h07800793;
+        flag = 1;
+
+  
+    end
+
+    // if (pipe.save_instruction[counter2] == 32'h00f71663) begin
+    //     pipe.instruction = 32'h07800793;
+    //     flag = 1;
+    // end
+end
+
+always @(posedge clk ) 
+begin
+    if ( ok_read == 0) begin
+        counter2 = counter2 + 1;
+    end
+end
+
+
+always @(posedge clk ) 
+begin
+    if (counter >= 27) begin
+        // if (pipe.save_instruction[counter2] == 32'h00f71663) begin
+        //     pipe.instruction <= 32'h00f71663;
+        //     aux <= counter2;
+        // end
+        // else if (pipe.instruction  == 32'h00f71663) begin
+        //     pipe.instruction <= 32'h07800793;
+        // end
+        // else begin
+
+        // pipe.save_instruction[14] <= 32'h00f71663;
+        // pipe.save_instruction[16] <= 32'h07800793;
+
+        // if (pipe.save_instruction[counter2] == 32'hfe442783) begin
+        //     pipe.save_instruction[15] = 32'h07800793;
+        //     aux <= counter2;
+        // end
+
+           pipe.instruction <= pipe.save_instruction[counter2];
+
+        // end
+        // $display("valor counter2: ",counter2 -);   
     end
 end
 
@@ -60,8 +150,93 @@ end
 // ID stage 
 ////////////////////////////////////////////////////////////////
 
+
+//Aqui é onde vai fica as instruções que vao chegar
+// Armazeno num aray para mannupular depois
+always @*
+begin
+        // $display("Valor Array:%h",inst_data_future );   
+    // pipe.instruction = //set_operand(inst_mem_read_data);
+    // inst_mem_read_data;
+   
+
+    if ( counter == 27) begin
+        
+        pipe.instruction = 32'hfef42223; 
+    end
+    else  begin
+        pipe.instruction = inst_mem_read_data;
+    end
+  
+
+    // else if begin
+
+    // end
+    // pipe.instruction = 32'hfef42223;
+         
+end
+
+always @(pipe.instruction)
+begin
+    
+    // if ( counter == 25) begin
+    //     pipe.instruction = 32'hfef42223; 
+    // end
+end
+
+initial begin
+    counter            <= 1;
+    counter2  <= 1;
+    ok_read <= 1  ;
+    flag =  0 ; 
+    aux = 0 ;
+    flag_aux = 0 ;
+end
+
+
+
+always @(inst_mem_read_data) 
+begin
+
+    // $display("Valor Array:%h", pipe.save_instruction[20]);
+ 
+    // $display("Clauber2:",counter);
+
+    if ( counter == 26) begin
+        ok_read <= 0  ;  
+    end
+    
+    if (counter < 60) begin
+        counter <= counter + 1;    
+    end
+    else begin
+        counter = 0;
+    end
+
+
+    //k_read <= 1  ;  
+
+end
+
+always @(inst_data_future) 
+begin
+    pipe.save_instruction[counter] <= inst_data_future;
+    // if ( counter == 22) begin
+    //     ok_read <= 0  ;  
+    // end
+    counter <= counter + 1;
+    // $display("Clauber:",counter);
+    
+end
+
 always @* 
 begin
+    // $display("Valor Array:%h",inst_data_future);
+    // pipe.save_instruction[counter] = inst_data_future;
+    // $display("Valor Array:%h",pipe.save_instruction[counter]);
+ 
+        
+    
     pipe.immediate                     = 32'h0;
     pipe.illegal_inst                  = 1'b0;
     case(pipe.instruction[`OPCODE])
@@ -74,7 +249,8 @@ begin
         LUI   : pipe.immediate      = {pipe.instruction[31:12], 12'd0}; // U-type
         JAL   : pipe.immediate      = {{12{pipe.instruction[31]}}, pipe.instruction[19:12], pipe.instruction[20], pipe.instruction[30:21], 1'b0}; // J-type
 
-        CUSTOM: pipe.immediate      =  'd0;
+        CUSTOM: pipe.immediate      =   (pipe.instruction[`FUNC3] == SLL || pipe.instruction[`FUNC3] == SR) ? {27'h0, pipe.instruction[24:20]} : {{20{pipe.instruction[31]}}, pipe.instruction[31:20]}; // I-type
+
         CUSTOM_BRANCH: pipe.immediate = {{20{pipe.instruction[31]}}, pipe.instruction[7], pipe.instruction[30:25], pipe.instruction[11:8], 1'b0}; // B-type
 
         default: begin // illegal instruction
@@ -110,8 +286,10 @@ begin
     else if(!pipe.stall_read) 
     begin                      // else take the values from the IF stage and decode it to pass values to corresponding wires
         pipe.execute_immediate      <= pipe.immediate;
+        
+        // Esse habilita a instructions imediato
         pipe.immediate_sel          <= (pipe.instruction[`OPCODE] == JALR  ) || (pipe.instruction[`OPCODE] == LOAD  ) ||
-                                        (pipe.instruction[`OPCODE] == ARITHI) ;
+                                        (pipe.instruction[`OPCODE] == ARITHI) ||  (pipe.instruction[`OPCODE] == CUSTOM) ;
        
        
        pipe.alu                    <= (pipe.instruction[`OPCODE] == ARITHI) || (pipe.instruction[`OPCODE] == ARITHR) || (pipe.instruction[`OPCODE] == CUSTOM);

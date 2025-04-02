@@ -19,8 +19,8 @@ Disassembly of section .text:
   2c:	fef42623          	sw	a5,-20(s0)
   30:	fec42703          	lw	a4,-20(s0)
   34:	03200793          	li	a5,50
-  38:	00e7d663          	bge	a5,a4,44 <.L2>
-  3c:	04600793          	li	a5,70
+  38:	00f71663          	bne	a4,a5,44 <.L2>
+  3c:	07800793          	li	a5,120
   40:	fef42623          	sw	a5,-20(s0)
 
 00000044 <.L2>:

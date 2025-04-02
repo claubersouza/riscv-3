@@ -16,9 +16,12 @@
     // interface of instruction Memory
     input                   inst_mem_is_valid,
     input           [31: 0] inst_mem_read_data,
+   
     input           [31: 0] dmem_read_data_temp,
     input                   dmem_write_valid,
-    input                   dmem_read_valid
+    input                   dmem_read_valid,
+    input           [31: 0] read_data_future,
+    output                  ok_read            
 );
     
     //Declaring Wires and Registers
@@ -36,7 +39,7 @@
     wire                  dmem_read_valid_checker;
     
     //Instruction Fetch/Decode Stage 
-    
+    reg [31:0]      save_instruction [0:50];
     reg           [31: 0] immediate;
     reg                   immediate_sel;
     reg           [ 4: 0] src1_select;
@@ -57,7 +60,8 @@
     reg                   custom;
     reg                   branch;
     reg                   stall_read;
-    wire          [31: 0] instruction;
+    reg          [31: 0] instruction;
+    wire          [31: 0] instruction_future;
     wire          [31: 0] reg_rdata2 ; 
     wire          [31: 0] reg_rdata1;
     reg           [31: 0] regs [31: 1];
@@ -122,7 +126,9 @@ IF_ID IF_ID(
     .stall      (stall),
     .exception  (exception),
     .inst_mem_read_data (inst_mem_read_data),
-    .inst_mem_is_valid (inst_mem_is_valid)
+    .inst_data_future (read_data_future),
+    .inst_mem_is_valid (inst_mem_is_valid),
+    .ok_read(ok_read)
 );
 
 // instatiating execute module -----------------------------------

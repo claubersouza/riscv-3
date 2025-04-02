@@ -56,7 +56,7 @@ begin
         pipe.branch_custom: begin
             case(pipe.alu_operation) 
             BNE_CUSTOM: begin
-                pipe.teste = 1'b1;
+                // pipe.teste = 1'b1;
                 pipe.next_pc = !pipe.result_subs[32] ? pipe.pc + pipe.execute_immediate : pipe.fetch_pc + 4;
                 if (pipe.result_subs[32]) 
                     pipe.branch_taken = 1'b0;
@@ -117,6 +117,7 @@ end
 
 always @(*) 
 begin
+  
     case(1'b1)
         pipe.mem_write:   pipe.result          = pipe.alu_operand2;
         pipe.jal:         pipe.result          = pipe.pc + 4;
@@ -124,7 +125,16 @@ begin
         pipe.lui:         pipe.result          = pipe.execute_immediate;
         pipe.custom:
             case(pipe.alu_operation)
-                ADD_CUSTOM : pipe.result  = (pipe.alu_operand1 + pipe.alu_operand2) * 2 ;
+                ADD_CUSTOM : begin 
+                pipe.teste = 1'b1;
+                pipe.result  = (pipe.alu_operand1 + pipe.alu_operand2)   ;
+               
+                pipe.next_pc = (pipe.result_subs[32: 0] != 'd0) ? pipe.pc + pipe.execute_immediate : pipe.fetch_pc + 4;
+                if (pipe.result_subs[32: 0] == 'd0) 
+                    pipe.branch_taken = 1'b0;
+    
+            end  
+                
             endcase
             default: pipe.result = 'hx;
         

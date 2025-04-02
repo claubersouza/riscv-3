@@ -12,8 +12,9 @@ module memory # (
     input       [31: 0] write_data,
     input       [ 3: 0] write_byte,
     output reg  [31: 0] read_data,
-    input       [31: 2] read_address
-    
+    input       [31: 2] read_address,
+    output reg  [31: 0] read_data_future,
+    input               ok_read
 );
 
     localparam ADDR = $clog2(SIZE/4);
@@ -21,6 +22,8 @@ module memory # (
     wire        [ADDR-1: 0] write_addr;
     reg         [31: 0] memory [(SIZE/4)-1: 0];
     integer                 i;
+    integer counter  ;
+    reg teste [31:0];
 
 assign read_addr[ADDR-1: 0] = read_address[ADDR+1: 2];
 assign write_addr[ADDR-1: 0] = write_address[ADDR+1: 2];
@@ -32,9 +35,13 @@ initial begin
     end
 // Reading and storing data in bytes, the stan read_data <= memory[read_addr];
     $readmemh(FILE, memory, 0, SIZE/4-1);
+   
+    counter = 1;
+   
 end
 
 always @(posedge clk) begin
+    // $display("Valor de ok_read",ok_read);
     if (write_ready) begin
         if (write_byte[0]) memory[write_addr][8*0+7:8*0] <= write_data[8*0+7:8*0];
         if (write_byte[1]) memory[write_addr][8*1+7:8*1] <= write_data[8*1+7:8*1];
@@ -42,7 +49,8 @@ always @(posedge clk) begin
         if (write_byte[3]) memory[write_addr][8*3+7:8*3] <= write_data[8*3+7:8*3];
     end
 
-    if (read_ready) begin
+    if (read_ready && ok_read) begin
+     
         if (write_ready && read_addr == write_addr) begin
             read_data[8*0+7:8*0] <= (write_byte[0]) ? write_data[8*0+7:8*0] : memory[read_addr][8*0+7:8*0];
             read_data[8*1+7:8*1] <= (write_byte[1]) ? write_data[8*1+7:8*1] : memory[read_addr][8*1+7:8*1];
@@ -50,8 +58,11 @@ always @(posedge clk) begin
             read_data[8*3+7:8*3] <= (write_byte[3]) ? write_data[8*3+7:8*3] : memory[read_addr][8*3+7:8*3];
         end else begin
             read_data <= memory[read_addr];
+            read_data_future <= memory[counter]; 
+            // $display("Clauber:%h",memory[counter]);
         end
     end
+    counter = counter  + 1;
 end
 
 endmodule

@@ -35,7 +35,8 @@ addition: $(SRC_ADDITION)
 	$(OBJCOPY) -O binary $(TARGET) ./imem_dmem/imem.bin
 	$(OBJCOPY) -j .data -O binary $(TARGET) ./imem_dmem/dmem.bin
 	$(OBJDUMP) -d $(TARGET) > ./imem_dmem/code.dis
-	cd imem_dmem && python3 bin2hex.py
+	cd imem_dmem && python3 bin2hex.py 
+	#cd imem_dmem && python3 main.py
 
 sort: $(SRC_SORT)
 	$(CC) -c  $(SRC_SORT) -o $(TARGET) $(CFLAGS)
