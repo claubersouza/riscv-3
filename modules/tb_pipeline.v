@@ -28,15 +28,13 @@ assign inst_mem_is_valid   = 1'b1;
 initial
 begin
  
-     $monitor("time: %t ,result =%d",$time,pipe.regs[15]);
+     $monitor("time=%0t PC=%08h instruction=%08h x10=%08h x15=%08h",
+             $time, pipe.inst_mem_address, pipe.instruction,
+             pipe.regs[10], pipe.regs[15]);
 end
 
-always @(posedge clk) begin
-    if (reset && pipe.regs[15] == 32'd3) begin
-        $display("RESULTADO CORRETO: %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
-        #10 $finish;
-    end
-end
+// Não encerra mais quando x15 vale 3. Durante o CRC, x15 é temporário
+// e pode assumir 3 antes do resultado final.
 
 
 initial
@@ -94,7 +92,12 @@ begin
         $display("========================================");
         $display("RET encontrado");
         $display("PC        = %08h", pipe.inst_mem_address);
-        $display("Resultado = %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
+        $display("CRC em x10 = %0d (0x%08h)", pipe.regs[10], pipe.regs[10]);
+        $display("Temporario x15 = %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
+        if (pipe.regs[10] == 32'h9BE3E0A3)
+            $display("RESULTADO CORRETO: CRC(\"1234\") = 0x9BE3E0A3");
+        else
+            $display("RESULTADO INCORRETO: esperado 0x9BE3E0A3");
         $display("========================================");
         #1 $finish;
     end
