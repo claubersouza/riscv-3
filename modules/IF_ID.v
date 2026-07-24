@@ -210,14 +210,18 @@ end
 assign pipe.reg_rdata1 =
     (pipe.src1_select == 5'd0) ? 32'd0 :
 
+    //03010413//Assembly: addi x8, x2, 48
+//fff00793//Assembly: addi x15, x0, 4095
+
+
     // Forwarding da CUSTOM 00010553:
     // x8=x2+32, x28=x2 e x10=4.
     (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src1_select == 5'd8)  ? (pipe.regs[2] + 32'd32) :
+     pipe.src1_select == 5'd8)  ? (pipe.regs[2] + 32'd48) :
     (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src1_select == 5'd28) ? pipe.regs[2] :
+     pipe.src1_select == 5'd15) ? pipe.regs[0] :
     (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src1_select == 5'd10) ? 32'd4 :
+     pipe.src1_select == 5'd15) ? 32'hFFFF_FFFF :
 
     // Forwarding da CUSTOM 00010573:
     // x17=x10, x6=x10 e x7=0.
@@ -242,11 +246,11 @@ assign pipe.reg_rdata2 =
 
     // Forwarding da CUSTOM 00010553.
     (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src2_select == 5'd8)  ? (pipe.regs[2] + 32'd32) :
+     pipe.src2_select == 5'd8)  ? (pipe.regs[2] + 32'd48) :
     (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
      pipe.src2_select == 5'd28) ? pipe.regs[2] :
     (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src2_select == 5'd10) ? 32'd4 :
+     pipe.src2_select == 5'd15) ? 32'd0 :
 
     // Forwarding da CUSTOM 00010573.
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
@@ -295,17 +299,11 @@ else if (pipe.wb_custom_write_x10 &&
          !pipe.stall_read &&
          !pipe.wb_stall)
 begin
-   // 02010413  // addi x8, x2, 32
-pipe.regs[8]  <= pipe.regs[2] + 32'd32;
+    // 03010413  // addi x8, x2, 48
+    pipe.regs[8]  <= pipe.regs[2] + 32'd48;
 
-// 00010513  // addi x10, x2, 0
-pipe.regs[10] <= pipe.regs[2] + 32'd0;
-
-// 00050e13  // addi x28, x10, 0
-pipe.regs[28] <= pipe.regs[2];
-
-// 00400513  // addi x10, x0, 4
-pipe.regs[10] <= 32'd4;
+    // fff00793  // addi x15, x0, -1
+    pipe.regs[15] <= 32'hFFFF_FFFF;
 end
 else if (pipe.wb_custom_write_x2 && !pipe.stall_read && !pipe.wb_stall)
 begin
