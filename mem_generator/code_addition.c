@@ -1,13 +1,53 @@
 #include <stdio.h>
 
-int main(void) {
-    int a = 10;
-    int b = 20;
-    int c = a + (b * 2); // 50
+int main(void)
+{
+    unsigned int crc = 0xFFFFFFFF;
+    unsigned int data;
 
-    if (c == 50) {
-        c =  120;
+    data = '1';
+    crc ^= data;
+
+    for (unsigned int j = 0; j < 8; j++)
+    {
+        if (crc & 1)
+            crc = (crc >> 1) ^ 0xEDB88320;
+        else
+            crc >>= 1;
     }
- 
-    return c;
+
+    data = '2';
+    crc ^= data;
+
+    for (unsigned int j = 0; j < 8; j++)
+    {
+        if (crc & 1)
+            crc = (crc >> 1) ^ 0xEDB88320;
+        else
+            crc >>= 1;
+    }
+
+    data = '3';
+    crc ^= data;
+
+    for (unsigned int j = 0; j < 8; j++)
+    {
+        if (crc & 1)
+            crc = (crc >> 1) ^ 0xEDB88320;
+        else
+            crc >>= 1;
+    }
+
+    data = '4';
+    crc ^= data;
+
+    for (unsigned int j = 0; j < 8; j++)
+    {
+        if (crc & 1)
+            crc = (crc >> 1) ^ 0xEDB88320;
+        else
+            crc >>= 1;
+    }
+
+    return (int)(~crc);
 }

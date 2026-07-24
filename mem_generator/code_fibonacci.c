@@ -2,7 +2,7 @@
 
 int main(){ 
     /* Declare an array to store Fibonacci numbers. */
-    int n = 5;
+    int n = 4;
     int f[n + 1]; 
     int i; 
   

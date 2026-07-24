@@ -1,0 +1,158 @@
+#!/usr/bin/env python3
+import re
+import sys
+from typing import List, Dict, Tuple, Optional
+
+def main():
+    if len(sys.argv) < 2:
+        print("Uso: ./riscv_optimizer_pro.py input.s [output.s]")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
+    output_file = sys.argv[2] if len(sys.argv) > 2 else None
+
+    try:
+        with open(input_file, 'r') as f:
+            code = f.read()
+    except FileNotFoundError:
+        print(f"Erro: Arquivo '{input_file}' não encontrado", file=sys.stderr)
+        sys.exit(1)
+
+    optimized = optimize_riscv(code)
+
+    if output_file:
+        with open(output_file, 'w') as f:
+            f.write(optimized)
+        print(f"Código otimizado salvo em '{output_file}'")
+    else:
+        print(optimized)
+
+def optimize_riscv(code: str) -> str:
+    """Função principal de otimização"""
+    lines = preprocess_code(code)
+    analyzer = CodeAnalyzer()
+    optimizer = CodeOptimizer(analyzer)
+    
+    # Duas passadas para melhor otimização
+    analyzer.analyze(lines)
+    optimized_lines = optimizer.optimize(lines)
+    
+    return '\n'.join(optimized_lines)
+
+def preprocess_code(code: str) -> List[Tuple[str, str]]:
+    """Divide em instruções e comentários"""
+    processed = []
+    for line in code.split('\n'):
+        line = line.strip()
+        if not line:
+            continue
+        
+        if '#' in line:
+            instr, comment = line.split('#', 1)
+            processed.append((instr.strip(), '#' + comment))
+        else:
+            processed.append((line, ''))
+    return processed
+
+class CodeAnalyzer:
+    def __init__(self):
+        self.stack_size = 0
+        self.s0_offset = 0
+        self.memory_access = {}
+        self.register_values = {}
+
+    def analyze(self, lines: List[Tuple[str, str]]):
+        """Analisa o código para coletar informações importantes"""
+        for i, (line, _) in enumerate(lines):
+            # Detecta alocação de pilha
+            if match := re.match(r'addi\s+sp,sp,-(\d+)', line):
+                self.stack_size = int(match.group(1))
+            
+            # Detecta store de s0
+            elif match := re.match(r'sw\s+s0,(\d+)\(sp\)', line):
+                self.s0_offset = int(match.group(1))
+            
+            # Registra acessos à memória
+            elif match := re.match(r'sw\s+(\w+),(-?\d+)\((\w+)\)', line):
+                reg, offset, base = match.groups()
+                self.memory_access[(base, int(offset))] = ('store', i, reg)
+            
+            elif match := re.match(r'lw\s+(\w+),(-?\d+)\((\w+)\)', line):
+                reg, offset, base = match.groups()
+                self.memory_access[(base, int(offset))] = ('load', i, reg)
+
+class CodeOptimizer:
+    def __init__(self, analyzer: CodeAnalyzer):
+        self.analyzer = analyzer
+        self.optimized = []
+        self.register_map = {}
+        self.skip_lines = set()
+
+    def optimize(self, lines: List[Tuple[str, str]]]) -> List[str]:
+        """Executa as otimizações"""
+        for i, (line, comment) in enumerate(lines):
+            if i in self.skip_lines:
+                continue
+
+            # Preserva configurações de pilha
+            if 'addi sp,sp,-' in line or 'sw s0,' in line or 'addi s0,sp,' in line:
+                self.optimized.append(line + comment)
+                continue
+
+            # Otimiza store/load redundantes
+            if (i + 1 < len(lines)) and ('sw ' in line) and ('lw ' in lines[i+1][0]):
+                optimized = self._optimize_store_load(line, comment, lines[i+1][0], lines[i+1][1], i)
+                if optimized:
+                    self.skip_lines.add(i+1)
+                    self.optimized.append(optimized)
+                    continue
+
+            # Otimiza movimentações
+            optimized_line = self._optimize_moves(line, comment)
+            self.optimized.append(optimized_line)
+
+        return self.optimized
+
+    def _optimize_store_load(self, store_line: str, store_comment: str, 
+                           load_line: str, load_comment: str, index: int) -> Optional[str]:
+        """Otimiza pares store/load redundantes"""
+        store_match = re.match(r'sw\s+(\w+),(-?\d+)\((\w+)\)', store_line)
+        if not store_match:
+            return None
+
+        reg, offset, base = store_match.groups()
+        offset = int(offset)
+        load_match = re.match(r'lw\s+(\w+),(-?\d+)\((\w+)\)', load_line)
+        
+        if (load_match and 
+            int(load_match.group(2)) == offset and 
+            load_match.group(3) == base):
+            
+            # Verifica se há modificações entre store e load
+            for j in range(index+1, min(index+20, len(self.analyzer.memory_access))):
+                if (base, offset) in self.analyzer.memory_access:
+                    if self.analyzer.memory_access[(base, offset)][0] == 'store':
+                        return None
+            
+            self.register_map[load_match.group(1)] = reg
+            return f"mv {load_match.group(1)},{reg}{load_comment}"
+        
+        return None
+
+    def _optimize_moves(self, line: str, comment: str) -> str:
+        """Otimiza instruções de movimentação"""
+        # addi com 0 vira mv
+        if match := re.match(r'addi\s+(\w+),(\w+),0\s*$', line):
+            dest, src = match.groups()
+            if dest != src:
+                return f"mv {dest},{src}{comment}"
+            return f"nop{comment}"
+
+        # Substitui registradores mapeados
+        for old_reg, new_reg in self.register_map.items():
+            line = re.sub(rf'\b{old_reg}\b', new_reg, line)
+
+        return line + comment
+
+if __name__ == '__main__':
+    main()

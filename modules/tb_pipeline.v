@@ -14,13 +14,10 @@ module testbench();
     reg             stall;
     wire            exception;
     wire    [31: 0] inst_mem_read_data;
-    wire    [31: 0] future_read_data;
     wire            inst_mem_is_valid;
     wire            dmem_write_valid;
     wire            dmem_read_valid;
     wire    [31: 0] dmem_read_data_temp;
-
-    wire      ok_read;   
     
 
 assign dmem_write_valid    = 1'b1;
@@ -34,19 +31,11 @@ begin
      $monitor("time: %t ,result =%d",$time,pipe.regs[15]);
 end
 
-initial begin
-    
-    // if (pipe.regs[15] == 32'd10673) begin
-    //     // Mensagem informando que o valor foi encontrado
-    //     $display("ACHOU!");
-    //     $display("Time: %t, Result = %d", $time, pipe.regs[15]);
-        
-    //     // Finaliza a simulação
-    //     $finish(2);
-    // end else begin
-    //     // Mensagem para quando o valor não for encontrado (opcional)
-    //     $display("Valor não encontrado em pipe.regs[15].");
-    // end
+always @(posedge clk) begin
+    if (reset && pipe.regs[15] == 32'd3) begin
+        $display("RESULTADO CORRETO: %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
+        #10 $finish;
+    end
 end
 
 
@@ -57,32 +46,18 @@ begin
 end
 
 
-initial 
-begin
+initial begin
+    clk   = 1'b0;
+    reset = 1'b0;
+    stall = 1'b1;
 
-    clk            <= 1'b1;
-    reset          <= 1'b0;
-    stall          <= 1'b1;
-    // ok_read <= 1'b1;    
-
-    repeat (10) @(posedge clk);
-    reset          <= 1'b1;
-
-    repeat (10) @(posedge clk);
-    stall           <= 1'b0;
-
+    repeat (5) @(posedge clk);
+    reset = 1'b1;
+    stall = 1'b0;
 end
 
 always #10 clk      <= ~clk;
 
-
-// always @(posedge clk or negedge reset) begin
-//     if (~reset) begin
-//       ok_read <= 1'b0;
-//     end else begin
-//       ok_read <= 1'b1;
-//     end
-// end
 
 // check timeout if the PC do not change anymore
 always @(posedge clk or negedge reset) 
@@ -109,12 +84,29 @@ begin
     end
 end
 
-// stop at exception
-always @(posedge clk) 
+// Encerra normalmente quando a instrucao RET (jalr x0, 0(x1)) chega ao pipeline.
+// Isso evita que, depois do retorno, o PC volte para 0 e a palavra 00000000
+// seja reportada como instrucao ilegal.
+always @(posedge clk)
 begin
-    if (exception) 
+    if (reset && pipe.instruction == 32'h00008067)
     begin
-        $display("All instructions are Fetched");
+        $display("========================================");
+        $display("RET encontrado");
+        $display("PC        = %08h", pipe.inst_mem_address);
+        $display("Resultado = %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
+        $display("========================================");
+        #1 $finish;
+    end
+end
+
+// Para em excecoes reais, mas ignora a janela em que RET esta sendo concluido.
+always @(posedge clk)
+begin
+    if (reset && exception && pipe.instruction != 32'h00008067)
+    begin
+        $display("EXCEPTION: PC=%08h instruction=%08h illegal=%b",
+                 pipe.inst_mem_address, pipe.instruction, pipe.illegal_inst);
         #10 $finish(2);
     end
 end
@@ -124,7 +116,7 @@ end
 ///////////////////////////////////////////////////////////
     memory # (
         .SIZE(DMEMSIZE),
-        .FILE("../mem_generator/imem_dmem/dmem.hex")
+        .FILE("../modules/dmem.hex")
     ) dmem (
         .clk   (clk),
         .read_ready(pipe.dmem_read_ready),
@@ -133,7 +125,11 @@ end
         .read_address (pipe.dmem_read_address[31:2]),
         .write_address (pipe.dmem_write_address[31:2]),
         .write_data (pipe.dmem_write_data),
-        .write_byte (pipe.dmem_write_byte)
+        .write_byte (pipe.dmem_write_byte),
+        .write2_ready (pipe.dmem_write2_ready),
+        .write2_address (pipe.dmem_write2_address[31:2]),
+        .write2_data (pipe.dmem_write2_data),
+        .write2_byte (pipe.dmem_write2_byte)
     );
 
 ///////////////////////////////////////////////////////////
@@ -142,7 +138,7 @@ end
 
     memory # (
         .SIZE(IMEMSIZE),
-        .FILE("../mem_generator/imem_dmem/imem2.hex")
+        .FILE("../modules/imem_custom.hex")
         
     ) inst_mem (
         .clk   (clk),
@@ -153,8 +149,10 @@ end
         .write_address (30'h0),
         .write_data (32'h0),
         .write_byte (4'h0),
-        .read_data_future(future_read_data),
-        .ok_read (ok_read)
+        .write2_ready (1'b0),
+        .write2_address (30'h0),
+        .write2_data (32'h0),
+        .write2_byte (4'h0)
     );
 
 ///////////////////////////////////////////////////////////
@@ -170,15 +168,12 @@ pipe pipe(
     .inst_mem_is_valid (inst_mem_is_valid),
     .dmem_read_data_temp(dmem_read_data_temp),
     .dmem_write_valid(dmem_write_valid),
-    .dmem_read_valid(dmem_read_valid),
-    .read_data_future(future_read_data),
-    .ok_read (ok_read)
+    .dmem_read_valid(dmem_read_valid)
 );
 
 //check memory range
 always @(posedge clk) 
 begin
-    
     if (pipe.inst_mem_is_ready && pipe.inst_mem_address[31:$clog2(IMEMSIZE)] != 'd0) 
     begin
         $display("IMEM address %x out of range", pipe.inst_mem_address);

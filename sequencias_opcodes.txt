@@ -1,0 +1,1067 @@
+// Sequência 1
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 4
+// Endereços: 0x00000008 até 0x00000014
+02010413 // 32'h00000008 -> addi x8, x2, 32
+00010513 // 32'h0000000c -> addi x10, x2, 0
+00050e13 // 32'h00000010 -> addi x28, x10, 0
+00400513 // 32'h00000014 -> addi x10, x0, 4
+
+
+// Sequência 2
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 2
+// Endereços: 0x00000020 até 0x00000024
+00150513 // 32'h00000020 -> addi x10, x10, 1
+fff50893 // 32'h00000024 -> addi x17, x10, -1
+
+
+// Sequência 3
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 5
+// Endereços: 0x0000002c até 0x0000003c
+00050893 // 32'h0000002c -> addi x17, x10, 0
+00088313 // 32'h00000030 -> addi x6, x17, 0
+00000393 // 32'h00000034 -> addi x7, x0, 0
+01b35893 // 32'h00000038 -> srli x17, x6, 27
+00539713 // 32'h0000003c -> slli x14, x7, 5
+
+
+// Sequência 4
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 6
+// Endereços: 0x00000044 até 0x00000058
+00531693 // 32'h00000044 -> slli x13, x6, 5
+00050713 // 32'h00000048 -> addi x14, x10, 0
+00070593 // 32'h0000004c -> addi x11, x14, 0
+00000613 // 32'h00000050 -> addi x12, x0, 0
+01b5d713 // 32'h00000054 -> srli x14, x11, 27
+00561813 // 32'h00000058 -> slli x16, x12, 5
+
+
+// Sequência 5
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 6
+// Endereços: 0x00000060 até 0x00000074
+00559793 // 32'h00000060 -> slli x15, x11, 5
+00050793 // 32'h00000064 -> addi x15, x10, 0
+00279793 // 32'h00000068 -> slli x15, x15, 2
+00f78793 // 32'h0000006c -> addi x15, x15, 15
+0047d793 // 32'h00000070 -> srli x15, x15, 4
+00479793 // 32'h00000074 -> slli x15, x15, 4
+
+
+// Sequência 6
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 4
+// Endereços: 0x0000007c até 0x00000088
+00010793 // 32'h0000007c -> addi x15, x2, 0
+00378793 // 32'h00000080 -> addi x15, x15, 3
+0027d793 // 32'h00000084 -> srli x15, x15, 2
+00279793 // 32'h00000088 -> slli x15, x15, 2
+
+
+// Sequência 7
+// Opcode: 0x03
+// Tipo: LOAD
+// Quantidade: 2
+// Endereços: 0x000000c4 até 0x000000c8
+0007a703 // 32'h000000c4 -> lw x14, 0(x15)
+fec42783 // 32'h000000c8 -> lw x15, -20(x8)
+
+
+// Sequência 8
+// Opcode: 0x03
+// Tipo: LOAD
+// Quantidade: 2
+// Endereços: 0x000000e4 até 0x000000e8
+fe042683 // 32'h000000e4 -> lw x13, -32(x8)
+fec42783 // 32'h000000e8 -> lw x15, -20(x8)
+
+
+// Sequência 9
+// Opcode: 0x03
+// Tipo: LOAD
+// Quantidade: 2
+// Endereços: 0x00000104 até 0x00000108
+fec42703 // 32'h00000104 -> lw x14, -20(x8)
+fe842783 // 32'h00000108 -> lw x15, -24(x8)
+
+
+// Sequência 10
+// Opcode: 0x03
+// Tipo: LOAD
+// Quantidade: 2
+// Endereços: 0x00000110 até 0x00000114
+fe042703 // 32'h00000110 -> lw x14, -32(x8)
+fe842783 // 32'h00000114 -> lw x15, -24(x8)
+
+
+// Sequência 11
+// Opcode: 0x13
+// Tipo: OP-IMM
+// Quantidade: 3
+// Endereços: 0x00000124 até 0x0000012c
+000e0113 // 32'h00000124 -> addi x2, x28, 0
+00078513 // 32'h00000128 -> addi x10, x15, 0
+fe040113 // 32'h0000012c -> addi x2, x8, -32
+
+
+// Sequência 12
+// Opcode: 0x00
+// Tipo: UNKNOWN_0x00
+// Quantidade: 945
+// Endereços: 0x0000013c até 0x00000ffc
+00000000 // 32'h0000013c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000140 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000144 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000148 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000014c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000150 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000154 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000158 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000015c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000160 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000164 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000168 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000016c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000170 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000174 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000178 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000017c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000180 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000184 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000188 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000018c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000190 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000194 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000198 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000019c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000001fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000200 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000204 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000208 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000020c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000210 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000214 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000218 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000021c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000220 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000224 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000228 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000022c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000230 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000234 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000238 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000023c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000240 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000244 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000248 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000024c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000250 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000254 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000258 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000025c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000260 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000264 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000268 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000026c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000270 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000274 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000278 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000027c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000280 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000284 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000288 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000028c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000290 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000294 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000298 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000029c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000002fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000300 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000304 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000308 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000030c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000310 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000314 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000318 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000031c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000320 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000324 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000328 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000032c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000330 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000334 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000338 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000033c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000340 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000344 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000348 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000034c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000350 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000354 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000358 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000035c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000360 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000364 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000368 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000036c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000370 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000374 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000378 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000037c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000380 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000384 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000388 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000038c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000390 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000394 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000398 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000039c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000003fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000400 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000404 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000408 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000040c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000410 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000414 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000418 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000041c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000420 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000424 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000428 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000042c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000430 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000434 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000438 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000043c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000440 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000444 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000448 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000044c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000450 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000454 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000458 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000045c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000460 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000464 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000468 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000046c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000470 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000474 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000478 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000047c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000480 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000484 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000488 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000048c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000490 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000494 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000498 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000049c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000004fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000500 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000504 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000508 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000050c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000510 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000514 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000518 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000051c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000520 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000524 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000528 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000052c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000530 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000534 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000538 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000053c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000540 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000544 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000548 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000054c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000550 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000554 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000558 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000055c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000560 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000564 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000568 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000056c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000570 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000574 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000578 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000057c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000580 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000584 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000588 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000058c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000590 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000594 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000598 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000059c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000005fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000600 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000604 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000608 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000060c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000610 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000614 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000618 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000061c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000620 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000624 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000628 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000062c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000630 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000634 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000638 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000063c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000640 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000644 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000648 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000064c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000650 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000654 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000658 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000065c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000660 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000664 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000668 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000066c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000670 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000674 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000678 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000067c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000680 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000684 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000688 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000068c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000690 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000694 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000698 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000069c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000006fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000700 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000704 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000708 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000070c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000710 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000714 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000718 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000071c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000720 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000724 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000728 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000072c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000730 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000734 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000738 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000073c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000740 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000744 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000748 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000074c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000750 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000754 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000758 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000075c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000760 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000764 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000768 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000076c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000770 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000774 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000778 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000077c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000780 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000784 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000788 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000078c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000790 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000794 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000798 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000079c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000007fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000800 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000804 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000808 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000080c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000810 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000814 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000818 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000081c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000820 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000824 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000828 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000082c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000830 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000834 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000838 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000083c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000840 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000844 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000848 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000084c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000850 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000854 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000858 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000085c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000860 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000864 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000868 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000086c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000870 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000874 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000878 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000087c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000880 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000884 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000888 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000088c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000890 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000894 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000898 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000089c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000008fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000900 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000904 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000908 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000090c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000910 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000914 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000918 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000091c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000920 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000924 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000928 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000092c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000930 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000934 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000938 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000093c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000940 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000944 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000948 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000094c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000950 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000954 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000958 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000095c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000960 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000964 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000968 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000096c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000970 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000974 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000978 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000097c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000980 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000984 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000988 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000098c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000990 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000994 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000998 -> instrução desconhecida opcode=0x00
+00000000 // 32'h0000099c -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009a0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009a4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009a8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009ac -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009b0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009b4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009b8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009bc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009c0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009c4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009c8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009cc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009d0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009d4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009d8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009dc -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009e0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009e4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009e8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009ec -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009f0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009f4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009f8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h000009fc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a00 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a04 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a08 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a0c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a10 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a14 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a18 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a1c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a20 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a24 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a28 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a2c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a30 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a34 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a38 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a3c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a40 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a44 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a48 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a4c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a50 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a54 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a58 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a5c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a60 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a64 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a68 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a6c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a70 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a74 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a78 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a7c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a80 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a84 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a88 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a8c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a90 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a94 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a98 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000a9c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000aa0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000aa4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000aa8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000aac -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ab0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ab4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ab8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000abc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ac0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ac4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ac8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000acc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ad0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ad4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ad8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000adc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ae0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ae4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ae8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000aec -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000af0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000af4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000af8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000afc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b00 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b04 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b08 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b0c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b10 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b14 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b18 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b1c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b20 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b24 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b28 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b2c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b30 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b34 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b38 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b3c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b40 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b44 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b48 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b4c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b50 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b54 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b58 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b5c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b60 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b64 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b68 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b6c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b70 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b74 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b78 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b7c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b80 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b84 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b88 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b8c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b90 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b94 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b98 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000b9c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ba0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ba4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ba8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bac -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bb0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bb4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bb8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bbc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bc0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bc4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bc8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bcc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bd0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bd4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bd8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bdc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000be0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000be4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000be8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bec -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bf0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bf4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bf8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000bfc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c00 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c04 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c08 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c0c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c10 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c14 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c18 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c1c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c20 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c24 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c28 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c2c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c30 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c34 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c38 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c3c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c40 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c44 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c48 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c4c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c50 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c54 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c58 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c5c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c60 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c64 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c68 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c6c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c70 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c74 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c78 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c7c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c80 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c84 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c88 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c8c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c90 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c94 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c98 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000c9c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ca0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ca4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ca8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cac -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cb0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cb4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cb8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cbc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cc0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cc4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cc8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ccc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cd0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cd4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cd8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cdc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ce0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ce4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ce8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cec -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cf0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cf4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cf8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000cfc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d00 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d04 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d08 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d0c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d10 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d14 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d18 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d1c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d20 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d24 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d28 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d2c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d30 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d34 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d38 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d3c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d40 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d44 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d48 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d4c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d50 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d54 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d58 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d5c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d60 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d64 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d68 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d6c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d70 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d74 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d78 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d7c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d80 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d84 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d88 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d8c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d90 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d94 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d98 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000d9c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000da0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000da4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000da8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dac -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000db0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000db4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000db8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dbc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dc0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dc4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dc8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dcc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dd0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dd4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dd8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ddc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000de0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000de4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000de8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dec -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000df0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000df4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000df8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000dfc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e00 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e04 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e08 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e0c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e10 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e14 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e18 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e1c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e20 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e24 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e28 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e2c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e30 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e34 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e38 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e3c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e40 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e44 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e48 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e4c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e50 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e54 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e58 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e5c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e60 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e64 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e68 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e6c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e70 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e74 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e78 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e7c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e80 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e84 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e88 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e8c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e90 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e94 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e98 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000e9c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ea0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ea4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ea8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000eac -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000eb0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000eb4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000eb8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ebc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ec0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ec4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ec8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ecc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ed0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ed4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ed8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000edc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ee0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ee4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ee8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000eec -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ef0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ef4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ef8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000efc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f00 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f04 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f08 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f0c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f10 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f14 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f18 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f1c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f20 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f24 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f28 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f2c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f30 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f34 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f38 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f3c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f40 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f44 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f48 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f4c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f50 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f54 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f58 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f5c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f60 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f64 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f68 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f6c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f70 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f74 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f78 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f7c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f80 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f84 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f88 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f8c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f90 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f94 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f98 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000f9c -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fa0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fa4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fa8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fac -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fb0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fb4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fb8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fbc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fc0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fc4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fc8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fcc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fd0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fd4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fd8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fdc -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fe0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fe4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fe8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000fec -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ff0 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ff4 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ff8 -> instrução desconhecida opcode=0x00
+00000000 // 32'h00000ffc -> instrução desconhecida opcode=0x00
+
+

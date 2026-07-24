@@ -5,7 +5,7 @@ int main()
 int swapped;
 int n, i, k, j, m;
 n = 3;
-int arr[] = {6,3,9};
+int arr[] = {4,5,7};
 m =n;
 
 do{

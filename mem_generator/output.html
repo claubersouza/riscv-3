@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Instruções Otimizadas</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+        }
+        .linha {
+            margin: 4px 0;
+        }
+        .custom {
+            color: #00ff99;
+            font-weight: bold;
+        }
+        .comentario {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h2>Instruções Otimizadas com Marcações (ASIP)</h2>
+
+    <div class="linha">fe010113 <span class="comentario">// addi x2, x2, 4064</span></div>
+    <div class="linha">00812e23 <span class="comentario">// sw x8, 28(x2)</span></div>
+    <div class="linha">02010413 <span class="comentario">// addi x8, x2, 32</span></div>
+
+    <div class="linha custom">C0DECAFE <span class="comentario">// li x14, 50</span></div>
+    <div class="linha custom">C0DECAFE <span class="comentario">// li x15, 40</span></div>
+
+    <div class="linha">00f707b3 <span class="comentario">// add x15, x14, x15</span></div>
+    <div class="linha">fef42223 <span class="comentario">// sw x15, 4068(x8)</span></div>
+    <div class="linha">fe442783 <span class="comentario">// lw x15, 4068(x8)</span></div>
+    <div class="linha">ffe78793 <span class="comentario">// addi x15, x15, 4094</span></div>
+    <div class="linha">fef42223 <span class="comentario">// sw x15, 4068(x8)</span></div>
+    <div class="linha">fe442783 <span class="comentario">// lw x15, 4068(x8)</span></div>
+
+    <div class="linha custom">C0DECAFE <span class="comentario">// mv x10, x15</span></div>
+
+    <div class="linha">01c12403 <span class="comentario">// lw x8, 28(x2)</span></div>
+    <div class="linha">02010113 <span class="comentario">// addi x2, x2, 32</span></div>
+    <div class="linha">00008067 <span class="comentario">// jalr x0, 0(x1)</span></div>
+</body>
+</html>
+

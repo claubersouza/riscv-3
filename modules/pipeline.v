@@ -16,12 +16,9 @@
     // interface of instruction Memory
     input                   inst_mem_is_valid,
     input           [31: 0] inst_mem_read_data,
-   
     input           [31: 0] dmem_read_data_temp,
     input                   dmem_write_valid,
-    input                   dmem_read_valid,
-    input           [31: 0] read_data_future,
-    output                  ok_read            
+    input                   dmem_read_valid
 );
     
     //Declaring Wires and Registers
@@ -35,11 +32,15 @@
     wire          [31: 0] dmem_read_address;
     wire          [31: 0] dmem_write_data;
     wire          [ 3: 0] dmem_write_byte;
+    wire                  dmem_write2_ready;
+    wire          [31: 0] dmem_write2_address;
+    wire          [31: 0] dmem_write2_data;
+    wire          [ 3: 0] dmem_write2_byte;
     wire                  inst_mem_is_ready;
     wire                  dmem_read_valid_checker;
     
     //Instruction Fetch/Decode Stage 
-    reg [31:0]      save_instruction [0:50];
+    
     reg           [31: 0] immediate;
     reg                   immediate_sel;
     reg           [ 4: 0] src1_select;
@@ -55,17 +56,22 @@
     reg                   lui;
     reg                   jal;
     reg                   jalr;
-    reg                    branch_custom;    //  
-    reg                    teste;              
-    reg                   custom;
     reg                   branch;
+    reg                   custom;
+    reg                   custom2;
+    reg                   custom_sw2;
+    reg                   custom_sw3;
+    reg                   custom_lw2;
+    reg                   custom_lw3;
+    reg                   custom_write_x10;
+    reg                   custom_write_x2;
     reg                   stall_read;
-    reg          [31: 0] instruction;
-    wire          [31: 0] instruction_future;
+    wire          [31: 0] instruction;
     wire          [31: 0] reg_rdata2 ; 
     wire          [31: 0] reg_rdata1;
     reg           [31: 0] regs [31: 1];
-    // reg           [31: 0] teste;
+    reg           [31: 0] teste;
+    
     // PC
 
     reg            [31: 0] pc;
@@ -94,6 +100,61 @@
     // Write Back 
     
     reg                    wb_alu_to_reg;
+    reg                    wb_custom_write_x10;
+    reg                    wb_custom_write_x2;
+    reg            [31: 0] wb_custom_x2_value;
+    reg                    wb_custom_sw2;
+    reg            [31: 0] wb_custom_sw2_base;
+    reg            [31: 0] wb_custom_sw2_data;
+
+    // CUSTOM_SW3 rápida: duas portas de escrita na DMEM
+    reg                    wb_custom_sw3;
+    reg            [31:0]  wb_custom_sw3_base;
+    reg            [31:0]  wb_custom_sw3_data;
+
+        reg                    wb_custom_lw3;
+    reg            [31:0]  wb_custom_lw3_base;
+    reg            [4:0]   wb_custom_lw3_dest;
+    reg            [2:0]   custom_lw3_state;
+    reg [31:0] custom_lw3_base1_latched;
+    reg [31:0] custom_lw3_base2_latched;
+    reg            [4:0]   custom_lw3_dest_latched;
+    reg            [31:0]  custom_lw3_data1_latched;
+    reg            [31:0]  custom_lw3_data2_latched;
+    reg                    custom_lw3_seen;
+    wire                   custom_lw3_busy;
+    wire                   custom_lw3_read_valid;
+    wire           [31:0]  custom_lw3_read_address;
+    wire                   custom_lw3_writeback_valid;
+    wire           [4:0]   custom_lw3_writeback_dest;
+    wire           [31:0]  custom_lw3_writeback_data;
+
+
+    // CUSTOM_LW2: x13=MEM[x8-32], x15=MEM[x8-20]
+    reg                    wb_custom_lw2;
+    reg            [31:0]  wb_custom_lw2_base;
+    reg            [4:0]   wb_custom_lw2_dest;
+    reg            [2:0]   custom_lw2_state;
+    reg            [31:0]  custom_lw2_base_latched;
+    reg            [4:0]   custom_lw2_dest_latched;
+    reg            [31:0]  custom_lw2_data1_latched;
+    reg            [31:0]  custom_lw2_data2_latched;
+    reg                    custom_lw2_seen;
+    wire                   custom_lw2_busy;
+    wire                   custom_lw2_read_valid;
+    wire           [31:0]  custom_lw2_read_address;
+    wire                   custom_lw2_writeback_valid;
+    wire           [4:0]   custom_lw2_writeback_dest;
+    wire           [31:0]  custom_lw2_writeback_data;
+
+    // Controlador multiciclo da CUSTOM_SW2
+    reg            [1:0]  custom_sw2_state;
+    reg            [31:0] custom_sw2_base_latched;
+    reg            [31:0] custom_sw2_data_latched;
+    wire                   custom_sw2_busy;
+    wire                   custom_sw2_write_valid;
+    wire           [31:0] custom_sw2_write_address;
+    wire           [31:0] custom_sw2_write_data;
     reg            [31: 0] wb_result;
     reg            [ 2: 0] wb_alu_operation;
     reg                    wb_mem_write;
@@ -109,12 +170,23 @@
     wire           [31: 0] inst_mem_address;
 
 //------------------------------------------------------//
-assign dmem_write_address           = wb_write_address;     // assigning where to write 
-assign dmem_read_address            = alu_operand1 + execute_immediate;  // Assigning address to read from the data memory
-assign dmem_read_ready              = mem_to_reg;   // load instruction flag to read from memory
-assign dmem_write_ready             = wb_mem_write;     // flag to write into the memory
-assign dmem_write_data              = wb_write_data;    // assigning data to write
-assign dmem_write_byte              = wb_write_byte;    // flag for writing the data bytes
+// Porta 1: SW normal, CUSTOM_SW2 ou primeira escrita da CUSTOM_SW3.
+assign dmem_write_address           = wb_custom_sw3 ? (wb_custom_sw3_base - 32'd20) :
+                                      (custom_sw2_write_valid ? custom_sw2_write_address : wb_write_address);
+assign dmem_read_address =          custom_lw3_read_valid ? custom_lw3_read_address :
+                                    custom_lw2_read_valid ? custom_lw2_read_address :
+                                                            (alu_operand1 + execute_immediate);
+assign dmem_read_ready              = custom_lw3_read_valid || custom_lw2_read_valid || mem_to_reg;
+assign dmem_write_ready             = wb_custom_sw3 || custom_sw2_write_valid || wb_mem_write;
+assign dmem_write_data              = wb_custom_sw3 ? wb_custom_sw3_data :
+                                      (custom_sw2_write_valid ? custom_sw2_write_data : wb_write_data);
+assign dmem_write_byte              = (wb_custom_sw3 || custom_sw2_write_valid) ? 4'b1111 : wb_write_byte;
+
+// Porta 2 dedicada: segunda escrita da CUSTOM_SW3 no mesmo ciclo.
+assign dmem_write2_ready            = wb_custom_sw3;
+assign dmem_write2_address          = wb_custom_sw3_base - 32'd24;
+assign dmem_write2_data             = 32'd0;
+assign dmem_write2_byte             = 4'b1111;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory
 assign dmem_read_valid_checker      = 1'b1;
 // -----------------------------------------------------//
@@ -126,9 +198,7 @@ IF_ID IF_ID(
     .stall      (stall),
     .exception  (exception),
     .inst_mem_read_data (inst_mem_read_data),
-    .inst_data_future (read_data_future),
-    .inst_mem_is_valid (inst_mem_is_valid),
-    .ok_read(ok_read)
+    .inst_mem_is_valid (inst_mem_is_valid)
 );
 
 // instatiating execute module -----------------------------------

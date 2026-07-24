@@ -119,4 +119,292 @@ begin
 end
 
 
+
+// -----------------------------------------------------------------------------
+// CUSTOM_SW2 (00f45053)
+// Substitui:
+//   sw x15, -20(x8)
+//   sw x0,  -28(x8)
+// A memória possui uma única porta de escrita, portanto são usados dois ciclos.
+// -----------------------------------------------------------------------------
+localparam [1:0] CUSTOM_SW2_IDLE   = 2'd0;
+localparam [1:0] CUSTOM_SW2_WRITE1 = 2'd1;
+localparam [1:0] CUSTOM_SW2_WRITE2 = 2'd2;
+
+assign pipe.custom_sw2_busy = (pipe.custom_sw2_state != CUSTOM_SW2_IDLE);
+assign pipe.custom_sw2_write_valid =
+       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ||
+       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE2);
+
+assign pipe.custom_sw2_write_address =
+       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ?
+       (pipe.custom_sw2_base_latched - 32'd20) :
+       (pipe.custom_sw2_base_latched - 32'd28);
+
+assign pipe.custom_sw2_write_data =
+       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ?
+       pipe.custom_sw2_data_latched : 32'd0;
+
+always @(posedge clk or negedge reset)
+begin
+    if (!reset)
+    begin
+        pipe.custom_sw2_state        <= CUSTOM_SW2_IDLE;
+        pipe.custom_sw2_base_latched <= 32'd0;
+        pipe.custom_sw2_data_latched <= 32'd0;
+    end
+    else
+    begin
+        case (pipe.custom_sw2_state)
+            CUSTOM_SW2_IDLE:
+            begin
+                if (pipe.wb_custom_sw2)
+                begin
+                    pipe.custom_sw2_base_latched <= pipe.wb_custom_sw2_base;
+                    pipe.custom_sw2_data_latched <= pipe.wb_custom_sw2_data;
+                    pipe.custom_sw2_state        <= CUSTOM_SW2_WRITE1;
+                end
+            end
+
+            CUSTOM_SW2_WRITE1:
+                pipe.custom_sw2_state <= CUSTOM_SW2_WRITE2;
+
+            CUSTOM_SW2_WRITE2:
+                pipe.custom_sw2_state <= CUSTOM_SW2_IDLE;
+
+            default:
+                pipe.custom_sw2_state <= CUSTOM_SW2_IDLE;
+        endcase
+    end
+end
+
+
+
+// -----------------------------------------------------------------------------
+// CUSTOM_SW3 rápida (0010EFF1)
+// As duas escritas são realizadas simultaneamente pelas duas portas da DMEM.
+// Não há FSM nem stall específico para esta instrução.
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// CUSTOM_LW2 (0004075b)
+// Substitui:
+//   fe042683  // lw x13, -32(x8)
+//   fec42783  // lw x15, -20(x8)
+//
+// A RAM é síncrona: o dado solicitado em um ciclo somente pode ser capturado
+// no ciclo seguinte. Por isso REQ e CAP são estados separados.
+// -----------------------------------------------------------------------------
+localparam [2:0] CUSTOM_LW2_IDLE   = 3'd0;
+localparam [2:0] CUSTOM_LW2_REQ1   = 3'd1;
+localparam [2:0] CUSTOM_LW2_CAP1   = 3'd2;
+localparam [2:0] CUSTOM_LW2_REQ2   = 3'd3;
+localparam [2:0] CUSTOM_LW2_CAP2   = 3'd4;
+localparam [2:0] CUSTOM_LW2_WRITE1 = 3'd5;
+localparam [2:0] CUSTOM_LW2_WRITE2 = 3'd6;
+
+assign pipe.custom_lw2_busy = (pipe.custom_lw2_state != CUSTOM_LW2_IDLE);
+
+assign pipe.custom_lw2_read_valid =
+       (pipe.custom_lw2_state == CUSTOM_LW2_REQ1) ||
+       (pipe.custom_lw2_state == CUSTOM_LW2_REQ2);
+
+assign pipe.custom_lw2_read_address =
+       (pipe.custom_lw2_state == CUSTOM_LW2_REQ1) ?
+       (pipe.custom_lw2_base_latched - 32'd32) :
+       (pipe.custom_lw2_base_latched - 32'd20);
+
+assign pipe.custom_lw2_writeback_valid =
+       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ||
+       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE2);
+
+assign pipe.custom_lw2_writeback_dest =
+       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ?
+       5'd13 :
+       5'd15;
+
+assign pipe.custom_lw2_writeback_data =
+       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ?
+       pipe.custom_lw2_data1_latched :
+       pipe.custom_lw2_data2_latched;
+
+always @(posedge clk or negedge reset)
+begin
+    if (!reset)
+    begin
+        pipe.custom_lw2_state         <= CUSTOM_LW2_IDLE;
+        pipe.custom_lw2_base_latched  <= 32'd0;
+        pipe.custom_lw2_dest_latched  <= 5'd0;
+        pipe.custom_lw2_data1_latched <= 32'd0;
+        pipe.custom_lw2_data2_latched <= 32'd0;
+        pipe.custom_lw2_seen          <= 1'b0;
+    end
+    else
+    begin
+        case (pipe.custom_lw2_state)
+            CUSTOM_LW2_IDLE:
+            begin
+                if (pipe.custom_lw2 && !pipe.custom_lw2_seen)
+                begin
+                    // reg_rdata1 já contém x8 com o forwarding normal aplicado.
+                    pipe.custom_lw2_base_latched <= pipe.reg_rdata1;
+                    pipe.custom_lw2_dest_latched <= 5'd13; // primeiro destino fixo: x13
+                    pipe.custom_lw2_seen          <= 1'b1;
+                    pipe.custom_lw2_state         <= CUSTOM_LW2_REQ1;
+                end
+                else if (!pipe.custom_lw2)
+                begin
+                    pipe.custom_lw2_seen <= 1'b0;
+                end
+            end
+
+            // A RAM recebe base-32 neste ciclo.
+            CUSTOM_LW2_REQ1:
+                pipe.custom_lw2_state <= CUSTOM_LW2_CAP1;
+
+            // read_data agora corresponde a MEM[base-32].
+            CUSTOM_LW2_CAP1:
+            begin
+                pipe.custom_lw2_data1_latched <= pipe.dmem_read_data;
+                pipe.custom_lw2_state         <= CUSTOM_LW2_REQ2;
+            end
+
+            // A RAM recebe base-20 neste ciclo.
+            CUSTOM_LW2_REQ2:
+                pipe.custom_lw2_state <= CUSTOM_LW2_CAP2;
+
+            // read_data agora corresponde a MEM[base-20].
+            CUSTOM_LW2_CAP2:
+            begin
+                pipe.custom_lw2_data2_latched <= pipe.dmem_read_data;
+                pipe.custom_lw2_state         <= CUSTOM_LW2_WRITE1;
+            end
+
+            CUSTOM_LW2_WRITE1:
+                pipe.custom_lw2_state <= CUSTOM_LW2_WRITE2;
+
+            CUSTOM_LW2_WRITE2:
+                pipe.custom_lw2_state <= CUSTOM_LW2_IDLE;
+
+            default:
+                pipe.custom_lw2_state <= CUSTOM_LW2_IDLE;
+        endcase
+    end
+end
+
+
+
+
+
+// -----------------------------------------------------------------------------
+// CUSTOM_lw3 (0004075b)
+// Substitui:
+//   fe042683  // lw x13, -32(x8)
+//   fec42783  // lw x15, -20(x8)
+
+// 0007a703  // lw x14, 0(x15)
+// fec42783  // lw x15, -20(x8)
+//
+// A RAM é síncrona: o dado solicitado em um ciclo somente pode ser capturado
+// no ciclo seguinte. Por isso REQ e CAP são estados separados.
+// -----------------------------------------------------------------------------
+localparam [2:0] CUSTOM_LW3_IDLE   = 3'd0;
+localparam [2:0] CUSTOM_lw3_REQ1   = 3'd1;
+localparam [2:0] CUSTOM_LW3_CAP1   = 3'd2;
+localparam [2:0] CUSTOM_LW3_REQ2   = 3'd3;
+localparam [2:0] CUSTOM_LW3_CAP2   = 3'd4;
+localparam [2:0] CUSTOM_LW3_WRITE1 = 3'd5;
+localparam [2:0] CUSTOM_LW3_WRITE2 = 3'd6;
+
+assign pipe.custom_lw3_busy = (pipe.custom_lw3_state != CUSTOM_LW3_IDLE);
+
+assign pipe.custom_lw3_read_valid =
+       (pipe.custom_lw3_state == CUSTOM_lw3_REQ1) ||
+       (pipe.custom_lw3_state == CUSTOM_LW3_REQ2);
+
+assign pipe.custom_lw3_read_address =
+    (pipe.custom_lw3_state == CUSTOM_lw3_REQ1)
+        ? pipe.custom_lw3_base1_latched
+        : pipe.custom_lw3_base2_latched - 32'd20;
+
+assign pipe.custom_lw3_writeback_valid =
+       (pipe.custom_lw3_state == CUSTOM_LW3_WRITE1) ||
+       (pipe.custom_lw3_state == CUSTOM_LW3_WRITE2);
+
+assign pipe.custom_lw3_writeback_dest =
+       (pipe.custom_lw3_state == CUSTOM_LW3_WRITE1) ?
+       5'd14 :
+       5'd15;
+
+assign pipe.custom_lw3_writeback_data =
+       (pipe.custom_lw3_state == CUSTOM_LW3_WRITE1) ?
+       pipe.custom_lw3_data1_latched :
+       pipe.custom_lw3_data2_latched;
+
+always @(posedge clk or negedge reset)
+begin
+    if (!reset)
+    begin
+        pipe.custom_lw3_state         <= CUSTOM_LW3_IDLE;
+       pipe.custom_lw3_base1_latched <= 32'd0;
+pipe.custom_lw3_base2_latched <= 32'd0;
+        pipe.custom_lw3_dest_latched  <= 5'd0;
+        pipe.custom_lw3_data1_latched <= 32'd0;
+        pipe.custom_lw3_data2_latched <= 32'd0;
+        pipe.custom_lw3_seen          <= 1'b0;
+    end
+    else
+    begin
+        case (pipe.custom_lw3_state)
+            CUSTOM_LW3_IDLE:
+            begin
+                if (pipe.custom_lw3 && !pipe.custom_lw3_seen)
+                begin
+                    // reg_rdata1 já contém x8 com o forwarding normal aplicado.
+                    pipe.custom_lw3_base1_latched <= pipe.reg_rdata1; // x15
+                    pipe.custom_lw3_base2_latched <= pipe.reg_rdata2; // x8
+                    pipe.custom_lw3_dest_latched <= 5'd14; // primeiro destino fixo: x14
+                    pipe.custom_lw3_seen          <= 1'b1;
+                    pipe.custom_lw3_state         <= CUSTOM_lw3_REQ1;
+                end
+                else if (!pipe.custom_lw3)
+                begin
+                    pipe.custom_lw3_seen <= 1'b0;
+                end
+            end
+
+            // A RAM recebe base-32 neste ciclo.
+            CUSTOM_lw3_REQ1:
+                pipe.custom_lw3_state <= CUSTOM_LW3_CAP1;
+
+            // read_data agora corresponde a MEM[base-32].
+            CUSTOM_LW3_CAP1:
+            begin
+                pipe.custom_lw3_data1_latched <= pipe.dmem_read_data;
+                pipe.custom_lw3_state         <= CUSTOM_LW3_REQ2;
+            end
+
+            // A RAM recebe base-20 neste ciclo.
+            CUSTOM_LW3_REQ2:
+                pipe.custom_lw3_state <= CUSTOM_LW3_CAP2;
+
+            // read_data agora corresponde a MEM[base-20].
+            CUSTOM_LW3_CAP2:
+            begin
+                pipe.custom_lw3_data2_latched <= pipe.dmem_read_data;
+                pipe.custom_lw3_state         <= CUSTOM_LW3_WRITE1;
+            end
+
+            CUSTOM_LW3_WRITE1:
+                pipe.custom_lw3_state <= CUSTOM_LW3_WRITE2;
+
+            CUSTOM_LW3_WRITE2:
+                pipe.custom_lw3_state <= CUSTOM_LW3_IDLE;
+
+            default:
+                pipe.custom_lw3_state <= CUSTOM_LW3_IDLE;
+        endcase
+    end
+end
+
 endmodule

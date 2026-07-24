@@ -1,0 +1,1069 @@
+// Sequência 1
+// Opcode: 0x13
+// Funct3: 0x0
+// Tipo: OP-IMM
+// Quantidade: 4
+// Endereço inicial: 0x00000008
+// Endereço final: 0x00000014
+02010413 // 32'h00000008 -> addi x8, x2, 32
+00010513 // 32'h0000000c -> addi x10, x2, 0
+00050e13 // 32'h00000010 -> addi x28, x10, 0
+00400513 // 32'h00000014 -> addi x10, x0, 4
+
+
+// Sequência 2
+// Opcode: 0x13
+// Funct3: 0x0
+// Tipo: OP-IMM
+// Quantidade: 2
+// Endereço inicial: 0x00000020
+// Endereço final: 0x00000024
+00150513 // 32'h00000020 -> addi x10, x10, 1
+fff50893 // 32'h00000024 -> addi x17, x10, -1
+
+
+// Sequência 3
+// Opcode: 0x13
+// Funct3: 0x0
+// Tipo: OP-IMM
+// Quantidade: 3
+// Endereço inicial: 0x0000002c
+// Endereço final: 0x00000034
+00050893 // 32'h0000002c -> addi x17, x10, 0
+00088313 // 32'h00000030 -> addi x6, x17, 0
+00000393 // 32'h00000034 -> addi x7, x0, 0
+
+
+// Sequência 4
+// Opcode: 0x13
+// Funct3: 0x0
+// Tipo: OP-IMM
+// Quantidade: 3
+// Endereço inicial: 0x00000048
+// Endereço final: 0x00000050
+00050713 // 32'h00000048 -> addi x14, x10, 0
+00070593 // 32'h0000004c -> addi x11, x14, 0
+00000613 // 32'h00000050 -> addi x12, x0, 0
+
+
+// Sequência 5
+// Opcode: 0x13
+// Funct3: 0x0
+// Tipo: OP-IMM
+// Quantidade: 2
+// Endereço inicial: 0x0000007c
+// Endereço final: 0x00000080
+00010793 // 32'h0000007c -> addi x15, x2, 0
+00378793 // 32'h00000080 -> addi x15, x15, 3
+
+
+// Sequência 6
+// Opcode: 0x03
+// Funct3: 0x2
+// Tipo: LOAD
+// Quantidade: 2
+// Endereço inicial: 0x000000c4
+// Endereço final: 0x000000c8
+0007a703 // 32'h000000c4 -> lw x14, 0(x15)
+fec42783 // 32'h000000c8 -> lw x15, -20(x8)
+
+
+// Sequência 7
+// Opcode: 0x03
+// Funct3: 0x2
+// Tipo: LOAD
+// Quantidade: 2
+// Endereço inicial: 0x000000e4
+// Endereço final: 0x000000e8
+fe042683 // 32'h000000e4 -> lw x13, -32(x8)
+fec42783 // 32'h000000e8 -> lw x15, -20(x8)
+
+
+// Sequência 8
+// Opcode: 0x03
+// Funct3: 0x2
+// Tipo: LOAD
+// Quantidade: 2
+// Endereço inicial: 0x00000104
+// Endereço final: 0x00000108
+fec42703 // 32'h00000104 -> lw x14, -20(x8)
+fe842783 // 32'h00000108 -> lw x15, -24(x8)
+
+
+// Sequência 9
+// Opcode: 0x03
+// Funct3: 0x2
+// Tipo: LOAD
+// Quantidade: 2
+// Endereço inicial: 0x00000110
+// Endereço final: 0x00000114
+fe042703 // 32'h00000110 -> lw x14, -32(x8)
+fe842783 // 32'h00000114 -> lw x15, -24(x8)
+
+
+// Sequência 10
+// Opcode: 0x13
+// Funct3: 0x0
+// Tipo: OP-IMM
+// Quantidade: 3
+// Endereço inicial: 0x00000124
+// Endereço final: 0x0000012c
+000e0113 // 32'h00000124 -> addi x2, x28, 0
+00078513 // 32'h00000128 -> addi x10, x15, 0
+fe040113 // 32'h0000012c -> addi x2, x8, -32
+
+
+// Sequência 11
+// Opcode: 0x00
+// Funct3: 0x0
+// Tipo: UNKNOWN_0x00
+// Quantidade: 945
+// Endereço inicial: 0x0000013c
+// Endereço final: 0x00000ffc
+00000000 // 32'h0000013c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000140 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000144 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000148 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000014c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000150 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000154 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000158 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000015c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000160 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000164 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000168 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000016c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000170 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000174 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000178 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000017c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000180 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000184 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000188 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000018c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000190 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000194 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000198 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000019c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000001fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000200 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000204 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000208 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000020c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000210 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000214 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000218 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000021c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000220 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000224 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000228 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000022c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000230 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000234 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000238 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000023c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000240 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000244 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000248 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000024c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000250 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000254 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000258 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000025c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000260 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000264 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000268 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000026c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000270 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000274 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000278 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000027c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000280 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000284 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000288 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000028c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000290 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000294 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000298 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000029c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000002fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000300 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000304 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000308 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000030c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000310 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000314 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000318 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000031c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000320 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000324 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000328 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000032c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000330 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000334 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000338 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000033c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000340 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000344 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000348 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000034c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000350 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000354 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000358 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000035c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000360 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000364 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000368 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000036c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000370 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000374 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000378 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000037c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000380 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000384 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000388 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000038c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000390 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000394 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000398 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000039c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000003fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000400 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000404 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000408 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000040c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000410 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000414 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000418 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000041c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000420 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000424 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000428 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000042c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000430 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000434 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000438 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000043c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000440 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000444 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000448 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000044c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000450 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000454 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000458 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000045c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000460 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000464 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000468 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000046c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000470 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000474 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000478 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000047c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000480 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000484 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000488 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000048c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000490 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000494 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000498 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000049c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000004fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000500 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000504 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000508 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000050c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000510 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000514 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000518 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000051c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000520 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000524 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000528 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000052c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000530 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000534 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000538 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000053c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000540 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000544 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000548 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000054c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000550 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000554 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000558 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000055c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000560 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000564 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000568 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000056c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000570 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000574 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000578 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000057c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000580 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000584 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000588 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000058c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000590 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000594 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000598 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000059c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000005fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000600 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000604 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000608 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000060c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000610 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000614 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000618 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000061c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000620 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000624 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000628 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000062c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000630 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000634 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000638 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000063c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000640 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000644 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000648 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000064c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000650 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000654 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000658 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000065c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000660 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000664 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000668 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000066c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000670 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000674 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000678 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000067c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000680 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000684 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000688 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000068c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000690 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000694 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000698 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000069c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000006fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000700 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000704 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000708 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000070c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000710 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000714 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000718 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000071c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000720 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000724 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000728 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000072c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000730 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000734 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000738 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000073c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000740 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000744 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000748 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000074c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000750 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000754 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000758 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000075c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000760 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000764 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000768 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000076c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000770 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000774 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000778 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000077c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000780 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000784 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000788 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000078c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000790 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000794 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000798 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000079c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000007fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000800 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000804 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000808 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000080c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000810 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000814 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000818 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000081c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000820 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000824 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000828 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000082c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000830 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000834 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000838 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000083c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000840 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000844 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000848 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000084c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000850 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000854 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000858 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000085c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000860 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000864 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000868 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000086c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000870 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000874 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000878 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000087c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000880 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000884 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000888 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000088c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000890 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000894 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000898 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000089c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000008fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000900 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000904 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000908 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000090c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000910 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000914 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000918 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000091c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000920 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000924 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000928 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000092c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000930 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000934 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000938 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000093c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000940 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000944 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000948 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000094c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000950 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000954 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000958 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000095c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000960 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000964 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000968 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000096c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000970 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000974 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000978 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000097c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000980 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000984 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000988 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000098c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000990 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000994 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000998 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h0000099c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009a0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009a4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009a8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009ac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009b0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009b4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009b8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009bc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009c0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009c4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009c8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009cc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009d0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009d4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009d8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009dc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009e0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009e4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009e8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009ec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009f0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009f4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009f8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h000009fc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a00 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a04 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a08 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a0c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a10 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a14 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a18 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a1c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a20 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a24 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a28 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a2c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a30 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a34 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a38 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a3c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a40 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a44 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a48 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a4c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a50 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a54 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a58 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a5c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a60 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a64 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a68 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a6c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a70 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a74 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a78 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a7c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a80 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a84 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a88 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a8c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a90 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a94 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a98 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000a9c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000aa0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000aa4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000aa8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000aac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ab0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ab4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ab8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000abc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ac0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ac4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ac8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000acc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ad0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ad4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ad8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000adc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ae0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ae4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ae8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000aec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000af0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000af4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000af8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000afc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b00 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b04 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b08 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b0c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b10 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b14 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b18 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b1c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b20 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b24 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b28 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b2c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b30 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b34 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b38 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b3c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b40 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b44 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b48 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b4c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b50 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b54 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b58 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b5c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b60 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b64 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b68 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b6c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b70 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b74 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b78 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b7c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b80 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b84 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b88 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b8c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b90 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b94 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b98 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000b9c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ba0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ba4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ba8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bb0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bb4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bb8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bbc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bc0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bc4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bc8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bcc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bd0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bd4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bd8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bdc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000be0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000be4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000be8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bf0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bf4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bf8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000bfc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c00 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c04 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c08 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c0c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c10 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c14 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c18 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c1c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c20 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c24 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c28 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c2c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c30 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c34 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c38 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c3c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c40 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c44 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c48 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c4c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c50 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c54 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c58 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c5c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c60 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c64 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c68 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c6c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c70 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c74 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c78 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c7c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c80 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c84 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c88 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c8c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c90 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c94 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c98 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000c9c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ca0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ca4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ca8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cb0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cb4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cb8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cbc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cc0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cc4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cc8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ccc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cd0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cd4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cd8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cdc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ce0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ce4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ce8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cf0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cf4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cf8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000cfc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d00 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d04 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d08 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d0c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d10 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d14 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d18 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d1c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d20 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d24 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d28 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d2c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d30 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d34 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d38 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d3c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d40 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d44 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d48 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d4c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d50 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d54 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d58 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d5c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d60 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d64 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d68 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d6c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d70 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d74 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d78 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d7c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d80 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d84 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d88 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d8c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d90 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d94 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d98 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000d9c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000da0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000da4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000da8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000db0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000db4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000db8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dbc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dc0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dc4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dc8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dcc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dd0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dd4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dd8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ddc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000de0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000de4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000de8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000df0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000df4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000df8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000dfc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e00 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e04 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e08 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e0c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e10 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e14 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e18 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e1c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e20 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e24 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e28 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e2c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e30 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e34 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e38 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e3c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e40 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e44 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e48 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e4c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e50 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e54 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e58 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e5c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e60 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e64 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e68 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e6c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e70 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e74 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e78 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e7c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e80 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e84 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e88 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e8c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e90 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e94 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e98 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000e9c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ea0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ea4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ea8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000eac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000eb0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000eb4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000eb8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ebc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ec0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ec4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ec8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ecc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ed0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ed4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ed8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000edc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ee0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ee4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ee8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000eec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ef0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ef4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ef8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000efc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f00 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f04 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f08 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f0c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f10 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f14 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f18 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f1c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f20 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f24 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f28 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f2c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f30 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f34 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f38 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f3c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f40 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f44 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f48 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f4c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f50 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f54 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f58 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f5c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f60 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f64 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f68 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f6c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f70 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f74 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f78 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f7c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f80 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f84 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f88 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f8c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f90 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f94 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f98 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000f9c -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fa0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fa4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fa8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fac -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fb0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fb4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fb8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fbc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fc0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fc4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fc8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fcc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fd0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fd4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fd8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fdc -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fe0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fe4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fe8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000fec -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ff0 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ff4 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ff8 -> desconhecida opcode=0x00, funct3=0x0
+00000000 // 32'h00000ffc -> desconhecida opcode=0x00, funct3=0x0
+
+

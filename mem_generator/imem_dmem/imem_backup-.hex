@@ -1,0 +1,13 @@
+fe010113        // addi x2, x2, 4064       ; Ajusta ponteiro de pilha
+00812e23        // sw x8, 28(x2)           ; Salva x8 na pilha
+02010413        // addi x8, x2, 32         ; x8 = x2 + 32
+
+03200713        // li x14, 50              ; x14 = 50
+02800793        // li x15, 40              ; x15 = 40
+00f707b3        // add x15, x14, x15       ; x15 = 50 + 40 = 90
+ffe78793        // addi x15, x15, 4094     ; x15 = 90 + 4094 = 4184
+
+00078513        // mv x10, x15             ; x10 = x15
+01c12403        // lw x8, 28(x2)           ; Restaura x8
+02010113        // addi x2, x2, 32         ; Restaura ponteiro de pilha
+00008067        // jalr x0, 0(x1)          ; Retorna

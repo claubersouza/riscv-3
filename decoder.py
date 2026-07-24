@@ -27,16 +27,16 @@ def decoder(inst):
 
     if opcode == '0110111':
         inst_n = "LUI"
-        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, imm:{imm_U}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, imm:{imm_U}\n")
     elif opcode == '0010111':
         inst_n = "AUIPC"
-        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, imm:{imm_U}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, imm:{imm_U}\n")
     elif opcode == "1101111":
         inst_n = "JAL"
-        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, imm:{imm_J}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, imm:{imm_J}\n")
     elif opcode == "1100111":
         inst_n = "JALR"
-        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, imm:{imm_I}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, imm:{imm_I}\n")
     elif opcode == "1100011":
         if funct3 == '000':
             inst_n = 'BEQ '
@@ -50,7 +50,7 @@ def decoder(inst):
             inst_n = 'BLTU '
         if funct3 == '111':
             inst_n = 'BGEU '
-        print(f"inst_n: {inst_n}, opcode: {opcode}, funct3:{funct3}, rs1:{rs1}, rs2:{rs2}, imm:{imm_B}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, funct3:{funct3}, rs1:{rs1}, rs2:{rs2}, imm:{imm_B}\n")
     elif opcode == "0000011":
         if funct3 == '000':
             inst_n = 'LB '
@@ -62,7 +62,7 @@ def decoder(inst):
             inst_n = 'LBU '
         if funct3 == '101':
             inst_n = 'LHU '
-        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, imm:{imm_I}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, imm:{imm_I}\n")
     elif opcode == "0100011":
         if funct3 == '000':
             inst_n = 'SB '
@@ -70,7 +70,7 @@ def decoder(inst):
             inst_n = 'SH '
         if funct3 == '010':
             inst_n = 'SW '
-        print(f"inst_n: {inst_n}, opcode: {opcode}, funct3:{funct3}, rs1:{rs1}, rs2:{rs2}, imm:{imm_S}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, funct3:{funct3}, rs1:{rs1}, rs2:{rs2}, imm:{imm_S}\n")
     elif opcode == "0010011":
         if funct3 == '000':
             inst_n = 'ADDI '
@@ -91,9 +91,9 @@ def decoder(inst):
                 inst_n = 'SRLI '
             else:
                 inst_n = 'SRAI'
-            print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, func7:{funct7}")
+            print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, func7:{funct7}\n")
         else:
-            print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, imm:{imm_I}")
+            print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, imm:{imm_I}\n")
     elif opcode == "0110011":
         if funct3 == '000':
             if funct7 == '0000000':
@@ -117,14 +117,14 @@ def decoder(inst):
             inst_n = 'OR'
         if funct3 == '111':
             inst_n = 'AND'
-        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, rs2:{rs2}, func7:{funct7}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, rs2:{rs2}, func7:{funct7}\n")
             
     elif opcode == '0001111':
         if funct3 == '000':
             inst_n = 'FENCE'
         if funct3 == '001':
             inst_n = 'FENCE.I'
-        print(f"inst_n: {inst_n}, opcode: {opcode}, funct3:{funct3}")
+        print(f"inst_n: {inst_n}, opcode: {opcode}, funct3:{funct3}\n")
         
     elif opcode == '1110011':
         if funct3 == '001':
@@ -144,9 +144,9 @@ def decoder(inst):
                 inst_n = 'ECALL'
             else:
                 inst_n = 'EBREAK'
-            print(f"inst_n: {inst_n}, opcode: {opcode}, imm:{imm_I}")
+            print(f"inst_n: {inst_n}, opcode: {opcode}, imm:{imm_I}\n")
         else:
-            print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, csr:{imm_I}")
+            print(f"inst_n: {inst_n}, opcode: {opcode}, rd:{rd}, funct3:{funct3}, rs1:{rs1}, csr:{imm_I}\n")
     else:
         print("ERROR")
         

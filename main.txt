@@ -1,0 +1,19 @@
+fe010113//Assembly: addi x2, x2, 4064
+00812e23//Assembly: sw x8, 28(x2)
+02010413//Assembly: addi x8, x2, 32
+03200793//Assembly: addi x15, x0, 50
+fef42623//Assembly: sw x15, 4076(x8)
+fec42703//Assembly: lw x14, 4076(x8)
+02800793//Assembly: addi x15, x0, 40
+fef42423//Assembly: sw x15, 4072(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+ffe78793//Assembly: addi x15, x15, 4094
+fef42223//Assembly: sw x15, 4068(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00078513//Assembly: addi x10, x15, 0
+01c12403//Assembly: lw x8, 28(x2)
+02010113//Assembly: addi x2, x2, 32
+00008067//Assembly: jalr x0, 0(x1)
