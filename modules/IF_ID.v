@@ -216,12 +216,10 @@ assign pipe.reg_rdata1 =
 
     // Forwarding da CUSTOM 00010553:
     // x8=x2+32, x28=x2 e x10=4.
-    (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src1_select == 5'd8)  ? (pipe.regs[2] + 32'd48) :
-    (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src1_select == 5'd15) ? pipe.regs[0] :
-    (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src1_select == 5'd15) ? 32'hFFFF_FFFF :
+      (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd8) ?
+        (pipe.regs[2] + 32'd48) :
+    (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd15) ?
+        32'hFFFF_FFFF :
 
     // Forwarding da CUSTOM 00010573:
     // x17=x10, x6=x10 e x7=0.
@@ -245,12 +243,10 @@ assign pipe.reg_rdata2 =
     (pipe.src2_select == 5'd0) ? 32'd0 :
 
     // Forwarding da CUSTOM 00010553.
-    (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src2_select == 5'd8)  ? (pipe.regs[2] + 32'd48) :
-    (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src2_select == 5'd28) ? pipe.regs[2] :
-    (!pipe.wb_stall && pipe.wb_custom_write_x10 &&
-     pipe.src2_select == 5'd15) ? 32'd0 :
+    (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd8) ?
+        (pipe.regs[2] + 32'd48) :
+    (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd15) ?
+        32'hFFFF_FFFF :
 
     // Forwarding da CUSTOM 00010573.
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
