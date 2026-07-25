@@ -1,7 +1,7 @@
 fd010113//Assembly: addi x2, x2, 4048
 02812623//Assembly: sw x8, 44(x2)
-
 00010553
+00000013
 //03010413//Assembly: addi x8, x2, 48
 //fff00793//Assembly: addi x15, x0, 4095
 
@@ -13,8 +13,9 @@ fec42703//Assembly: lw x14, 4076(x8)
 fd842783//Assembly: lw x15, 4056(x8)
 00f747b3//Assembly: xor x15, x14, x15
 
-fef42623//Assembly: sw x15, 4076(x8)
-fe042423//Assembly: sw x0, 4072(x8)
+00f45053// CUSTOM: sw x15,-20(x8) + sw x0,-24(x8)
+//fe042423// palavra reservada; ignorada pelo PC + 8 da custom
+
 
 0440006f//Assembly: jal x0, 68
 fec42783//Assembly: lw x15, 4076(x8)
@@ -41,8 +42,11 @@ fcf42c23//Assembly: sw x15, 4056(x8)
 fec42703//Assembly: lw x14, 4076(x8)
 fd842783//Assembly: lw x15, 4056(x8)
 00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-fe042223//Assembly: sw x0, 4068(x8)
+
+00f46053// CUSTOM: sw x15,-20(x8) + sw x0,-28(x8)
+//fe042223// palavra reservada; ignorada pelo PC + 8 da custom
+
+
 0440006f//Assembly: jal x0, 68
 fec42783//Assembly: lw x15, 4076(x8)
 0017f793//Assembly: andi x15, x15, 1
@@ -95,8 +99,10 @@ fcf42c23//Assembly: sw x15, 4056(x8)
 fec42703//Assembly: lw x14, 4076(x8)
 fd842783//Assembly: lw x15, 4056(x8)
 00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-fc042e23//Assembly: sw x0, 4060(x8)
+
+00f47053// CUSTOM_SW6: sw x15,-20(x8) + sw x0,-36(x8)
+//fc042e23// POSICAO RESERVADA: pulada por PC+8
+
 0440006f//Assembly: jal x0, 68
 fec42783//Assembly: lw x15, 4076(x8)
 0017f793//Assembly: andi x15, x15, 1

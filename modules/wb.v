@@ -124,7 +124,7 @@ end
 // CUSTOM_SW2 (00f45053)
 // Substitui:
 //   sw x15, -20(x8)
-//   sw x0,  -28(x8)
+//   sw x0,  -24(x8)
 // A memória possui uma única porta de escrita, portanto são usados dois ciclos.
 // -----------------------------------------------------------------------------
 localparam [1:0] CUSTOM_SW2_IDLE   = 2'd0;
@@ -139,7 +139,7 @@ assign pipe.custom_sw2_write_valid =
 assign pipe.custom_sw2_write_address =
        (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ?
        (pipe.custom_sw2_base_latched - 32'd20) :
-       (pipe.custom_sw2_base_latched - 32'd28);
+       (pipe.custom_sw2_base_latched - 32'd24);
 
 assign pipe.custom_sw2_write_data =
        (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ?
@@ -347,7 +347,7 @@ begin
     begin
         pipe.custom_lw3_state         <= CUSTOM_LW3_IDLE;
        pipe.custom_lw3_base1_latched <= 32'd0;
-pipe.custom_lw3_base2_latched <= 32'd0;
+        pipe.custom_lw3_base2_latched <= 32'd0;
         pipe.custom_lw3_dest_latched  <= 5'd0;
         pipe.custom_lw3_data1_latched <= 32'd0;
         pipe.custom_lw3_data2_latched <= 32'd0;

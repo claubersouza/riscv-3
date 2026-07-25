@@ -1,136 +1,122 @@
-fe010113  // addi x2, x2, -32
-00812e23  // sw x8, 28(x2)
-
-//02010413  // addi x8, x2, 32
-//00010513  // addi x10, x2, 0
-//00050e13  // addi x28, x10, 0
-//00400513  // addi x10, x0, 4
-00010553
-
-fea42423  // sw x10, -24(x8)
-fe842503  // lw x10, -24(x8)
-00150513  // addi x10, x10, 1
-fff50893  // addi x17, x10, -1
-ff142223  // sw x17, -28(x8)
-
-//00050893  // addi x17, x10, 0
-//00088313  // addi x6, x17, 0
-//00000393  // addi x7, x0, 0
-
-
-
-01b35893  // srli x17, x6, 27
-00539713  // slli x14, x7, 5
-00e8e733  // or x14, x17, x14
-00531693  // slli x13, x6, 5
-
-00050713  // addi x14, x10, 0
-00070593  // addi x11, x14, 0
-00000613  // addi x12, x0, 0
-
-01b5d713  // srli x14, x11, 27
-00561813  // slli x16, x12, 5
-01076833  // or x16, x14, x16
-00559793  // slli x15, x11, 5
-00050793  // addi x15, x10, 0
-00279793  // slli x15, x15, 2
-00f78793  // addi x15, x15, 15
-0047d793  // srli x15, x15, 4
-00479793  // slli x15, x15, 4
-40f10133  // sub x2, x2, x15
-00010793  // addi x15, x2, 0
-00378793  // addi x15, x15, 3
-0027d793  // srli x15, x15, 2
-00279793  // slli x15, x15, 2
-fef42023  // sw x15, -32(x8)
-fe042783  // lw x15, -32(x8)
-0007a023  // sw x0, 0(x15)
-fe042783  // lw x15, -32(x8)
-00100713  // addi x14, x0, 1
-00e7a223  // sw x14, 4(x15)
-00200793  // addi x15, x0, 2
+fd010113  // addi x2, x2, -48
+02812623  // sw x8, 44(x2)
+00010553  // instrução desconhecida opcode=0x53
+00000013  // addi x0, x0, 0
 fef42623  // sw x15, -20(x8)
-0580006f  // jal x0, 88
-fec42783  // lw x15, -20(x8)
-fff78793  // addi x15, x15, -1
-fe042703  // lw x14, -32(x8)
-00279793  // slli x15, x15, 2
-00f707b3  // add x15, x14, x15
-
-0007a703  // lw x14, 0(x15)
-fec42783  // lw x15, -20(x8)
-
-
-ffe78793  // addi x15, x15, -2
-fe042683  // lw x13, -32(x8)
-00279793  // slli x15, x15, 2
-00f687b3  // add x15, x13, x15
-0007a783  // lw x15, 0(x15)
-00f70733  // add x14, x14, x15
-
-fe042683  // lw x13, -32(x8)
-fec42783  // lw x15, -20(x8)
-
-00279793  // slli x15, x15, 2
-00f687b3  // add x15, x13, x15
-00e7a023  // sw x14, 0(x15)
-fec42783  // lw x15, -20(x8)
-00178793  // addi x15, x15, 1
-fef42623  // sw x15, -20(x8)
+03100793  // addi x15, x0, 49
+fcf42c23  // sw x15, -40(x8)
 fec42703  // lw x14, -20(x8)
+fd842783  // lw x15, -40(x8)
+00f747b3  // xor x15, x14, x15
+00f45053  // instrução desconhecida opcode=0x53
+fe042423  // sw x0, -24(x8)
+0440006f  // jal x0, 68
+fec42783  // lw x15, -20(x8)
+0017f793  // andi x15, x15, 1
+02078063  // beq x15, x0, 32
+fec42783  // lw x15, -20(x8)
+0017d713  // srli x14, x15, 1
+edb887b7  // lui x15, 0xedb88
+32078793  // addi x15, x15, 800
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+0100006f  // jal x0, 16
+fec42783  // lw x15, -20(x8)
+0017d793  // srli x15, x15, 1
+fef42623  // sw x15, -20(x8)
 fe842783  // lw x15, -24(x8)
-fae7d2e3  // bge x15, x14, -92
+00178793  // addi x15, x15, 1
+fef42423  // sw x15, -24(x8)
+fe842703  // lw x14, -24(x8)
+00700793  // addi x15, x0, 7
+fae7fce3  // bgeu x15, x14, -72
+03200793  // addi x15, x0, 50
+fcf42c23  // sw x15, -40(x8)
+fec42703  // lw x14, -20(x8)
+fd842783  // lw x15, -40(x8)
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+fe042223  // sw x0, -28(x8)
+0440006f  // jal x0, 68
+fec42783  // lw x15, -20(x8)
+0017f793  // andi x15, x15, 1
+02078063  // beq x15, x0, 32
+fec42783  // lw x15, -20(x8)
+0017d713  // srli x14, x15, 1
+edb887b7  // lui x15, 0xedb88
+32078793  // addi x15, x15, 800
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+0100006f  // jal x0, 16
+fec42783  // lw x15, -20(x8)
+0017d793  // srli x15, x15, 1
+fef42623  // sw x15, -20(x8)
+fe442783  // lw x15, -28(x8)
+00178793  // addi x15, x15, 1
+fef42223  // sw x15, -28(x8)
+fe442703  // lw x14, -28(x8)
+00700793  // addi x15, x0, 7
+fae7fce3  // bgeu x15, x14, -72
+03300793  // addi x15, x0, 51
+fcf42c23  // sw x15, -40(x8)
+fec42703  // lw x14, -20(x8)
+fd842783  // lw x15, -40(x8)
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+fe042023  // sw x0, -32(x8)
+0440006f  // jal x0, 68
+fec42783  // lw x15, -20(x8)
+0017f793  // andi x15, x15, 1
+02078063  // beq x15, x0, 32
+fec42783  // lw x15, -20(x8)
+0017d713  // srli x14, x15, 1
+edb887b7  // lui x15, 0xedb88
+32078793  // addi x15, x15, 800
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+0100006f  // jal x0, 16
+fec42783  // lw x15, -20(x8)
+0017d793  // srli x15, x15, 1
+fef42623  // sw x15, -20(x8)
+fe042783  // lw x15, -32(x8)
+00178793  // addi x15, x15, 1
+fef42023  // sw x15, -32(x8)
 fe042703  // lw x14, -32(x8)
-fe842783  // lw x15, -24(x8)
-00279793  // slli x15, x15, 2
-00f707b3  // add x15, x14, x15
-0007a783  // lw x15, 0(x15)
-000e0113  // addi x2, x28, 0
+00700793  // addi x15, x0, 7
+fae7fce3  // bgeu x15, x14, -72
+03400793  // addi x15, x0, 52
+fcf42c23  // sw x15, -40(x8)
+fec42703  // lw x14, -20(x8)
+fd842783  // lw x15, -40(x8)
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+fc042e23  // sw x0, -36(x8)
+0440006f  // jal x0, 68
+fec42783  // lw x15, -20(x8)
+0017f793  // andi x15, x15, 1
+02078063  // beq x15, x0, 32
+fec42783  // lw x15, -20(x8)
+0017d713  // srli x14, x15, 1
+edb887b7  // lui x15, 0xedb88
+32078793  // addi x15, x15, 800
+00f747b3  // xor x15, x14, x15
+fef42623  // sw x15, -20(x8)
+0100006f  // jal x0, 16
+fec42783  // lw x15, -20(x8)
+0017d793  // srli x15, x15, 1
+fef42623  // sw x15, -20(x8)
+fdc42783  // lw x15, -36(x8)
+00178793  // addi x15, x15, 1
+fcf42e23  // sw x15, -36(x8)
+fdc42703  // lw x14, -36(x8)
+00700793  // addi x15, x0, 7
+fae7fce3  // bgeu x15, x14, -72
+fec42783  // lw x15, -20(x8)
+fff7c793  // xori x15, x15, -1
 00078513  // addi x10, x15, 0
-fe040113  // addi x2, x8, -32
-01c12403  // lw x8, 28(x2)
-02010113  // addi x2, x2, 32
+02c12403  // lw x8, 44(x2)
+03010113  // addi x2, x2, 48
 00008067  // jalr x0, 0(x1)
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
-00000000  // instrução desconhecida opcode=0x00
 00000000  // instrução desconhecida opcode=0x00
 00000000  // instrução desconhecida opcode=0x00
 00000000  // instrução desconhecida opcode=0x00

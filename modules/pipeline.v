@@ -61,6 +61,8 @@
     reg                   custom2;
     reg                   custom_sw2;
     reg                   custom_sw3;
+    reg                   custom_sw4;
+    reg                   custom_sw6;
     reg                   custom_lw2;
     reg                   custom_lw3;
     reg                   custom_write_x10;
@@ -111,6 +113,16 @@
     reg                    wb_custom_sw3;
     reg            [31:0]  wb_custom_sw3_base;
     reg            [31:0]  wb_custom_sw3_data;
+
+    // CUSTOM_SW4: MEM[x8-20]=x15 e MEM[x8-28]=0
+    reg                    wb_custom_sw4;
+    reg            [31:0]  wb_custom_sw4_base;
+    reg            [31:0]  wb_custom_sw4_data;
+
+    // CUSTOM_SW6: MEM[x8-20]=x15 e MEM[x8-36]=0
+    reg                    wb_custom_sw6;
+    reg            [31:0]  wb_custom_sw6_base;
+    reg            [31:0]  wb_custom_sw6_data;
 
         reg                    wb_custom_lw3;
     reg            [31:0]  wb_custom_lw3_base;
@@ -171,20 +183,26 @@
 
 //------------------------------------------------------//
 // Porta 1: SW normal, CUSTOM_SW2 ou primeira escrita da CUSTOM_SW3.
-assign dmem_write_address           = wb_custom_sw3 ? (wb_custom_sw3_base - 32'd20) :
+assign dmem_write_address           = wb_custom_sw6 ? (wb_custom_sw6_base - 32'd20) :
+                                      wb_custom_sw4 ? (wb_custom_sw4_base - 32'd20) :
+                                      wb_custom_sw3 ? (wb_custom_sw3_base - 32'd20) :
                                       (custom_sw2_write_valid ? custom_sw2_write_address : wb_write_address);
 assign dmem_read_address =          custom_lw3_read_valid ? custom_lw3_read_address :
                                     custom_lw2_read_valid ? custom_lw2_read_address :
                                                             (alu_operand1 + execute_immediate);
 assign dmem_read_ready              = custom_lw3_read_valid || custom_lw2_read_valid || mem_to_reg;
-assign dmem_write_ready             = wb_custom_sw3 || custom_sw2_write_valid || wb_mem_write;
-assign dmem_write_data              = wb_custom_sw3 ? wb_custom_sw3_data :
+assign dmem_write_ready             = wb_custom_sw6 || wb_custom_sw4 || wb_custom_sw3 || custom_sw2_write_valid || wb_mem_write;
+assign dmem_write_data              = wb_custom_sw6 ? wb_custom_sw6_data :
+                                      wb_custom_sw4 ? wb_custom_sw4_data :
+                                      wb_custom_sw3 ? wb_custom_sw3_data :
                                       (custom_sw2_write_valid ? custom_sw2_write_data : wb_write_data);
-assign dmem_write_byte              = (wb_custom_sw3 || custom_sw2_write_valid) ? 4'b1111 : wb_write_byte;
+assign dmem_write_byte              = (wb_custom_sw6 || wb_custom_sw4 || wb_custom_sw3 || custom_sw2_write_valid) ? 4'b1111 : wb_write_byte;
 
 // Porta 2 dedicada: segunda escrita da CUSTOM_SW3 no mesmo ciclo.
-assign dmem_write2_ready            = wb_custom_sw3;
-assign dmem_write2_address          = wb_custom_sw3_base - 32'd24;
+assign dmem_write2_ready            = wb_custom_sw6 || wb_custom_sw4 || wb_custom_sw3;
+assign dmem_write2_address          = wb_custom_sw6 ? (wb_custom_sw6_base - 32'd36) :
+                                      wb_custom_sw4 ? (wb_custom_sw4_base - 32'd28) :
+                                      (wb_custom_sw3_base - 32'd24);
 assign dmem_write2_data             = 32'd0;
 assign dmem_write2_byte             = 4'b1111;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory

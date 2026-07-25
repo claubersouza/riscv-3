@@ -148,6 +148,8 @@ begin
     pipe.custom2                <= 1'b0;
     pipe.custom_sw2             <= 1'b0;
     pipe.custom_sw3             <= 1'b0;
+    pipe.custom_sw4             <= 1'b0;
+    pipe.custom_sw6             <= 1'b0;
     pipe.custom_lw2             <= 1'b0;
     pipe.custom_write_x10       <= 1'b0;
      pipe.custom_write_x2       <= 1'b0;
@@ -175,10 +177,13 @@ begin
                                    (pipe.instruction[`OPCODE] == ARITHR);
     pipe.lui                    <= pipe.instruction[`OPCODE] == LUI;
     pipe.custom                 <= pipe.instruction[`OPCODE] == CUSTOM;
-    // CUSTOM_SW2: MEM[x8-20] = x15 e MEM[x8-28] = 0
-    pipe.custom_sw2             <= (pipe.instruction == 32'h00f45053);
-    // CUSTOM_SW3 0010EFF1: MEM[x8-20] = x15 e MEM[x8-24] = 0
-    pipe.custom_sw3             <= (pipe.instruction == 32'h0010EFF1);
+    // 00f45053: MEM[x8-20] = x15 e MEM[x8-24] = 0
+    // 00f46053: MEM[x8-20] = x15 e MEM[x8-28] = 0
+    // 00f47053: MEM[x8-20] = x15 e MEM[x8-36] = 0 (CUSTOM_SW6)
+    pipe.custom_sw2             <= 1'b0;
+    pipe.custom_sw3             <= (pipe.instruction == 32'h00f45053);
+    pipe.custom_sw4             <= (pipe.instruction == 32'h00f46053);
+    pipe.custom_sw6             <= (pipe.instruction == 32'h00f47053);
     // 0004075b: lw x13,-32(x8) + lw x15,-20(x8)
     pipe.custom_lw2             <= (pipe.instruction == 32'h0004075b);
     pipe.custom_lw3 <= (pipe.instruction == 32'h000407db);

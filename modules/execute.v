@@ -166,9 +166,11 @@ begin
     // BRANCH, mas o PC avanca 8 bytes quando a FSM termina. Assim, nao e
     // necessario usar 00000013 como preenchimento e a palavra reservada nao
     // chega ao decode.
-        // A CUSTOM_SW3 é reconhecida diretamente na saída da IMEM.
+        // A 00f45053 é reconhecida diretamente na saída da IMEM.
         // O próximo fetch salta a segunda SW substituída sem stall e sem bolha.
         if (pipe.instruction == 32'h0010EFF1)
+            pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
+        else if ((pipe.instruction == 32'h00f47053) || (pipe.instruction == 32'h00f46053) || (pipe.instruction == 32'h00f45053))
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else if ((pipe.instruction == 32'h0004075b) &&
             pipe.custom_lw2_seen &&
@@ -199,6 +201,12 @@ begin
         pipe.wb_custom_sw3            <= 1'b0;
         pipe.wb_custom_sw3_base       <= 32'd0;
         pipe.wb_custom_sw3_data       <= 32'd0;
+        pipe.wb_custom_sw4            <= 1'b0;
+        pipe.wb_custom_sw4_base       <= 32'd0;
+        pipe.wb_custom_sw4_data       <= 32'd0;
+        pipe.wb_custom_sw6            <= 1'b0;
+        pipe.wb_custom_sw6_base       <= 32'd0;
+        pipe.wb_custom_sw6_data       <= 32'd0;
         pipe.wb_custom_lw2             <= 1'b0;
         pipe.wb_custom_lw2_base        <= 32'd0;
         pipe.wb_custom_lw2_dest        <= 5'd0;
@@ -228,6 +236,12 @@ begin
         pipe.wb_custom_sw3            <= pipe.custom_sw3;
         pipe.wb_custom_sw3_base       <= pipe.reg_rdata1;
         pipe.wb_custom_sw3_data       <= pipe.reg_rdata2;
+        pipe.wb_custom_sw4            <= pipe.custom_sw4;
+        pipe.wb_custom_sw4_base       <= pipe.reg_rdata1;
+        pipe.wb_custom_sw4_data       <= pipe.reg_rdata2;
+        pipe.wb_custom_sw6            <= pipe.custom_sw6;
+        pipe.wb_custom_sw6_base       <= pipe.reg_rdata1;
+        pipe.wb_custom_sw6_data       <= pipe.reg_rdata2;
         pipe.wb_custom_lw2             <= pipe.custom_lw2;
         pipe.wb_custom_lw2_base        <= pipe.reg_rdata1;
         pipe.wb_custom_lw2_dest        <= pipe.dest_reg_sel;

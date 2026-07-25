@@ -64,7 +64,7 @@ always @(posedge clk) begin
     end
 
     // Segunda porta de escrita. É usada pela CUSTOM_SW3 para efetuar
-    // MEM[x8-24] = 0 no mesmo ciclo de MEM[x8-20] = x15.
+    // MEM[x8-24] ou MEM[x8-28] = 0 no mesmo ciclo de MEM[x8-20] = x15.
     if (write2_ready) begin
         if (write2_byte[0]) memory[write2_addr][8*0+7:8*0] <= write2_data[8*0+7:8*0];
         if (write2_byte[1]) memory[write2_addr][8*1+7:8*1] <= write2_data[8*1+7:8*1];
