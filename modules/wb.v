@@ -134,7 +134,7 @@ localparam [1:0] CUSTOM_SW_WRITE2 = 2'd2;
 wire custom_sw_request = pipe.wb_custom_sw2 || pipe.wb_custom_sw3 ||
                          pipe.wb_custom_sw4 || pipe.wb_custom_sw6;
 
-wire custom_sw_instruction = (pipe.instruction == 32'h00f45053) ||
+wire custom_sw_instruction = (pipe.instruction == 32'h0010EFF1) ||
                              (pipe.instruction == 32'h00f46053) ||
                              (pipe.instruction == 32'h00f47053);
 

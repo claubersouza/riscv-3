@@ -176,7 +176,7 @@ begin
     pipe.mem_to_reg             <= 1'b0;
 end 
 else if (!pipe.stall_read ||
-         (pipe.instruction == 32'h00f45053) ||
+         (pipe.instruction == 32'h0010EFF1) ||
          (pipe.instruction == 32'h00f46053) ||
          (pipe.instruction == 32'h00f47053))
 begin
@@ -193,7 +193,7 @@ begin
     // 00f46053: MEM[x8-20] = x15 e MEM[x8-28] = 0
     // 00f47053: MEM[x8-20] = x15 e MEM[x8-36] = 0 (CUSTOM_SW6)
     pipe.custom_sw2             <= 1'b0;
-    pipe.custom_sw3             <= (pipe.instruction == 32'h00f45053);
+    pipe.custom_sw3             <= (pipe.instruction == 32'h0010EFF1);
     pipe.custom_sw4             <= (pipe.instruction == 32'h00f46053);
     pipe.custom_sw6             <= (pipe.instruction == 32'h00f47053);
     // 0004075b: lw x13,-32(x8) + lw x15,-20(x8)
@@ -230,13 +230,22 @@ assign pipe.reg_rdata1 =
     //03010413//Assembly: addi x8, x2, 48
 //fff00793//Assembly: addi x15, x0, 4095
 
+//02010413  // addi x8, x2, 32
+//00010513  // addi x10, x2, 0
+//00050e13  // addi x28, x10, 0
+//00400513  // addi x10, x0, 4
+
 
     // Forwarding da CUSTOM 00010553:
     // x8=x2+32, x28=x2 e x10=4.
       (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd8) ?
-        (pipe.regs[2] + 32'd48) :
-    (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd15) ?
-        32'hFFFF_FFFF :
+        (pipe.regs[2] + 32'd32) :
+         (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd28) ?
+        (pipe.regs[2]):
+        (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd10) ?
+        (4):    
+
+
 
     // Forwarding da CUSTOM 00010573:
     // x17=x10, x6=x10 e x7=0.
@@ -260,10 +269,12 @@ assign pipe.reg_rdata2 =
     (pipe.src2_select == 5'd0) ? 32'd0 :
 
     // Forwarding da CUSTOM 00010553.
-    (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd8) ?
-        (pipe.regs[2] + 32'd48) :
-    (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd15) ?
-        32'hFFFF_FFFF :
+        (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd8) ?
+        (pipe.regs[2] + 32'd32) :
+         (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd28) ?
+        (pipe.regs[2]):
+        (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd10) ?
+        (4):    
 
     // Forwarding da CUSTOM 00010573.
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
@@ -313,10 +324,9 @@ else if (pipe.wb_custom_write_x10 &&
          !pipe.wb_stall)
 begin
     // 03010413  // addi x8, x2, 48
-    pipe.regs[8]  <= pipe.regs[2] + 32'd48;
-
-    // fff00793  // addi x15, x0, -1
-    pipe.regs[15] <= 32'hFFFF_FFFF;
+    pipe.regs[8]  <= pipe.regs[2] + 32'd32;
+    pipe.regs[28] = pipe.regs[10];
+    pipe.regs[10] <= 4;
 end
 else if (pipe.wb_custom_write_x2 && !pipe.stall_read && !pipe.wb_stall)
 begin
