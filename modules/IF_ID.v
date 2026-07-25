@@ -93,10 +93,19 @@ begin
     // Trava na primeira detecção e permanece travado somente enquanto a FSM
     // está ocupada. Depois de WRITE2, custom_lw2_seen=1 permite liberar o PC
     // mesmo que a palavra CUSTOM ainda esteja na saída da IMEM.
+    // Para a FSM genérica de store, o pipeline deve travar já quando a
+    // palavra customizada aparece na saída da IMEM. O sinal custom_sw_seen
+    // permite liberar o PC somente depois de WRITE1 e WRITE2 terminarem.
+    // IMPORTANTE: o stall começa somente depois que a instrução já foi
+    // decodificada. Usar pipe.instruction aqui fazia a própria instrução virar
+    // NOP antes de custom_sw3/custom_sw4/custom_sw6 serem registrados.
     pipe.stall_read <= stall ||
-                       pipe.custom_sw2_busy ||
+                       (((pipe.custom_sw3 || pipe.custom_sw4 || pipe.custom_sw6) &&
+                         !pipe.custom_sw_seen)) ||
+                       pipe.custom_sw_busy ||
                        ((pipe.instruction == 32'h0004075b) && !pipe.custom_lw2_seen) ||
-                       pipe.custom_lw2_busy || pipe.custom_lw3_busy || ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_seen);
+                       pipe.custom_lw2_busy || pipe.custom_lw3_busy ||
+                       ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_seen);
 end
 end
 
@@ -166,8 +175,11 @@ begin
     pipe.mem_write              <= 1'b0;
     pipe.mem_to_reg             <= 1'b0;
 end 
-else if(!pipe.stall_read) 
-begin  
+else if (!pipe.stall_read ||
+         (pipe.instruction == 32'h00f45053) ||
+         (pipe.instruction == 32'h00f46053) ||
+         (pipe.instruction == 32'h00f47053))
+begin
     //  $display("Valor:%b",pipe.instruction[`OPCODE]);    
                      // else take the values from the IF stage and decode it to pass values to corresponding wires
     pipe.execute_immediate      <= pipe.immediate;

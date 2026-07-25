@@ -99,10 +99,8 @@ fcf42c23//Assembly: sw x15, 4056(x8)
 fec42703//Assembly: lw x14, 4076(x8)
 fd842783//Assembly: lw x15, 4056(x8)
 00f747b3//Assembly: xor x15, x14, x15
-
 00f47053// CUSTOM_SW6: sw x15,-20(x8) + sw x0,-36(x8)
 //fc042e23// POSICAO RESERVADA: pulada por PC+8
-
 0440006f//Assembly: jal x0, 68
 fec42783//Assembly: lw x15, 4076(x8)
 0017f793//Assembly: andi x15, x15, 1

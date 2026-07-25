@@ -220,7 +220,11 @@ begin
         pipe.wb_read_address         <= 2'h0;
         pipe.wb_alu_operation        <= 3'h0;
     end 
-    else if (!pipe.stall_read) 
+    // A FSM genérica trava o fetch/decode assim que reconhece SW3/SW4/SW6.
+    // Mesmo durante esse stall inicial, a operação customizada precisa avançar
+    // uma vez para os registradores wb_custom_sw*. Por isso existe a exceção.
+    else if (!pipe.stall_read || pipe.custom_sw2 || pipe.custom_sw3 ||
+             pipe.custom_sw4 || pipe.custom_sw6)
     begin
         pipe.wb_result               <= pipe.result;
         pipe.wb_mem_write            <= pipe.mem_write && !pipe.branch_stall;

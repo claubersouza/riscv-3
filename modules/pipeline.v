@@ -159,14 +159,16 @@
     wire           [4:0]   custom_lw2_writeback_dest;
     wire           [31:0]  custom_lw2_writeback_data;
 
-    // Controlador multiciclo da CUSTOM_SW2
-    reg            [1:0]  custom_sw2_state;
-    reg            [31:0] custom_sw2_base_latched;
-    reg            [31:0] custom_sw2_data_latched;
-    wire                   custom_sw2_busy;
-    wire                   custom_sw2_write_valid;
-    wire           [31:0] custom_sw2_write_address;
-    wire           [31:0] custom_sw2_write_data;
+    // Controlador multiciclo genérico para CUSTOM_SW2/SW3/SW4/SW6
+    reg            [1:0]  custom_sw_state;
+    reg            [31:0] custom_sw_base_latched;
+    reg            [31:0] custom_sw_data_latched;
+    reg            [31:0] custom_sw_offset2_latched;
+    reg                    custom_sw_seen;
+    wire                   custom_sw_busy;
+    wire                   custom_sw_write_valid;
+    wire           [31:0] custom_sw_write_address;
+    wire           [31:0] custom_sw_write_data;
     reg            [31: 0] wb_result;
     reg            [ 2: 0] wb_alu_operation;
     reg                    wb_mem_write;
@@ -182,29 +184,23 @@
     wire           [31: 0] inst_mem_address;
 
 //------------------------------------------------------//
-// Porta 1: SW normal, CUSTOM_SW2 ou primeira escrita da CUSTOM_SW3.
-assign dmem_write_address           = wb_custom_sw6 ? (wb_custom_sw6_base - 32'd20) :
-                                      wb_custom_sw4 ? (wb_custom_sw4_base - 32'd20) :
-                                      wb_custom_sw3 ? (wb_custom_sw3_base - 32'd20) :
-                                      (custom_sw2_write_valid ? custom_sw2_write_address : wb_write_address);
-assign dmem_read_address =          custom_lw3_read_valid ? custom_lw3_read_address :
-                                    custom_lw2_read_valid ? custom_lw2_read_address :
-                                                            (alu_operand1 + execute_immediate);
+// Porta 1 compartilhada: SW normal ou escrita da FSM CUSTOM_SW genérica.
+// WRITE1: MEM[base-20] = data
+// WRITE2: MEM[base-offset2] = 0
+assign dmem_write_address           = custom_sw_write_valid ? custom_sw_write_address : wb_write_address;
+assign dmem_read_address            = custom_lw3_read_valid ? custom_lw3_read_address :
+                                      custom_lw2_read_valid ? custom_lw2_read_address :
+                                                              (alu_operand1 + execute_immediate);
 assign dmem_read_ready              = custom_lw3_read_valid || custom_lw2_read_valid || mem_to_reg;
-assign dmem_write_ready             = wb_custom_sw6 || wb_custom_sw4 || wb_custom_sw3 || custom_sw2_write_valid || wb_mem_write;
-assign dmem_write_data              = wb_custom_sw6 ? wb_custom_sw6_data :
-                                      wb_custom_sw4 ? wb_custom_sw4_data :
-                                      wb_custom_sw3 ? wb_custom_sw3_data :
-                                      (custom_sw2_write_valid ? custom_sw2_write_data : wb_write_data);
-assign dmem_write_byte              = (wb_custom_sw6 || wb_custom_sw4 || wb_custom_sw3 || custom_sw2_write_valid) ? 4'b1111 : wb_write_byte;
+assign dmem_write_ready             = custom_sw_write_valid || wb_mem_write;
+assign dmem_write_data              = custom_sw_write_valid ? custom_sw_write_data : wb_write_data;
+assign dmem_write_byte              = custom_sw_write_valid ? 4'b1111 : wb_write_byte;
 
-// Porta 2 dedicada: segunda escrita da CUSTOM_SW3 no mesmo ciclo.
-assign dmem_write2_ready            = wb_custom_sw6 || wb_custom_sw4 || wb_custom_sw3;
-assign dmem_write2_address          = wb_custom_sw6 ? (wb_custom_sw6_base - 32'd36) :
-                                      wb_custom_sw4 ? (wb_custom_sw4_base - 32'd28) :
-                                      (wb_custom_sw3_base - 32'd24);
+// A porta 2 não é usada pelas CUSTOM_SW multiciclo.
+assign dmem_write2_ready            = 1'b0;
+assign dmem_write2_address          = 32'd0;
 assign dmem_write2_data             = 32'd0;
-assign dmem_write2_byte             = 4'b1111;
+assign dmem_write2_byte             = 4'b0000;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory
 assign dmem_read_valid_checker      = 1'b1;
 // -----------------------------------------------------//

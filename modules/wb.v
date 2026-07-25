@@ -121,69 +121,108 @@ end
 
 
 // -----------------------------------------------------------------------------
-// CUSTOM_SW2 (00f45053)
-// Substitui:
-//   sw x15, -20(x8)
-//   sw x0,  -24(x8)
-// A memória possui uma única porta de escrita, portanto são usados dois ciclos.
+// Controlador genérico para CUSTOM_SW2, CUSTOM_SW3, CUSTOM_SW4 e CUSTOM_SW6.
+// Todas usam uma única porta de escrita e dois ciclos:
+//   WRITE1: MEM[base-20]      = data
+//   WRITE2: MEM[base-offset2] = 0
+// offset2: SW2/SW3=24, SW4=28, SW6=36.
 // -----------------------------------------------------------------------------
-localparam [1:0] CUSTOM_SW2_IDLE   = 2'd0;
-localparam [1:0] CUSTOM_SW2_WRITE1 = 2'd1;
-localparam [1:0] CUSTOM_SW2_WRITE2 = 2'd2;
+localparam [1:0] CUSTOM_SW_IDLE   = 2'd0;
+localparam [1:0] CUSTOM_SW_WRITE1 = 2'd1;
+localparam [1:0] CUSTOM_SW_WRITE2 = 2'd2;
 
-assign pipe.custom_sw2_busy = (pipe.custom_sw2_state != CUSTOM_SW2_IDLE);
-assign pipe.custom_sw2_write_valid =
-       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ||
-       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE2);
+wire custom_sw_request = pipe.wb_custom_sw2 || pipe.wb_custom_sw3 ||
+                         pipe.wb_custom_sw4 || pipe.wb_custom_sw6;
 
-assign pipe.custom_sw2_write_address =
-       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ?
-       (pipe.custom_sw2_base_latched - 32'd20) :
-       (pipe.custom_sw2_base_latched - 32'd24);
+wire custom_sw_instruction = (pipe.instruction == 32'h00f45053) ||
+                             (pipe.instruction == 32'h00f46053) ||
+                             (pipe.instruction == 32'h00f47053);
 
-assign pipe.custom_sw2_write_data =
-       (pipe.custom_sw2_state == CUSTOM_SW2_WRITE1) ?
-       pipe.custom_sw2_data_latched : 32'd0;
+assign pipe.custom_sw_busy = (pipe.custom_sw_state != CUSTOM_SW_IDLE);
+
+assign pipe.custom_sw_write_valid =
+       (pipe.custom_sw_state == CUSTOM_SW_WRITE1) ||
+       (pipe.custom_sw_state == CUSTOM_SW_WRITE2);
+
+assign pipe.custom_sw_write_address =
+       (pipe.custom_sw_state == CUSTOM_SW_WRITE1) ?
+       (pipe.custom_sw_base_latched - 32'd20) :
+       (pipe.custom_sw_base_latched - pipe.custom_sw_offset2_latched);
+
+assign pipe.custom_sw_write_data =
+       (pipe.custom_sw_state == CUSTOM_SW_WRITE1) ?
+       pipe.custom_sw_data_latched : 32'd0;
 
 always @(posedge clk or negedge reset)
 begin
     if (!reset)
     begin
-        pipe.custom_sw2_state        <= CUSTOM_SW2_IDLE;
-        pipe.custom_sw2_base_latched <= 32'd0;
-        pipe.custom_sw2_data_latched <= 32'd0;
+        pipe.custom_sw_state           <= CUSTOM_SW_IDLE;
+        pipe.custom_sw_base_latched    <= 32'd0;
+        pipe.custom_sw_data_latched    <= 32'd0;
+        pipe.custom_sw_offset2_latched <= 32'd0;
+        pipe.custom_sw_seen            <= 1'b0;
     end
     else
     begin
-        case (pipe.custom_sw2_state)
-            CUSTOM_SW2_IDLE:
+        case (pipe.custom_sw_state)
+            CUSTOM_SW_IDLE:
             begin
-                if (pipe.wb_custom_sw2)
+                if (custom_sw_request && !pipe.custom_sw_seen)
                 begin
-                    pipe.custom_sw2_base_latched <= pipe.wb_custom_sw2_base;
-                    pipe.custom_sw2_data_latched <= pipe.wb_custom_sw2_data;
-                    pipe.custom_sw2_state        <= CUSTOM_SW2_WRITE1;
+                    pipe.custom_sw_seen <= 1'b1;
+
+                    if (pipe.wb_custom_sw6)
+                    begin
+                        pipe.custom_sw_base_latched    <= pipe.wb_custom_sw6_base;
+                        pipe.custom_sw_data_latched    <= pipe.wb_custom_sw6_data;
+                        pipe.custom_sw_offset2_latched <= 32'd36;
+                    end
+                    else if (pipe.wb_custom_sw4)
+                    begin
+                        pipe.custom_sw_base_latched    <= pipe.wb_custom_sw4_base;
+                        pipe.custom_sw_data_latched    <= pipe.wb_custom_sw4_data;
+                        pipe.custom_sw_offset2_latched <= 32'd28;
+                    end
+                    else if (pipe.wb_custom_sw3)
+                    begin
+                        pipe.custom_sw_base_latched    <= pipe.wb_custom_sw3_base;
+                        pipe.custom_sw_data_latched    <= pipe.wb_custom_sw3_data;
+                        pipe.custom_sw_offset2_latched <= 32'd24;
+                    end
+                    else
+                    begin
+                        pipe.custom_sw_base_latched    <= pipe.wb_custom_sw2_base;
+                        pipe.custom_sw_data_latched    <= pipe.wb_custom_sw2_data;
+                        pipe.custom_sw_offset2_latched <= 32'd24;
+                    end
+
+                    pipe.custom_sw_state <= CUSTOM_SW_WRITE1;
+                end
+                // Só libera uma nova execução quando o PC já saiu da palavra
+                // customizada atual. Isso evita redisparo enquanto wb_custom_sw*
+                // permanece congelado pelo stall.
+                else if (!custom_sw_instruction && !custom_sw_request)
+                begin
+                    pipe.custom_sw_seen <= 1'b0;
                 end
             end
 
-            CUSTOM_SW2_WRITE1:
-                pipe.custom_sw2_state <= CUSTOM_SW2_WRITE2;
+            CUSTOM_SW_WRITE1:
+                pipe.custom_sw_state <= CUSTOM_SW_WRITE2;
 
-            CUSTOM_SW2_WRITE2:
-                pipe.custom_sw2_state <= CUSTOM_SW2_IDLE;
+            CUSTOM_SW_WRITE2:
+                pipe.custom_sw_state <= CUSTOM_SW_IDLE;
 
             default:
-                pipe.custom_sw2_state <= CUSTOM_SW2_IDLE;
+                pipe.custom_sw_state <= CUSTOM_SW_IDLE;
         endcase
     end
 end
 
 
-
 // -----------------------------------------------------------------------------
-// CUSTOM_SW3 rápida (0010EFF1)
-// As duas escritas são realizadas simultaneamente pelas duas portas da DMEM.
-// Não há FSM nem stall específico para esta instrução.
+// CUSTOM_SW3/SW4/SW6 agora são atendidas pela FSM genérica acima.
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
@@ -347,7 +386,7 @@ begin
     begin
         pipe.custom_lw3_state         <= CUSTOM_LW3_IDLE;
        pipe.custom_lw3_base1_latched <= 32'd0;
-        pipe.custom_lw3_base2_latched <= 32'd0;
+pipe.custom_lw3_base2_latched <= 32'd0;
         pipe.custom_lw3_dest_latched  <= 5'd0;
         pipe.custom_lw3_data1_latched <= 32'd0;
         pipe.custom_lw3_data2_latched <= 32'd0;
