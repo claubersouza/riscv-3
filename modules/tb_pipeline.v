@@ -1,8 +1,8 @@
 module testbench();
     
     //Local Parameters
-    localparam      IMEMSIZE = 4096;
-    localparam      DMEMSIZE = 4096;
+    localparam      IMEMSIZE = 65536;
+    localparam      DMEMSIZE = 65536;
 
     // PC counter and checker
     reg     [31: 0] next_pc;
@@ -64,7 +64,7 @@ begin
     begin
         next_pc     <= 32'h0;
         count       <= 8'h0;
-        pipe.regs[2] <= 32'h00000fff;
+        pipe.regs[2] <= 32'h0000fffc;
     end 
     else 
     begin
@@ -92,12 +92,12 @@ begin
         $display("========================================");
         $display("RET encontrado");
         $display("PC        = %08h", pipe.inst_mem_address);
-        $display("CRC em x10 = %0d (0x%08h)", pipe.regs[10], pipe.regs[10]);
+        $display("SHA-256 em x10 = %0d (0x%08h)", pipe.regs[10], pipe.regs[10]);
         $display("Temporario x15 = %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
-        if (pipe.regs[10] == 32'h9BE3E0A3)
-            $display("RESULTADO CORRETO: CRC(\"1234\") = 0x9BE3E0A3");
+        if (pipe.regs[10] == 32'h03AC6742)
+            $display("RESULTADO CORRETO: primeiros 32 bits do SHA-256(\"1234\") = 0x03AC6742");
         else
-            $display("RESULTADO INCORRETO: esperado 0x9BE3E0A3");
+            $display("RESULTADO INCORRETO: esperado 0x03AC6742");
         $display("========================================");
         #1 $finish;
     end

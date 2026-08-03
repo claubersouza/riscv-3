@@ -269,11 +269,11 @@ assign pipe.reg_rdata2 =
     (pipe.src2_select == 5'd0) ? 32'd0 :
 
     // Forwarding da CUSTOM 00010553.
-        (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd8) ?
+        (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd8) ?
         (pipe.regs[2] + 32'd32) :
-         (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd28) ?
+         (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd28) ?
         (pipe.regs[2]):
-        (pipe.wb_custom_write_x10 && pipe.src1_select == 5'd10) ?
+        (pipe.wb_custom_write_x10 && pipe.src2_select == 5'd10) ?
         (4):    
 
     // Forwarding da CUSTOM 00010573.
