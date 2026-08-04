@@ -92,12 +92,12 @@ begin
         $display("========================================");
         $display("RET encontrado");
         $display("PC        = %08h", pipe.inst_mem_address);
-        $display("SHA-256 em x10 = %0d (0x%08h)", pipe.regs[10], pipe.regs[10]);
+        $display("MD5 em x10 = %0d (0x%08h)", pipe.regs[10], pipe.regs[10]);
         $display("Temporario x15 = %0d (0x%08h)", pipe.regs[15], pipe.regs[15]);
-        if (pipe.regs[10] == 32'h03AC6742)
-            $display("RESULTADO CORRETO: primeiros 32 bits do SHA-256(\"1234\") = 0x03AC6742");
+        if (pipe.regs[10] == 32'h81DC9BDB)
+            $display("RESULTADO CORRETO: MD5(\"1234\") = 0x81DC9BDB");
         else
-            $display("RESULTADO INCORRETO: esperado 0x03AC6742");
+            $display("RESULTADO INCORRETO: esperado 0x81DC9BDB");
         $display("========================================");
         #1 $finish;
     end
@@ -189,5 +189,12 @@ begin
     end
 end
 
+
+// Diagnóstico da CUSTOM 00f46053.
+always @(posedge clk) begin
+    if (reset && pipe.wb_custom_sw4) begin
+        $display("CUSTOM_00f46053 base=%08h data=%08h addr1=%08h data1=%08h addr2=%08h data2=%08h", pipe.wb_custom_sw4_base, pipe.wb_custom_sw4_data, pipe.dmem_write_address, pipe.dmem_write_data, pipe.dmem_write2_address, pipe.dmem_write2_data);
+    end
+end
 endmodule
 

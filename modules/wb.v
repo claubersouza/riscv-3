@@ -121,21 +121,22 @@ end
 
 
 // -----------------------------------------------------------------------------
-// Controlador genérico para CUSTOM_SW2, CUSTOM_SW3, CUSTOM_SW4 e CUSTOM_SW6.
+// Controlador genérico para CUSTOM_SW2, CUSTOM_SW3 e CUSTOM_SW6.
 // Todas usam uma única porta de escrita e dois ciclos:
 //   WRITE1: MEM[base-20]      = data
 //   WRITE2: MEM[base-offset2] = 0
-// offset2: SW2/SW3=24, SW4=28, SW6=36.
+// offset2: SW2/SW3=24, SW6=36.
+// A CUSTOM_SW4 (00f46053) NAO passa por esta FSM: ela grava direto pelas
+// duas portas da memoria no mesmo ciclo (ver pipeline.v), sem stall.
 // -----------------------------------------------------------------------------
 localparam [1:0] CUSTOM_SW_IDLE   = 2'd0;
 localparam [1:0] CUSTOM_SW_WRITE1 = 2'd1;
 localparam [1:0] CUSTOM_SW_WRITE2 = 2'd2;
 
 wire custom_sw_request = pipe.wb_custom_sw2 || pipe.wb_custom_sw3 ||
-                         pipe.wb_custom_sw4 || pipe.wb_custom_sw6;
+                         pipe.wb_custom_sw6;
 
 wire custom_sw_instruction = (pipe.instruction == 32'h0010EFF1) ||
-                             (pipe.instruction == 32'h00f46053) ||
                              (pipe.instruction == 32'h00f47053);
 
 assign pipe.custom_sw_busy = (pipe.custom_sw_state != CUSTOM_SW_IDLE);
@@ -178,12 +179,6 @@ begin
                         pipe.custom_sw_data_latched    <= pipe.wb_custom_sw6_data;
                         pipe.custom_sw_offset2_latched <= 32'd36;
                     end
-                    else if (pipe.wb_custom_sw4)
-                    begin
-                        pipe.custom_sw_base_latched    <= pipe.wb_custom_sw4_base;
-                        pipe.custom_sw_data_latched    <= pipe.wb_custom_sw4_data;
-                        pipe.custom_sw_offset2_latched <= 32'd28;
-                    end
                     else if (pipe.wb_custom_sw3)
                     begin
                         pipe.custom_sw_base_latched    <= pipe.wb_custom_sw3_base;
@@ -222,7 +217,7 @@ end
 
 
 // -----------------------------------------------------------------------------
-// CUSTOM_SW3/SW4/SW6 agora são atendidas pela FSM genérica acima.
+// CUSTOM_SW3/SW6 usam a FSM. A 00f46053 usa duas portas diretamente.
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------

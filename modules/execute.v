@@ -170,7 +170,10 @@ begin
         // O próximo fetch salta a segunda SW substituída sem stall e sem bolha.
         if (pipe.instruction == 32'h0010EFF1)
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
-        else if ((pipe.instruction == 32'h00f47053) || (pipe.instruction == 32'h00f46053) || (pipe.instruction == 32'h0010EFF1))
+        else if ((pipe.instruction == 32'h00f47053) ||
+                 ((pipe.instruction == 32'h00f46053) &&
+                  (pipe.reg_rdata2 == 32'd32)) ||
+                 (pipe.instruction == 32'h0010EFF1))
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else if ((pipe.instruction == 32'h0004075b) &&
             pipe.custom_lw2_seen &&
@@ -240,7 +243,11 @@ begin
         pipe.wb_custom_sw3            <= pipe.custom_sw3;
         pipe.wb_custom_sw3_base       <= pipe.reg_rdata1;
         pipe.wb_custom_sw3_data       <= pipe.reg_rdata2;
-        pipe.wb_custom_sw4            <= pipe.custom_sw4;
+        // 00f46053 só é válida após o ADDI que prepara x15=32.
+        // Durante o caminho especulativo do BGEU, x15 vale 13; nesse caso,
+        // a custom é anulada e não produz escrita nem salto de PC.
+        pipe.wb_custom_sw4            <= pipe.custom_sw4 &&
+                                         (pipe.reg_rdata2 == 32'd32);
         pipe.wb_custom_sw4_base       <= pipe.reg_rdata1;
         pipe.wb_custom_sw4_data       <= pipe.reg_rdata2;
         pipe.wb_custom_sw6            <= pipe.custom_sw6;

@@ -114,7 +114,7 @@
     reg            [31:0]  wb_custom_sw3_base;
     reg            [31:0]  wb_custom_sw3_data;
 
-    // CUSTOM_SW4: MEM[x8-20]=x15 e MEM[x8-28]=0
+    // CUSTOM_SW4 00f46053: MEM[x8-64]=x15 e MEM[x8-60]=0
     reg                    wb_custom_sw4;
     reg            [31:0]  wb_custom_sw4_base;
     reg            [31:0]  wb_custom_sw4_data;
@@ -184,23 +184,28 @@
     wire           [31: 0] inst_mem_address;
 
 //------------------------------------------------------//
-// Porta 1 compartilhada: SW normal ou escrita da FSM CUSTOM_SW genérica.
-// WRITE1: MEM[base-20] = data
-// WRITE2: MEM[base-offset2] = 0
-assign dmem_write_address           = custom_sw_write_valid ? custom_sw_write_address : wb_write_address;
+// Porta 1: a CUSTOM 00f46053 faz a primeira escrita diretamente.
+// As demais CUSTOM_SW continuam usando a FSM já existente.
+assign dmem_write_address           = wb_custom_sw4 ? (wb_custom_sw4_base - 32'd64) :
+                                      custom_sw_write_valid ? custom_sw_write_address :
+                                                              wb_write_address;
 assign dmem_read_address            = custom_lw3_read_valid ? custom_lw3_read_address :
                                       custom_lw2_read_valid ? custom_lw2_read_address :
                                                               (alu_operand1 + execute_immediate);
 assign dmem_read_ready              = custom_lw3_read_valid || custom_lw2_read_valid || mem_to_reg;
-assign dmem_write_ready             = custom_sw_write_valid || wb_mem_write;
-assign dmem_write_data              = custom_sw_write_valid ? custom_sw_write_data : wb_write_data;
-assign dmem_write_byte              = custom_sw_write_valid ? 4'b1111 : wb_write_byte;
+assign dmem_write_ready             = wb_custom_sw4 || custom_sw_write_valid || wb_mem_write;
+assign dmem_write_data              = wb_custom_sw4 ? wb_custom_sw4_data :
+                                      custom_sw_write_valid ? custom_sw_write_data :
+                                                              wb_write_data;
+assign dmem_write_byte              = wb_custom_sw4 ? 4'b1111 :
+                                      custom_sw_write_valid ? 4'b1111 : wb_write_byte;
 
-// A porta 2 não é usada pelas CUSTOM_SW multiciclo.
-assign dmem_write2_ready            = 1'b0;
-assign dmem_write2_address          = 32'd0;
+// Segunda escrita da 00f46053 no mesmo ciclo:
+// MEM[x8-60] = 0.
+assign dmem_write2_ready            = wb_custom_sw4;
+assign dmem_write2_address          = wb_custom_sw4_base - 32'd60;
 assign dmem_write2_data             = 32'd0;
-assign dmem_write2_byte             = 4'b0000;
+assign dmem_write2_byte             = wb_custom_sw4 ? 4'b1111 : 4'b0000;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory
 assign dmem_read_valid_checker      = 1'b1;
 // -----------------------------------------------------//

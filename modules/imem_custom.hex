@@ -41,8 +41,7 @@ fec42703//Assembly: lw x14, 4076(x8)
 00d00793//Assembly: addi x15, x0, 13
 fce7fce3//Assembly: bgeu x15, x14, 8152
 02000793//Assembly: addi x15, x0, 32
-fcf42023//Assembly: sw x15, 4032(x8)
-fc042223//Assembly: sw x0, 4036(x8)
+00f46053//CUSTOM: sw x15,-64(x8) + sw x0,-60(x8)
 fe442703//Assembly: lw x14, 4068(x8)
 fe042783//Assembly: lw x15, 4064(x8)
 00f77733//Assembly: and x14, x14, x15

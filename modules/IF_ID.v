@@ -100,7 +100,7 @@ begin
     // decodificada. Usar pipe.instruction aqui fazia a própria instrução virar
     // NOP antes de custom_sw3/custom_sw4/custom_sw6 serem registrados.
     pipe.stall_read <= stall ||
-                       (((pipe.custom_sw3 || pipe.custom_sw4 || pipe.custom_sw6) &&
+                       (((pipe.custom_sw3 || pipe.custom_sw6) &&
                          !pipe.custom_sw_seen)) ||
                        pipe.custom_sw_busy ||
                        ((pipe.instruction == 32'h0004075b) && !pipe.custom_lw2_seen) ||
@@ -190,7 +190,7 @@ begin
     pipe.lui                    <= pipe.instruction[`OPCODE] == LUI;
     pipe.custom                 <= pipe.instruction[`OPCODE] == CUSTOM;
     // 00f45053: MEM[x8-20] = x15 e MEM[x8-24] = 0
-    // 00f46053: MEM[x8-20] = x15 e MEM[x8-28] = 0
+    // 00f46053: MEM[x8-64] = x15 e MEM[x8-60] = 0 (duas portas, sem stall)
     // 00f47053: MEM[x8-20] = x15 e MEM[x8-36] = 0 (CUSTOM_SW6)
     pipe.custom_sw2             <= 1'b0;
     pipe.custom_sw3             <= (pipe.instruction == 32'h0010EFF1);
