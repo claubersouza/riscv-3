@@ -14,12 +14,12 @@ module testbench();
     reg             stall;
     wire            exception;
     wire    [31: 0] inst_mem_read_data;
+    wire    [31: 0] inst_mem_read2_data;
     wire            inst_mem_is_valid;
     wire            dmem_write_valid;
     wire            dmem_read_valid;
     wire    [31: 0] dmem_read_data_temp;
     wire    [31: 0] dmem_read2_data_temp;
-    wire    [31: 0] dmem_fast_read_data_temp;
     
 
 assign dmem_write_valid    = 1'b1;
@@ -131,8 +131,6 @@ end
         .read2_ready(pipe.dmem_read2_ready),
         .read2_data(dmem_read2_data_temp),
         .read2_address(pipe.dmem_read2_address[31:2]),
-        .fast_read_address(pipe.dmem_fast_read_address[31:2]),
-        .fast_read_data(dmem_fast_read_data_temp),
         .write_address (pipe.dmem_write_address[31:2]),
         .write_data (pipe.dmem_write_data),
         .write_byte (pipe.dmem_write_byte),
@@ -155,12 +153,10 @@ end
         .read_ready(1'b1),
         .write_ready(1'b0),
         .read_data (inst_mem_read_data),
-        .read_address (pipe.inst_mem_address[31:2]),
-        .read2_ready(1'b0),
-        .read2_data(),
-        .read2_address(30'h0),
-        .fast_read_address(30'h0),
-        .fast_read_data(),
+        .read_address (pipe.inst_mem_port1_address[31:2]),
+        .read2_ready(1'b1),
+        .read2_data(inst_mem_read2_data),
+        .read2_address(pipe.inst_mem_port2_address[31:2]),
         .write_address (30'h0),
         .write_data (32'h0),
         .write_byte (4'h0),
@@ -180,10 +176,10 @@ pipe pipe(
     .stall      (stall),
     .exception  (exception),
     .inst_mem_read_data (inst_mem_read_data),
+    .inst_mem_read2_data (inst_mem_read2_data),
     .inst_mem_is_valid (inst_mem_is_valid),
     .dmem_read_data_temp(dmem_read_data_temp),
     .dmem_read2_data_temp(dmem_read2_data_temp),
-    .dmem_fast_read_data_temp(dmem_fast_read_data_temp),
     .dmem_write_valid(dmem_write_valid),
     .dmem_read_valid(dmem_read_valid)
 );

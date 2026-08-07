@@ -19,10 +19,7 @@ module memory # (
     input       [31: 2] read_address,
     input               read2_ready,
     output reg  [31: 0] read2_data,
-    input       [31: 2] read2_address,
-    // V30: leitura assíncrona dedicada ao segundo operando da CUSTOM_LW2+AND
-    input       [31: 2] fast_read_address,
-    output      [31: 0] fast_read_data
+    input       [31: 2] read2_address
     
 );
 
@@ -31,7 +28,6 @@ module memory # (
     wire        [ADDR-1: 0] read2_addr;
     wire        [ADDR-1: 0] write_addr;
     wire        [ADDR-1: 0] write2_addr;
-    wire        [ADDR-1: 0] fast_read_addr;
     reg         [31: 0] memory [(SIZE/4)-1: 0];
     integer                 i;
     integer counter  ;
@@ -41,11 +37,6 @@ assign read_addr[ADDR-1: 0] = read_address[ADDR+1: 2];
 assign read2_addr[ADDR-1: 0] = read2_address[ADDR+1: 2];
 assign write_addr[ADDR-1: 0] = write_address[ADDR+1: 2];
 assign write2_addr[ADDR-1: 0] = write2_address[ADDR+1: 2];
-assign fast_read_addr[ADDR-1:0] = fast_read_address[ADDR+1:2];
-
-// V30: somente MEM[x8-36] precisa ser lida. A primeira LW é eliminada
-// usando o x15 encaminhado que acabou de ser armazenado por SW x15,-28(x8).
-assign fast_read_data = memory[fast_read_addr];
 
 // task custom;
 //     begin

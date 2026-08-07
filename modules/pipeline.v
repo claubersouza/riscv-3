@@ -16,9 +16,9 @@
     // interface of instruction Memory
     input                   inst_mem_is_valid,
     input           [31: 0] inst_mem_read_data,
+    input           [31: 0] inst_mem_read2_data,
     input           [31: 0] dmem_read_data_temp,
     input           [31: 0] dmem_read2_data_temp,
-    input           [31: 0] dmem_fast_read_data_temp,
     input                   dmem_write_valid,
     input                   dmem_read_valid
 );
@@ -42,9 +42,10 @@
     wire          [31: 0] dmem_write2_data;
     wire          [ 3: 0] dmem_write2_byte;
     wire                  inst_mem_is_ready;
+    wire          [31:0] inst_mem_port1_address;
+    wire          [31:0] inst_mem_port2_address;
+    reg                   custom_lw2_imem_prefetch;
     wire                  dmem_read_valid_checker;
-    wire          [31: 0] dmem_fast_read_address;
-    wire          [31: 0] dmem_fast_read_data;
     
     //Instruction Fetch/Decode Stage 
     
@@ -149,7 +150,7 @@
     wire           [31:0]  custom_lw3_writeback_data;
 
 
-    // CUSTOM_LW2: x13=MEM[x8-32], x15=MEM[x8-20]
+    // CUSTOM_LW2: x14=MEM[x8-28], x15=MEM[x8-36]
     reg                    wb_custom_lw2;
     reg            [31:0]  wb_custom_lw2_base;
     reg            [4:0]   wb_custom_lw2_dest;
@@ -219,9 +220,6 @@ assign dmem_write2_byte             = wb_custom_sw4 ? 4'b1111 : 4'b0000;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory
 assign dmem_read2_data              = dmem_read2_data_temp;
 assign dmem_read_valid_checker      = 1'b1;
-// V30: endereço assíncrono do único load ainda necessário na fusão.
-assign dmem_fast_read_address = pipe.reg_rdata1 - 32'd36;
-assign dmem_fast_read_data = dmem_fast_read_data_temp;
 // -----------------------------------------------------//
 
 // instantiating Instruction fetch module -----------------------
@@ -231,6 +229,7 @@ IF_ID IF_ID(
     .stall      (stall),
     .exception  (exception),
     .inst_mem_read_data (inst_mem_read_data),
+    .inst_mem_read2_data (inst_mem_read2_data),
     .inst_mem_is_valid (inst_mem_is_valid)
 );
 

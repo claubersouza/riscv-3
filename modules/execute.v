@@ -161,24 +161,26 @@ begin
     end 
     else if (!pipe.stall_read) 
     begin
-    // A CUSTOM_LW2 substitui fe042683 e fec42783 por uma unica instrucao. A segunda palavra
+    // A CUSTOM_LW2 substitui fe442703 e fdc42783 por uma unica instrucao. A segunda palavra
     // continua reservada na IMEM para preservar todos os enderecos de JAL e
     // BRANCH, mas o PC avanca 8 bytes quando a FSM termina. Assim, nao e
     // necessario usar 00000013 como preenchimento e a palavra reservada nao
     // chega ao decode.
         // A 00f45053 é reconhecida diretamente na saída da IMEM.
         // O próximo fetch salta a segunda SW substituída sem stall e sem bolha.
-        if (pipe.instruction == 32'h00f47053)
-            // V30: CUSTOM_LW2 também executa o AND seguinte.
-            // Pula a palavra reservada e o AND original.
-            pipe.fetch_pc <= pipe.fetch_pc + 32'd12;
-        else if (pipe.instruction == 32'h0010EFF1)
+        if (pipe.instruction == 32'h0010EFF1)
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else if (((pipe.instruction == 32'h00f46053) &&
                   (pipe.reg_rdata2 == 32'd32)) ||
                  (pipe.instruction == 32'h0010EFF1))
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else if ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_busy)
+            pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
+        // V33: a porta 2 da IMEM ja fornece a instrucao real depois da palavra
+        // reservada da CUSTOM_LW2. Portanto o PC arquitetural deve saltar essa
+        // palavra uma unica vez. Sem este +8, o AND prefetched era executado
+        // novamente pelo caminho normal, anulando o ganho de um ciclo.
+        else if (pipe.instruction == 32'h00f47053)
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else
             pipe.fetch_pc <= (pipe.branch_stall) ? pipe.fetch_pc + 4 : pipe.next_pc;

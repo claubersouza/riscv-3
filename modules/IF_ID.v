@@ -13,7 +13,8 @@ output reg              exception,
 
 // interface of instruction Memory
 input                   inst_mem_is_valid,
-input           [31: 0] inst_mem_read_data
+input           [31: 0] inst_mem_read_data,
+input           [31: 0] inst_mem_read2_data
 
 );
 
@@ -55,7 +56,12 @@ endfunction
 ////////////////////////////////////////////////////////////////
 // A CUSTOM_SW3 faz o salto da segunda palavra já no estágio de fetch/decode.
 // Portanto não é necessário inserir bolha quando ela chega ao execute.
-assign pipe.instruction = pipe.stall_read ? NOP : teste(inst_mem_read_data);
+// V32: quando a CUSTOM_LW2 e detectada, a segunda porta da IMEM ja
+// prebuscou a instrucao depois da palavra reservada. Durante um unico ciclo,
+// usamos esse dado no lugar do NOP, sem fundir a instrucao seguinte.
+assign pipe.instruction = pipe.stall_read ? NOP :
+                          pipe.custom_lw2_imem_prefetch ? teste(inst_mem_read2_data) :
+                                                          teste(inst_mem_read_data);
 
 integer counter ;
 reg [31: 0] reg2;
@@ -76,6 +82,18 @@ if (!reset)
     
 else if (!pipe.stall_read)
     exception <= pipe.illegal_inst || (pipe.inst_mem_address[1:0] != 2'b00);
+end
+
+// V32 IMEM prefetch: a memoria de instrucoes e sincrona. Quando a palavra
+// 00f47053 chega ao decode, fetch_pc ja aponta para a palavra reservada.
+// A porta 2 da IMEM foi lida em paralelo em fetch_pc+4 e contem a instrucao
+// real seguinte. Mantemos este seletor ativo por exatamente um ciclo.
+always @(posedge clk or negedge reset)
+begin
+    if (!reset)
+        pipe.custom_lw2_imem_prefetch <= 1'b0;
+    else if (!pipe.stall_read)
+        pipe.custom_lw2_imem_prefetch <= (pipe.instruction == 32'h00f47053);
 end
 
 
@@ -132,7 +150,7 @@ case(pipe.instruction[`OPCODE])
     LUI   : pipe.immediate      = {pipe.instruction[31:12], 12'd0}; // U-type
     JAL   : pipe.immediate      = {{12{pipe.instruction[31]}}, pipe.instruction[19:12], pipe.instruction[20], pipe.instruction[30:21], 1'b0}; // J-type
     CUSTOM: pipe.immediate     = (pipe.instruction[`FUNC3] == SLL || pipe.instruction[`FUNC3] == SR) ? {27'h0, pipe.instruction[24:20]} : {{20{pipe.instruction[31]}}, pipe.instruction[31:20]}; // I-type
-    CUSTOM_LW2: pipe.immediate = 32'd0; // base em rs1; offsets fixos -32 e -20
+    CUSTOM_LW2: pipe.immediate = 32'd0; // base em rs1; offsets fixos -28 e -36
     CUSTOM_SW3: pipe.immediate = 32'd0; // operandos fixos x8 e x15; offsets -20 e -24
     CUSTOM2: pipe.immediate     = (pipe.instruction[`FUNC3] == SLL || pipe.instruction[`FUNC3] == SR) ? {27'h0, pipe.instruction[24:20]} : {{20{pipe.instruction[31]}}, pipe.instruction[31:20]}; // I-type
 
@@ -255,6 +273,13 @@ assign pipe.reg_rdata1 =
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
      pipe.src1_select == 5'd7)  ? 32'd0 :
 
+    // V32: a instrucao seguinte (AND) pode consumir os dois resultados
+    // diretamente durante o ciclo COMMIT da CUSTOM_LW2.
+    (pipe.custom_lw2_writeback_valid && pipe.src1_select == 5'd14) ?
+        pipe.custom_lw2_writeback_data1 :
+    (pipe.custom_lw2_writeback_valid && pipe.src1_select == 5'd15) ?
+        pipe.custom_lw2_writeback_data2 :
+
     // Forwarding normal do estágio WB.
     (!pipe.wb_stall &&
      pipe.wb_alu_to_reg &&
@@ -282,6 +307,12 @@ assign pipe.reg_rdata2 =
      pipe.src2_select == 5'd6)  ? pipe.regs[10] :
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
      pipe.src2_select == 5'd7)  ? 32'd0 :
+
+    // V32: forwarding do segundo resultado da CUSTOM_LW2.
+    (pipe.custom_lw2_writeback_valid && pipe.src2_select == 5'd14) ?
+        pipe.custom_lw2_writeback_data1 :
+    (pipe.custom_lw2_writeback_valid && pipe.src2_select == 5'd15) ?
+        pipe.custom_lw2_writeback_data2 :
 
     // Forwarding normal do estágio WB.
     (!pipe.wb_stall &&
@@ -313,17 +344,10 @@ begin
     if (pipe.custom_lw3_writeback_dest != 5'd0)
         pipe.regs[pipe.custom_lw3_writeback_dest] <= pipe.custom_lw3_writeback_data;
 end
-else if (pipe.custom_lw2)
+else if (pipe.custom_lw2_writeback_valid)
 begin
-    // V30: fusão de:
-    //   sw x15,-28(x8) (imediatamente anterior)
-    //   lw x14,-28(x8)
-    //   lw x15,-36(x8)
-    //   and x14,x14,x15
-    // reg_rdata2 já contém o x15 mais recente via forwarding normal.
-    // Apenas MEM[x8-36] é lida de forma assíncrona.
-    pipe.regs[14] <= pipe.reg_rdata2 & pipe.dmem_fast_read_data;
-    pipe.regs[15] <= pipe.dmem_fast_read_data;
+    pipe.regs[14] <= pipe.custom_lw2_writeback_data1;
+    pipe.regs[15] <= pipe.custom_lw2_writeback_data2;
 end
 else if (pipe.wb_custom_write_x10 &&
          !pipe.stall_read &&

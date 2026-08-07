@@ -378,8 +378,8 @@ fc442783//Assembly: lw x15, 4036(x8)
 fe042703//Assembly: lw x14, 4064(x8)
 00f707b3//Assembly: add x15, x14, x15
 fef42223//Assembly: sw x15, 4068(x8)
-00f47053//Assembly: lw x14, 4068(x8)
-00000013//Assembly: lw x15, 4060(x8)
+00f47053//CUSTOM_LW2: lw x14,-28(x8) + lw x15,-36(x8)
+00000013//NOP: bolha para latencia da CUSTOM_LW2
 00f77733//Assembly: and x14, x14, x15
 fdc42783//Assembly: lw x15, 4060(x8)
 fff7c693//Assembly: xori x13, x15, 4095
@@ -462,8 +462,8 @@ e9b6c7b7//Assembly: lui x15, 957292
 fe042703//Assembly: lw x14, 4064(x8)
 00f707b3//Assembly: add x15, x14, x15
 fef42223//Assembly: sw x15, 4068(x8)
-00f47053//Assembly: lw x14, 4068(x8)
-00000013//Assembly: lw x15, 4060(x8)
+00f47053//CUSTOM_LW2: lw x14,-28(x8) + lw x15,-36(x8)
+00000013//NOP: bolha para latencia da CUSTOM_LW2
 00f77733//Assembly: and x14, x14, x15
 fdc42783//Assembly: lw x15, 4060(x8)
 fff7c693//Assembly: xori x13, x15, 4095
@@ -546,8 +546,8 @@ bc878793//Assembly: addi x15, x15, 3016
 fe042703//Assembly: lw x14, 4064(x8)
 00f707b3//Assembly: add x15, x14, x15
 fef42223//Assembly: sw x15, 4068(x8)
-00f47053//Assembly: lw x14, 4068(x8)
-00000013//Assembly: lw x15, 4060(x8)
+00f47053//CUSTOM_LW2: lw x14,-28(x8) + lw x15,-36(x8)
+00000013//NOP: bolha para latencia da CUSTOM_LW2
 00f77733//Assembly: and x14, x14, x15
 fdc42783//Assembly: lw x15, 4060(x8)
 fff7c693//Assembly: xori x13, x15, 4095
@@ -630,8 +630,8 @@ fa842783//Assembly: lw x15, 4008(x8)
 fe042703//Assembly: lw x14, 4064(x8)
 00f707b3//Assembly: add x15, x14, x15
 fef42223//Assembly: sw x15, 4068(x8)
-00f47053//Assembly: lw x14, 4068(x8)
-00000013//Assembly: lw x15, 4060(x8)
+00f47053//CUSTOM_LW2: lw x14,-28(x8) + lw x15,-36(x8)
+00000013//NOP: bolha para latencia da CUSTOM_LW2
 00f77733//Assembly: and x14, x14, x15
 fdc42783//Assembly: lw x15, 4060(x8)
 fff7c693//Assembly: xori x13, x15, 4095
