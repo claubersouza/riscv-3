@@ -103,7 +103,7 @@ begin
                        (((pipe.custom_sw3 || pipe.custom_sw6) &&
                          !pipe.custom_sw_seen)) ||
                        pipe.custom_sw_busy ||
-                       ((pipe.instruction == 32'h0004075b) && !pipe.custom_lw2_seen) ||
+                       ((pipe.instruction == 32'h00f47053) && !pipe.custom_lw2_seen) ||
                        pipe.custom_lw2_busy || pipe.custom_lw3_busy ||
                        ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_seen);
 end
@@ -178,7 +178,7 @@ end
 else if (!pipe.stall_read ||
          (pipe.instruction == 32'h0010EFF1) ||
          (pipe.instruction == 32'h00f46053) ||
-         (pipe.instruction == 32'h00f47053))
+         ((pipe.instruction == 32'h00f47053) || (pipe.instruction == 32'h00f470d3)))
 begin
     //  $display("Valor:%b",pipe.instruction[`OPCODE]);    
                      // else take the values from the IF stage and decode it to pass values to corresponding wires
@@ -195,9 +195,9 @@ begin
     pipe.custom_sw2             <= 1'b0;
     pipe.custom_sw3             <= (pipe.instruction == 32'h0010EFF1);
     pipe.custom_sw4             <= (pipe.instruction == 32'h00f46053);
-    pipe.custom_sw6             <= (pipe.instruction == 32'h00f47053);
-    // 0004075b: lw x13,-32(x8) + lw x15,-20(x8)
-    pipe.custom_lw2             <= (pipe.instruction == 32'h0004075b);
+    pipe.custom_sw6             <= (pipe.instruction == 32'h00f470d3);
+    // 00f47053: lw x14,-28(x8) + lw x15,-36(x8)
+    pipe.custom_lw2             <= (pipe.instruction == 32'h00f47053);
     pipe.custom_lw3 <= (pipe.instruction == 32'h000407db);
     // pipe.custom2                <= pipe.instruction[`OPCODE] == CUSTOM2;
     // Instrução customizada exata que escreve 4 em x10.

@@ -221,10 +221,10 @@ end
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// CUSTOM_LW2 (0004075b)
+// CUSTOM_LW2 (00f47053)
 // Substitui:
-//   fe042683  // lw x13, -32(x8)
-//   fec42783  // lw x15, -20(x8)
+//   fe442703  // lw x14, -28(x8)
+//   fdc42783  // lw x15, -36(x8)
 //
 // A RAM é síncrona: o dado solicitado em um ciclo somente pode ser capturado
 // no ciclo seguinte. Por isso REQ e CAP são estados separados.
@@ -245,8 +245,8 @@ assign pipe.custom_lw2_read_valid =
 
 assign pipe.custom_lw2_read_address =
        (pipe.custom_lw2_state == CUSTOM_LW2_REQ1) ?
-       (pipe.custom_lw2_base_latched - 32'd32) :
-       (pipe.custom_lw2_base_latched - 32'd20);
+       (pipe.custom_lw2_base_latched - 32'd28) :
+       (pipe.custom_lw2_base_latched - 32'd36);
 
 assign pipe.custom_lw2_writeback_valid =
        (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ||
@@ -254,7 +254,7 @@ assign pipe.custom_lw2_writeback_valid =
 
 assign pipe.custom_lw2_writeback_dest =
        (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ?
-       5'd13 :
+       5'd14 :
        5'd15;
 
 assign pipe.custom_lw2_writeback_data =
@@ -282,7 +282,7 @@ begin
                 begin
                     // reg_rdata1 já contém x8 com o forwarding normal aplicado.
                     pipe.custom_lw2_base_latched <= pipe.reg_rdata1;
-                    pipe.custom_lw2_dest_latched <= 5'd13; // primeiro destino fixo: x13
+                    pipe.custom_lw2_dest_latched <= 5'd14; // primeiro destino fixo: x14
                     pipe.custom_lw2_seen          <= 1'b1;
                     pipe.custom_lw2_state         <= CUSTOM_LW2_REQ1;
                 end
@@ -333,8 +333,8 @@ end
 // -----------------------------------------------------------------------------
 // CUSTOM_lw3 (0004075b)
 // Substitui:
-//   fe042683  // lw x13, -32(x8)
-//   fec42783  // lw x15, -20(x8)
+//   fe442703  // lw x14, -28(x8)
+//   fdc42783  // lw x15, -36(x8)
 
 // 0007a703  // lw x14, 0(x15)
 // fec42783  // lw x15, -20(x8)
