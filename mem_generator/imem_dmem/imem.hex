@@ -1,1024 +1,1347 @@
-fd010113//Assembly: addi x2, x2, 4048
-02812623//Assembly: sw x8, 44(x2)
-03010413//Assembly: addi x8, x2, 48
-fff00793//Assembly: addi x15, x0, 4095
-fef42623//Assembly: sw x15, 4076(x8)
-03100793//Assembly: addi x15, x0, 49
-fcf42c23//Assembly: sw x15, 4056(x8)
-fec42703//Assembly: lw x14, 4076(x8)
-fd842783//Assembly: lw x15, 4056(x8)
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-fe042423//Assembly: sw x0, 4072(x8)
-0440006f//Assembly: jal x0, 68
-fec42783//Assembly: lw x15, 4076(x8)
-0017f793//Assembly: andi x15, x15, 1
-02078063//Assembly: beq x15, x0, 32
-fec42783//Assembly: lw x15, 4076(x8)
-0017d713//Assembly: srli x14, x15, 1
-edb887b7//Assembly: lui x15, 973704
-32078793//Assembly: addi x15, x15, 800
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-0100006f//Assembly: jal x0, 16
-fec42783//Assembly: lw x15, 4076(x8)
-0017d793//Assembly: srli x15, x15, 1
-fef42623//Assembly: sw x15, 4076(x8)
+f8010113//Assembly: addi x2, x2, 3968
+06812e23//Assembly: sw x8, 124(x2)
+08010413//Assembly: addi x8, x2, 128
+674527b7//Assembly: lui x15, 422994
+30178793//Assembly: addi x15, x15, 769
+fef42423//Assembly: sw x15, 4072(x8)
+efcdb7b7//Assembly: lui x15, 982235
+b8978793//Assembly: addi x15, x15, 2953
+fef42223//Assembly: sw x15, 4068(x8)
+98bae7b7//Assembly: lui x15, 625582
+cfe78793//Assembly: addi x15, x15, 3326
+fef42023//Assembly: sw x15, 4064(x8)
+103257b7//Assembly: lui x15, 66341
+47678793//Assembly: addi x15, x15, 1142
+fcf42e23//Assembly: sw x15, 4060(x8)
 fe842783//Assembly: lw x15, 4072(x8)
+fcf42c23//Assembly: sw x15, 4056(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+fcf42a23//Assembly: sw x15, 4052(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+fcf42823//Assembly: sw x15, 4048(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+fcf42623//Assembly: sw x15, 4044(x8)
+343337b7//Assembly: lui x15, 213811
+23178793//Assembly: addi x15, x15, 561
+f8f42423//Assembly: sw x15, 3976(x8)
+08000793//Assembly: addi x15, x0, 128
+f8f42623//Assembly: sw x15, 3980(x8)
+00200793//Assembly: addi x15, x0, 2
+fef42623//Assembly: sw x15, 4076(x8)
+0240006f//Assembly: jal x0, 36
+fec42783//Assembly: lw x15, 4076(x8)
+00279793//Assembly: slli x15, x15, 2
+ff040713//Assembly: addi x14, x8, 4080
+00f707b3//Assembly: add x15, x14, x15
+f807ac23//Assembly: sw x0, 3992(x15)
+fec42783//Assembly: lw x15, 4076(x8)
 00178793//Assembly: addi x15, x15, 1
+fef42623//Assembly: sw x15, 4076(x8)
+fec42703//Assembly: lw x14, 4076(x8)
+00d00793//Assembly: addi x15, x0, 13
+fce7fce3//Assembly: bgeu x15, x14, 8152
+02000793//Assembly: addi x15, x0, 32
+fcf42023//Assembly: sw x15, 4032(x8)
+fc042223//Assembly: sw x0, 4036(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f8842783//Assembly: lw x15, 3976(x8)
+00f70733//Assembly: add x14, x14, x15
+d76aa7b7//Assembly: lui x15, 882346
+47878793//Assembly: addi x15, x15, 1144
+00f707b3//Assembly: add x15, x14, x15
+00779713//Assembly: slli x14, x15, 7
+0197d793//Assembly: srli x15, x15, 25
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
 fef42423//Assembly: sw x15, 4072(x8)
 fe842703//Assembly: lw x14, 4072(x8)
-00700793//Assembly: addi x15, x0, 7
-fae7fce3//Assembly: bgeu x15, x14, 8120
-03200793//Assembly: addi x15, x0, 50
-fcf42c23//Assembly: sw x15, 4056(x8)
-fec42703//Assembly: lw x14, 4076(x8)
-fd842783//Assembly: lw x15, 4056(x8)
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-fe042223//Assembly: sw x0, 4068(x8)
-0440006f//Assembly: jal x0, 68
-fec42783//Assembly: lw x15, 4076(x8)
-0017f793//Assembly: andi x15, x15, 1
-02078063//Assembly: beq x15, x0, 32
-fec42783//Assembly: lw x15, 4076(x8)
-0017d713//Assembly: srli x14, x15, 1
-edb887b7//Assembly: lui x15, 973704
-32078793//Assembly: addi x15, x15, 800
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-0100006f//Assembly: jal x0, 16
-fec42783//Assembly: lw x15, 4076(x8)
-0017d793//Assembly: srli x15, x15, 1
-fef42623//Assembly: sw x15, 4076(x8)
 fe442783//Assembly: lw x15, 4068(x8)
-00178793//Assembly: addi x15, x15, 1
-fef42223//Assembly: sw x15, 4068(x8)
-fe442703//Assembly: lw x14, 4068(x8)
-00700793//Assembly: addi x15, x0, 7
-fae7fce3//Assembly: bgeu x15, x14, 8120
-03300793//Assembly: addi x15, x0, 51
-fcf42c23//Assembly: sw x15, 4056(x8)
-fec42703//Assembly: lw x14, 4076(x8)
-fd842783//Assembly: lw x15, 4056(x8)
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-fe042023//Assembly: sw x0, 4064(x8)
-0440006f//Assembly: jal x0, 68
-fec42783//Assembly: lw x15, 4076(x8)
-0017f793//Assembly: andi x15, x15, 1
-02078063//Assembly: beq x15, x0, 32
-fec42783//Assembly: lw x15, 4076(x8)
-0017d713//Assembly: srli x14, x15, 1
-edb887b7//Assembly: lui x15, 973704
-32078793//Assembly: addi x15, x15, 800
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-0100006f//Assembly: jal x0, 16
-fec42783//Assembly: lw x15, 4076(x8)
-0017d793//Assembly: srli x15, x15, 1
-fef42623//Assembly: sw x15, 4076(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
 fe042783//Assembly: lw x15, 4064(x8)
-00178793//Assembly: addi x15, x15, 1
-fef42023//Assembly: sw x15, 4064(x8)
-fe042703//Assembly: lw x14, 4064(x8)
-00700793//Assembly: addi x15, x0, 7
-fae7fce3//Assembly: bgeu x15, x14, 8120
-03400793//Assembly: addi x15, x0, 52
-fcf42c23//Assembly: sw x15, 4056(x8)
-fec42703//Assembly: lw x14, 4076(x8)
-fd842783//Assembly: lw x15, 4056(x8)
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-fc042e23//Assembly: sw x0, 4060(x8)
-0440006f//Assembly: jal x0, 68
-fec42783//Assembly: lw x15, 4076(x8)
-0017f793//Assembly: andi x15, x15, 1
-02078063//Assembly: beq x15, x0, 32
-fec42783//Assembly: lw x15, 4076(x8)
-0017d713//Assembly: srli x14, x15, 1
-edb887b7//Assembly: lui x15, 973704
-32078793//Assembly: addi x15, x15, 800
-00f747b3//Assembly: xor x15, x14, x15
-fef42623//Assembly: sw x15, 4076(x8)
-0100006f//Assembly: jal x0, 16
-fec42783//Assembly: lw x15, 4076(x8)
-0017d793//Assembly: srli x15, x15, 1
-fef42623//Assembly: sw x15, 4076(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
 fdc42783//Assembly: lw x15, 4060(x8)
-00178793//Assembly: addi x15, x15, 1
+00f70733//Assembly: add x14, x14, x15
+f8c42783//Assembly: lw x15, 3980(x8)
+00f70733//Assembly: add x14, x14, x15
+e8c7b7b7//Assembly: lui x15, 953467
+75678793//Assembly: addi x15, x15, 1878
+00f707b3//Assembly: add x15, x14, x15
+00c79713//Assembly: slli x14, x15, 12
+0147d793//Assembly: srli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
 fcf42e23//Assembly: sw x15, 4060(x8)
 fdc42703//Assembly: lw x14, 4060(x8)
-00700793//Assembly: addi x15, x0, 7
-fae7fce3//Assembly: bgeu x15, x14, 8120
-fec42783//Assembly: lw x15, 4076(x8)
-fff7c793//Assembly: xori x15, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+f9042783//Assembly: lw x15, 3984(x8)
+00f70733//Assembly: add x14, x14, x15
+242077b7//Assembly: lui x15, 147975
+0db78793//Assembly: addi x15, x15, 219
+00f707b3//Assembly: add x15, x14, x15
+00f7d713//Assembly: srli x14, x15, 15
+01179793//Assembly: slli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+f9442783//Assembly: lw x15, 3988(x8)
+00f70733//Assembly: add x14, x14, x15
+c1bdd7b7//Assembly: lui x15, 793565
+eee78793//Assembly: addi x15, x15, 3822
+00f707b3//Assembly: add x15, x14, x15
+00a7d713//Assembly: srli x14, x15, 10
+01679793//Assembly: slli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f9842783//Assembly: lw x15, 3992(x8)
+00f70733//Assembly: add x14, x14, x15
+f57c17b7//Assembly: lui x15, 1005505
+faf78793//Assembly: addi x15, x15, 4015
+00f707b3//Assembly: add x15, x14, x15
+00779713//Assembly: slli x14, x15, 7
+0197d793//Assembly: srli x15, x15, 25
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+f9c42783//Assembly: lw x15, 3996(x8)
+00f70733//Assembly: add x14, x14, x15
+4787c7b7//Assembly: lui x15, 292988
+62a78793//Assembly: addi x15, x15, 1578
+00f707b3//Assembly: add x15, x14, x15
+00c79713//Assembly: slli x14, x15, 12
+0147d793//Assembly: srli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fa042783//Assembly: lw x15, 4000(x8)
+00f70733//Assembly: add x14, x14, x15
+a83047b7//Assembly: lui x15, 688900
+61378793//Assembly: addi x15, x15, 1555
+00f707b3//Assembly: add x15, x14, x15
+00f7d713//Assembly: srli x14, x15, 15
+01179793//Assembly: slli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fa442783//Assembly: lw x15, 4004(x8)
+00f70733//Assembly: add x14, x14, x15
+fd4697b7//Assembly: lui x15, 1037417
+50178793//Assembly: addi x15, x15, 1281
+00f707b3//Assembly: add x15, x14, x15
+00a7d713//Assembly: srli x14, x15, 10
+01679793//Assembly: slli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fa842783//Assembly: lw x15, 4008(x8)
+00f70733//Assembly: add x14, x14, x15
+6980a7b7//Assembly: lui x15, 432138
+8d878793//Assembly: addi x15, x15, 2264
+00f707b3//Assembly: add x15, x14, x15
+00779713//Assembly: slli x14, x15, 7
+0197d793//Assembly: srli x15, x15, 25
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fac42783//Assembly: lw x15, 4012(x8)
+00f70733//Assembly: add x14, x14, x15
+8b44f7b7//Assembly: lui x15, 570447
+7af78793//Assembly: addi x15, x15, 1967
+00f707b3//Assembly: add x15, x14, x15
+00c79713//Assembly: slli x14, x15, 12
+0147d793//Assembly: srli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fb042783//Assembly: lw x15, 4016(x8)
+00f70733//Assembly: add x14, x14, x15
+ffff67b7//Assembly: lui x15, 1048566
+bb178793//Assembly: addi x15, x15, 2993
+00f707b3//Assembly: add x15, x14, x15
+00f7d713//Assembly: srli x14, x15, 15
+01179793//Assembly: slli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fb442783//Assembly: lw x15, 4020(x8)
+00f70733//Assembly: add x14, x14, x15
+895cd7b7//Assembly: lui x15, 562637
+7be78793//Assembly: addi x15, x15, 1982
+00f707b3//Assembly: add x15, x14, x15
+00a7d713//Assembly: srli x14, x15, 10
+01679793//Assembly: slli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fb842783//Assembly: lw x15, 4024(x8)
+00f70733//Assembly: add x14, x14, x15
+6b9017b7//Assembly: lui x15, 440577
+12278793//Assembly: addi x15, x15, 290
+00f707b3//Assembly: add x15, x14, x15
+00779713//Assembly: slli x14, x15, 7
+0197d793//Assembly: srli x15, x15, 25
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fbc42783//Assembly: lw x15, 4028(x8)
+00f70733//Assembly: add x14, x14, x15
+fd9877b7//Assembly: lui x15, 1038727
+19378793//Assembly: addi x15, x15, 403
+00f707b3//Assembly: add x15, x14, x15
+00c79713//Assembly: slli x14, x15, 12
+0147d793//Assembly: srli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fc042783//Assembly: lw x15, 4032(x8)
+00f70733//Assembly: add x14, x14, x15
+a67947b7//Assembly: lui x15, 681876
+38e78793//Assembly: addi x15, x15, 910
+00f707b3//Assembly: add x15, x14, x15
+00f7d713//Assembly: srli x14, x15, 15
+01179793//Assembly: slli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fc442783//Assembly: lw x15, 4036(x8)
+00f70733//Assembly: add x14, x14, x15
+49b417b7//Assembly: lui x15, 301889
+82178793//Assembly: addi x15, x15, 2081
+00f707b3//Assembly: add x15, x14, x15
+00a7d713//Assembly: srli x14, x15, 10
+01679793//Assembly: slli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f8c42783//Assembly: lw x15, 3980(x8)
+00f70733//Assembly: add x14, x14, x15
+f61e27b7//Assembly: lui x15, 1008098
+56278793//Assembly: addi x15, x15, 1378
+00f707b3//Assembly: add x15, x14, x15
+00579713//Assembly: slli x14, x15, 5
+01b7d793//Assembly: srli x15, x15, 27
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fa042783//Assembly: lw x15, 4000(x8)
+00f70733//Assembly: add x14, x14, x15
+c040b7b7//Assembly: lui x15, 787467
+34078793//Assembly: addi x15, x15, 832
+00f707b3//Assembly: add x15, x14, x15
+00979713//Assembly: slli x14, x15, 9
+0177d793//Assembly: srli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fb442783//Assembly: lw x15, 4020(x8)
+00f70733//Assembly: add x14, x14, x15
+265e67b7//Assembly: lui x15, 157158
+a5178793//Assembly: addi x15, x15, 2641
+00f707b3//Assembly: add x15, x14, x15
+00e79713//Assembly: slli x14, x15, 14
+0127d793//Assembly: srli x15, x15, 18
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+f8842783//Assembly: lw x15, 3976(x8)
+00f70733//Assembly: add x14, x14, x15
+e9b6c7b7//Assembly: lui x15, 957292
+7aa78793//Assembly: addi x15, x15, 1962
+00f707b3//Assembly: add x15, x14, x15
+00c7d713//Assembly: srli x14, x15, 12
+01479793//Assembly: slli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f9c42783//Assembly: lw x15, 3996(x8)
+00f70733//Assembly: add x14, x14, x15
+d62f17b7//Assembly: lui x15, 877297
+05d78793//Assembly: addi x15, x15, 93
+00f707b3//Assembly: add x15, x14, x15
+00579713//Assembly: slli x14, x15, 5
+01b7d793//Assembly: srli x15, x15, 27
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fb042783//Assembly: lw x15, 4016(x8)
+00f70733//Assembly: add x14, x14, x15
+024417b7//Assembly: lui x15, 9281
+45378793//Assembly: addi x15, x15, 1107
+00f707b3//Assembly: add x15, x14, x15
+00979713//Assembly: slli x14, x15, 9
+0177d793//Assembly: srli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fc442783//Assembly: lw x15, 4036(x8)
+00f70733//Assembly: add x14, x14, x15
+d8a1e7b7//Assembly: lui x15, 887326
+68178793//Assembly: addi x15, x15, 1665
+00f707b3//Assembly: add x15, x14, x15
+00e79713//Assembly: slli x14, x15, 14
+0127d793//Assembly: srli x15, x15, 18
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+f9842783//Assembly: lw x15, 3992(x8)
+00f70733//Assembly: add x14, x14, x15
+e7d407b7//Assembly: lui x15, 949568
+bc878793//Assembly: addi x15, x15, 3016
+00f707b3//Assembly: add x15, x14, x15
+00c7d713//Assembly: srli x14, x15, 12
+01479793//Assembly: slli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fac42783//Assembly: lw x15, 4012(x8)
+00f70733//Assembly: add x14, x14, x15
+21e1d7b7//Assembly: lui x15, 138781
+de678793//Assembly: addi x15, x15, 3558
+00f707b3//Assembly: add x15, x14, x15
+00579713//Assembly: slli x14, x15, 5
+01b7d793//Assembly: srli x15, x15, 27
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fc042783//Assembly: lw x15, 4032(x8)
+00f70733//Assembly: add x14, x14, x15
+c33707b7//Assembly: lui x15, 799600
+7d678793//Assembly: addi x15, x15, 2006
+00f707b3//Assembly: add x15, x14, x15
+00979713//Assembly: slli x14, x15, 9
+0177d793//Assembly: srli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+f9442783//Assembly: lw x15, 3988(x8)
+00f70733//Assembly: add x14, x14, x15
+f4d517b7//Assembly: lui x15, 1002833
+d8778793//Assembly: addi x15, x15, 3463
+00f707b3//Assembly: add x15, x14, x15
+00e79713//Assembly: slli x14, x15, 14
+0127d793//Assembly: srli x15, x15, 18
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fa842783//Assembly: lw x15, 4008(x8)
+00f70733//Assembly: add x14, x14, x15
+455a17b7//Assembly: lui x15, 284065
+4ed78793//Assembly: addi x15, x15, 1261
+00f707b3//Assembly: add x15, x14, x15
+00c7d713//Assembly: srli x14, x15, 12
+01479793//Assembly: slli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f77733//Assembly: and x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fbc42783//Assembly: lw x15, 4028(x8)
+00f70733//Assembly: add x14, x14, x15
+a9e3f7b7//Assembly: lui x15, 695871
+90578793//Assembly: addi x15, x15, 2309
+00f707b3//Assembly: add x15, x14, x15
+00579713//Assembly: slli x14, x15, 5
+01b7d793//Assembly: srli x15, x15, 27
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f77733//Assembly: and x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+f9042783//Assembly: lw x15, 3984(x8)
+00f70733//Assembly: add x14, x14, x15
+fcefa7b7//Assembly: lui x15, 1036026
+3f878793//Assembly: addi x15, x15, 1016
+00f707b3//Assembly: add x15, x14, x15
+00979713//Assembly: slli x14, x15, 9
+0177d793//Assembly: srli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f77733//Assembly: and x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fa442783//Assembly: lw x15, 4004(x8)
+00f70733//Assembly: add x14, x14, x15
+676f07b7//Assembly: lui x15, 423664
+2d978793//Assembly: addi x15, x15, 729
+00f707b3//Assembly: add x15, x14, x15
+00e79713//Assembly: slli x14, x15, 14
+0127d793//Assembly: srli x15, x15, 18
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f77733//Assembly: and x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c693//Assembly: xori x13, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fb842783//Assembly: lw x15, 4024(x8)
+00f70733//Assembly: add x14, x14, x15
+8d2a57b7//Assembly: lui x15, 578213
+c8a78793//Assembly: addi x15, x15, 3210
+00f707b3//Assembly: add x15, x14, x15
+00c7d713//Assembly: srli x14, x15, 12
+01479793//Assembly: slli x15, x15, 20
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f9c42783//Assembly: lw x15, 3996(x8)
+00f70733//Assembly: add x14, x14, x15
+fffa47b7//Assembly: lui x15, 1048484
+94278793//Assembly: addi x15, x15, 2370
+00f707b3//Assembly: add x15, x14, x15
+00479713//Assembly: slli x14, x15, 4
+01c7d793//Assembly: srli x15, x15, 28
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fa842783//Assembly: lw x15, 4008(x8)
+00f70733//Assembly: add x14, x14, x15
+8771f7b7//Assembly: lui x15, 554783
+68178793//Assembly: addi x15, x15, 1665
+00f707b3//Assembly: add x15, x14, x15
+00b79713//Assembly: slli x14, x15, 11
+0157d793//Assembly: srli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fb442783//Assembly: lw x15, 4020(x8)
+00f70733//Assembly: add x14, x14, x15
+6d9d67b7//Assembly: lui x15, 448982
+12278793//Assembly: addi x15, x15, 290
+00f707b3//Assembly: add x15, x14, x15
+01079713//Assembly: slli x14, x15, 16
+0107d793//Assembly: srli x15, x15, 16
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fc042783//Assembly: lw x15, 4032(x8)
+00f70733//Assembly: add x14, x14, x15
+fde547b7//Assembly: lui x15, 1039956
+80c78793//Assembly: addi x15, x15, 2060
+00f707b3//Assembly: add x15, x14, x15
+0097d713//Assembly: srli x14, x15, 9
+01779793//Assembly: slli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f8c42783//Assembly: lw x15, 3980(x8)
+00f70733//Assembly: add x14, x14, x15
+a4bef7b7//Assembly: lui x15, 674799
+a4478793//Assembly: addi x15, x15, 2628
+00f707b3//Assembly: add x15, x14, x15
+00479713//Assembly: slli x14, x15, 4
+01c7d793//Assembly: srli x15, x15, 28
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+f9842783//Assembly: lw x15, 3992(x8)
+00f70733//Assembly: add x14, x14, x15
+4bded7b7//Assembly: lui x15, 310765
+fa978793//Assembly: addi x15, x15, 4009
+00f707b3//Assembly: add x15, x14, x15
+00b79713//Assembly: slli x14, x15, 11
+0157d793//Assembly: srli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fa442783//Assembly: lw x15, 4004(x8)
+00f70733//Assembly: add x14, x14, x15
+f6bb57b7//Assembly: lui x15, 1010613
+b6078793//Assembly: addi x15, x15, 2912
+00f707b3//Assembly: add x15, x14, x15
+01079713//Assembly: slli x14, x15, 16
+0107d793//Assembly: srli x15, x15, 16
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fb042783//Assembly: lw x15, 4016(x8)
+00f70733//Assembly: add x14, x14, x15
+bebfc7b7//Assembly: lui x15, 781308
+c7078793//Assembly: addi x15, x15, 3184
+00f707b3//Assembly: add x15, x14, x15
+0097d713//Assembly: srli x14, x15, 9
+01779793//Assembly: slli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fbc42783//Assembly: lw x15, 4028(x8)
+00f70733//Assembly: add x14, x14, x15
+289b87b7//Assembly: lui x15, 166328
+ec678793//Assembly: addi x15, x15, 3782
+00f707b3//Assembly: add x15, x14, x15
+00479713//Assembly: slli x14, x15, 4
+01c7d793//Assembly: srli x15, x15, 28
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+f8842783//Assembly: lw x15, 3976(x8)
+00f70733//Assembly: add x14, x14, x15
+eaa127b7//Assembly: lui x15, 961042
+7fa78793//Assembly: addi x15, x15, 2042
+00f707b3//Assembly: add x15, x14, x15
+00b79713//Assembly: slli x14, x15, 11
+0157d793//Assembly: srli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+f9442783//Assembly: lw x15, 3988(x8)
+00f70733//Assembly: add x14, x14, x15
+d4ef37b7//Assembly: lui x15, 872179
+08578793//Assembly: addi x15, x15, 133
+00f707b3//Assembly: add x15, x14, x15
+01079713//Assembly: slli x14, x15, 16
+0107d793//Assembly: srli x15, x15, 16
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fa042783//Assembly: lw x15, 4000(x8)
+00f70733//Assembly: add x14, x14, x15
+048827b7//Assembly: lui x15, 18562
+d0578793//Assembly: addi x15, x15, 3333
+00f707b3//Assembly: add x15, x14, x15
+0097d713//Assembly: srli x14, x15, 9
+01779793//Assembly: slli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fe442703//Assembly: lw x14, 4068(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fac42783//Assembly: lw x15, 4012(x8)
+00f70733//Assembly: add x14, x14, x15
+d9d4d7b7//Assembly: lui x15, 892237
+03978793//Assembly: addi x15, x15, 57
+00f707b3//Assembly: add x15, x14, x15
+00479713//Assembly: slli x14, x15, 4
+01c7d793//Assembly: srli x15, x15, 28
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe842703//Assembly: lw x14, 4072(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fb842783//Assembly: lw x15, 4024(x8)
+00f70733//Assembly: add x14, x14, x15
+e6dba7b7//Assembly: lui x15, 945594
+9e578793//Assembly: addi x15, x15, 2533
+00f707b3//Assembly: add x15, x14, x15
+00b79713//Assembly: slli x14, x15, 11
+0157d793//Assembly: srli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fdc42703//Assembly: lw x14, 4060(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fc442783//Assembly: lw x15, 4036(x8)
+00f70733//Assembly: add x14, x14, x15
+1fa287b7//Assembly: lui x15, 129576
+cf878793//Assembly: addi x15, x15, 3320
+00f707b3//Assembly: add x15, x14, x15
+01079713//Assembly: slli x14, x15, 16
+0107d793//Assembly: srli x15, x15, 16
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe042703//Assembly: lw x14, 4064(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+f9042783//Assembly: lw x15, 3984(x8)
+00f70733//Assembly: add x14, x14, x15
+c4ac57b7//Assembly: lui x15, 805573
+66578793//Assembly: addi x15, x15, 1637
+00f707b3//Assembly: add x15, x14, x15
+0097d713//Assembly: srli x14, x15, 9
+01779793//Assembly: slli x15, x15, 23
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f8842783//Assembly: lw x15, 3976(x8)
+00f70733//Assembly: add x14, x14, x15
+f42927b7//Assembly: lui x15, 1000082
+24478793//Assembly: addi x15, x15, 580
+00f707b3//Assembly: add x15, x14, x15
+00679713//Assembly: slli x14, x15, 6
+01a7d793//Assembly: srli x15, x15, 26
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fa442783//Assembly: lw x15, 4004(x8)
+00f70733//Assembly: add x14, x14, x15
+432b07b7//Assembly: lui x15, 275120
+f9778793//Assembly: addi x15, x15, 3991
+00f707b3//Assembly: add x15, x14, x15
+00a79713//Assembly: slli x14, x15, 10
+0167d793//Assembly: srli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fc042783//Assembly: lw x15, 4032(x8)
+00f70733//Assembly: add x14, x14, x15
+ab9427b7//Assembly: lui x15, 702786
+3a778793//Assembly: addi x15, x15, 935
+00f707b3//Assembly: add x15, x14, x15
+00f79713//Assembly: slli x14, x15, 15
+0117d793//Assembly: srli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+f9c42783//Assembly: lw x15, 3996(x8)
+00f70733//Assembly: add x14, x14, x15
+fc93a7b7//Assembly: lui x15, 1034554
+03978793//Assembly: addi x15, x15, 57
+00f707b3//Assembly: add x15, x14, x15
+00b7d713//Assembly: srli x14, x15, 11
+01579793//Assembly: slli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fb842783//Assembly: lw x15, 4024(x8)
+00f70733//Assembly: add x14, x14, x15
+655b67b7//Assembly: lui x15, 415158
+9c378793//Assembly: addi x15, x15, 2499
+00f707b3//Assembly: add x15, x14, x15
+00679713//Assembly: slli x14, x15, 6
+01a7d793//Assembly: srli x15, x15, 26
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+f9442783//Assembly: lw x15, 3988(x8)
+00f70733//Assembly: add x14, x14, x15
+8f0cd7b7//Assembly: lui x15, 585933
+c9278793//Assembly: addi x15, x15, 3218
+00f707b3//Assembly: add x15, x14, x15
+00a79713//Assembly: slli x14, x15, 10
+0167d793//Assembly: srli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fb042783//Assembly: lw x15, 4016(x8)
+00f70733//Assembly: add x14, x14, x15
+ffeff7b7//Assembly: lui x15, 1048319
+47d78793//Assembly: addi x15, x15, 1149
+00f707b3//Assembly: add x15, x14, x15
+00f79713//Assembly: slli x14, x15, 15
+0117d793//Assembly: srli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+f8c42783//Assembly: lw x15, 3980(x8)
+00f70733//Assembly: add x14, x14, x15
+858467b7//Assembly: lui x15, 546886
+dd178793//Assembly: addi x15, x15, 3537
+00f707b3//Assembly: add x15, x14, x15
+00b7d713//Assembly: srli x14, x15, 11
+01579793//Assembly: slli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+fa842783//Assembly: lw x15, 4008(x8)
+00f70733//Assembly: add x14, x14, x15
+6fa887b7//Assembly: lui x15, 457352
+e4f78793//Assembly: addi x15, x15, 3663
+00f707b3//Assembly: add x15, x14, x15
+00679713//Assembly: slli x14, x15, 6
+01a7d793//Assembly: srli x15, x15, 26
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fc442783//Assembly: lw x15, 4036(x8)
+00f70733//Assembly: add x14, x14, x15
+fe2ce7b7//Assembly: lui x15, 1041102
+6e078793//Assembly: addi x15, x15, 1760
+00f707b3//Assembly: add x15, x14, x15
+00a79713//Assembly: slli x14, x15, 10
+0167d793//Assembly: srli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+fa042783//Assembly: lw x15, 4000(x8)
+00f70733//Assembly: add x14, x14, x15
+a30147b7//Assembly: lui x15, 667668
+31478793//Assembly: addi x15, x15, 788
+00f707b3//Assembly: add x15, x14, x15
+00f79713//Assembly: slli x14, x15, 15
+0117d793//Assembly: srli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fbc42783//Assembly: lw x15, 4028(x8)
+00f70733//Assembly: add x14, x14, x15
+4e0817b7//Assembly: lui x15, 319617
+1a178793//Assembly: addi x15, x15, 417
+00f707b3//Assembly: add x15, x14, x15
+00b7d713//Assembly: srli x14, x15, 11
+01579793//Assembly: slli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe442783//Assembly: lw x15, 4068(x8)
+00f76733//Assembly: or x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f70733//Assembly: add x14, x14, x15
+f9842783//Assembly: lw x15, 3992(x8)
+00f70733//Assembly: add x14, x14, x15
+f75387b7//Assembly: lui x15, 1013048
+e8278793//Assembly: addi x15, x15, 3714
+00f707b3//Assembly: add x15, x14, x15
+00679713//Assembly: slli x14, x15, 6
+01a7d793//Assembly: srli x15, x15, 26
+00e7e7b3//Assembly: or x15, x15, x14
+fe442703//Assembly: lw x14, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42423//Assembly: sw x15, 4072(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe842783//Assembly: lw x15, 4072(x8)
+00f76733//Assembly: or x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f74733//Assembly: xor x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f70733//Assembly: add x14, x14, x15
+fb442783//Assembly: lw x15, 4020(x8)
+00f70733//Assembly: add x14, x14, x15
+bd3af7b7//Assembly: lui x15, 775087
+23578793//Assembly: addi x15, x15, 565
+00f707b3//Assembly: add x15, x14, x15
+00a79713//Assembly: slli x14, x15, 10
+0167d793//Assembly: srli x15, x15, 22
+00e7e7b3//Assembly: or x15, x15, x14
+fe842703//Assembly: lw x14, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42e23//Assembly: sw x15, 4060(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fdc42783//Assembly: lw x15, 4060(x8)
+00f76733//Assembly: or x14, x14, x15
+fe842783//Assembly: lw x15, 4072(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe042783//Assembly: lw x15, 4064(x8)
+00f70733//Assembly: add x14, x14, x15
+f9042783//Assembly: lw x15, 3984(x8)
+00f70733//Assembly: add x14, x14, x15
+2ad7d7b7//Assembly: lui x15, 175485
+2bb78793//Assembly: addi x15, x15, 699
+00f707b3//Assembly: add x15, x14, x15
+00f79713//Assembly: slli x14, x15, 15
+0117d793//Assembly: srli x15, x15, 17
+00e7e7b3//Assembly: or x15, x15, x14
+fdc42703//Assembly: lw x14, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42023//Assembly: sw x15, 4064(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+fff7c713//Assembly: xori x14, x15, 4095
+fe042783//Assembly: lw x15, 4064(x8)
+00f76733//Assembly: or x14, x14, x15
+fdc42783//Assembly: lw x15, 4060(x8)
+00f74733//Assembly: xor x14, x14, x15
+fe442783//Assembly: lw x15, 4068(x8)
+00f70733//Assembly: add x14, x14, x15
+fac42783//Assembly: lw x15, 4012(x8)
+00f70733//Assembly: add x14, x14, x15
+eb86d7b7//Assembly: lui x15, 964717
+39178793//Assembly: addi x15, x15, 913
+00f707b3//Assembly: add x15, x14, x15
+00b7d713//Assembly: srli x14, x15, 11
+01579793//Assembly: slli x15, x15, 21
+00e7e7b3//Assembly: or x15, x15, x14
+fe042703//Assembly: lw x14, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fef42223//Assembly: sw x15, 4068(x8)
+fd842703//Assembly: lw x14, 4056(x8)
+fe842783//Assembly: lw x15, 4072(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42c23//Assembly: sw x15, 4056(x8)
+fd442703//Assembly: lw x14, 4052(x8)
+fe442783//Assembly: lw x15, 4068(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42a23//Assembly: sw x15, 4052(x8)
+fd042703//Assembly: lw x14, 4048(x8)
+fe042783//Assembly: lw x15, 4064(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42823//Assembly: sw x15, 4048(x8)
+fcc42703//Assembly: lw x14, 4044(x8)
+fdc42783//Assembly: lw x15, 4060(x8)
+00f707b3//Assembly: add x15, x14, x15
+fcf42623//Assembly: sw x15, 4044(x8)
+fd842783//Assembly: lw x15, 4056(x8)
+01879713//Assembly: slli x14, x15, 24
+fd842783//Assembly: lw x15, 4056(x8)
+00879693//Assembly: slli x13, x15, 8
+00ff07b7//Assembly: lui x15, 4080
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fd842783//Assembly: lw x15, 4056(x8)
+0087d693//Assembly: srli x13, x15, 8
+000107b7//Assembly: lui x15, 16
+f0078793//Assembly: addi x15, x15, 3840
+00f6f7b3//Assembly: and x15, x13, x15
+00f76733//Assembly: or x14, x14, x15
+fd842783//Assembly: lw x15, 4056(x8)
+0187d793//Assembly: srli x15, x15, 24
+00f767b3//Assembly: or x15, x14, x15
+fcf42423//Assembly: sw x15, 4040(x8)
+fc842783//Assembly: lw x15, 4040(x8)
 00078513//Assembly: addi x10, x15, 0
-02c12403//Assembly: lw x8, 44(x2)
-03010113//Assembly: addi x2, x2, 48
+07c12403//Assembly: lw x8, 124(x2)
+08010113//Assembly: addi x2, x2, 128
 00008067//Assembly: jalr x0, 0(x1)
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None
-00000000//None

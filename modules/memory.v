@@ -16,12 +16,16 @@ module memory # (
     input       [31: 0] write2_data,
     input       [ 3: 0] write2_byte,
     output reg  [31: 0] read_data,
-    input       [31: 2] read_address
+    input       [31: 2] read_address,
+    input               read2_ready,
+    output reg  [31: 0] read2_data,
+    input       [31: 2] read2_address
     
 );
 
     localparam ADDR = $clog2(SIZE/4);
     wire        [ADDR-1: 0] read_addr;
+    wire        [ADDR-1: 0] read2_addr;
     wire        [ADDR-1: 0] write_addr;
     wire        [ADDR-1: 0] write2_addr;
     reg         [31: 0] memory [(SIZE/4)-1: 0];
@@ -30,6 +34,7 @@ module memory # (
     reg [31:0] teste1, teste2, teste3;
 
 assign read_addr[ADDR-1: 0] = read_address[ADDR+1: 2];
+assign read2_addr[ADDR-1: 0] = read2_address[ADDR+1: 2];
 assign write_addr[ADDR-1: 0] = write_address[ADDR+1: 2];
 assign write2_addr[ADDR-1: 0] = write2_address[ADDR+1: 2];
 
@@ -49,6 +54,7 @@ assign write2_addr[ADDR-1: 0] = write2_address[ADDR+1: 2];
 
 initial begin
     read_data = 32'd0;
+    read2_data = 32'd0;
     for (i = 0; i < SIZE/4; i = i + 1)
         memory[i] = 32'h00000013; // NOP por padrão
     $display("Carregando memoria: %s", FILE);
@@ -70,6 +76,18 @@ always @(posedge clk) begin
         if (write2_byte[1]) memory[write2_addr][8*1+7:8*1] <= write2_data[8*1+7:8*1];
         if (write2_byte[2]) memory[write2_addr][8*2+7:8*2] <= write2_data[8*2+7:8*2];
         if (write2_byte[3]) memory[write2_addr][8*3+7:8*3] <= write2_data[8*3+7:8*3];
+    end
+
+
+    if (read2_ready) begin
+        if (write_ready && read2_addr == write_addr) begin
+            read2_data[8*0+7:8*0] <= (write_byte[0]) ? write_data[8*0+7:8*0] : memory[read2_addr][8*0+7:8*0];
+            read2_data[8*1+7:8*1] <= (write_byte[1]) ? write_data[8*1+7:8*1] : memory[read2_addr][8*1+7:8*1];
+            read2_data[8*2+7:8*2] <= (write_byte[2]) ? write_data[8*2+7:8*2] : memory[read2_addr][8*2+7:8*2];
+            read2_data[8*3+7:8*3] <= (write_byte[3]) ? write_data[8*3+7:8*3] : memory[read2_addr][8*3+7:8*3];
+        end else begin
+            read2_data <= memory[read2_addr];
+        end
     end
 
     if (read_ready) begin

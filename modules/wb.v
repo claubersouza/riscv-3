@@ -221,46 +221,36 @@ end
 // -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------
-// CUSTOM_LW2 (00f47053)
-// Substitui:
-//   fe442703  // lw x14, -28(x8)
-//   fdc42783  // lw x15, -36(x8)
+// CUSTOM_LW2 (00f47053) - V27: pipeline sem stall global, usando a palavra
+// reservada seguinte como bolha de uma instrucao.
+//   x14 = MEM[x8 - 28]
+//   x15 = MEM[x8 - 36]
 //
-// A RAM é síncrona: o dado solicitado em um ciclo somente pode ser capturado
-// no ciclo seguinte. Por isso REQ e CAP são estados separados.
+// A solicitacao das duas portas sincronas acontece no ciclo da CUSTOM.
+// No ciclo seguinte (NOP reservado), os dados ja estao validos e sao
+// apresentados ao banco de registradores. Assim preservamos exatamente a
+// latencia da RAM que tornou a V23 funcional, mas removemos a FSM/stall longo.
 // -----------------------------------------------------------------------------
-localparam [2:0] CUSTOM_LW2_IDLE   = 3'd0;
-localparam [2:0] CUSTOM_LW2_REQ1   = 3'd1;
-localparam [2:0] CUSTOM_LW2_CAP1   = 3'd2;
-localparam [2:0] CUSTOM_LW2_REQ2   = 3'd3;
-localparam [2:0] CUSTOM_LW2_CAP2   = 3'd4;
-localparam [2:0] CUSTOM_LW2_WRITE1 = 3'd5;
-localparam [2:0] CUSTOM_LW2_WRITE2 = 3'd6;
+localparam [1:0] CUSTOM_LW2_IDLE    = 2'd0;
+localparam [1:0] CUSTOM_LW2_COMMIT  = 2'd1;
 
-assign pipe.custom_lw2_busy = (pipe.custom_lw2_state != CUSTOM_LW2_IDLE);
+wire custom_lw2_request_now =
+    (pipe.custom_lw2_state == CUSTOM_LW2_IDLE) &&
+    pipe.custom_lw2 && !pipe.custom_lw2_seen;
 
-assign pipe.custom_lw2_read_valid =
-       (pipe.custom_lw2_state == CUSTOM_LW2_REQ1) ||
-       (pipe.custom_lw2_state == CUSTOM_LW2_REQ2);
+// Nao trava o pipeline: a segunda palavra do par permanece como NOP e fornece
+// naturalmente um ciclo para a RAM sincrona responder.
+assign pipe.custom_lw2_busy = 1'b0;
+assign pipe.custom_lw2_read_valid = custom_lw2_request_now;
+assign pipe.custom_lw2_read_address = pipe.reg_rdata1 - 32'd28;
+assign pipe.custom_lw2_read2_address = pipe.reg_rdata1 - 32'd36;
 
-assign pipe.custom_lw2_read_address =
-       (pipe.custom_lw2_state == CUSTOM_LW2_REQ1) ?
-       (pipe.custom_lw2_base_latched - 32'd28) :
-       (pipe.custom_lw2_base_latched - 32'd36);
-
+// Durante COMMIT, dmem_read_data/dmem_read2_data sao os resultados da
+// solicitacao feita no ciclo anterior.
 assign pipe.custom_lw2_writeback_valid =
-       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ||
-       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE2);
-
-assign pipe.custom_lw2_writeback_dest =
-       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ?
-       5'd14 :
-       5'd15;
-
-assign pipe.custom_lw2_writeback_data =
-       (pipe.custom_lw2_state == CUSTOM_LW2_WRITE1) ?
-       pipe.custom_lw2_data1_latched :
-       pipe.custom_lw2_data2_latched;
+    (pipe.custom_lw2_state == CUSTOM_LW2_COMMIT);
+assign pipe.custom_lw2_writeback_data1 = pipe.dmem_read_data;
+assign pipe.custom_lw2_writeback_data2 = pipe.dmem_read2_data;
 
 always @(posedge clk or negedge reset)
 begin
@@ -280,54 +270,26 @@ begin
             begin
                 if (pipe.custom_lw2 && !pipe.custom_lw2_seen)
                 begin
-                    // reg_rdata1 já contém x8 com o forwarding normal aplicado.
                     pipe.custom_lw2_base_latched <= pipe.reg_rdata1;
-                    pipe.custom_lw2_dest_latched <= 5'd14; // primeiro destino fixo: x14
                     pipe.custom_lw2_seen          <= 1'b1;
-                    pipe.custom_lw2_state         <= CUSTOM_LW2_REQ1;
+                    pipe.custom_lw2_state         <= CUSTOM_LW2_COMMIT;
                 end
                 else if (!pipe.custom_lw2)
-                begin
                     pipe.custom_lw2_seen <= 1'b0;
-                end
             end
 
-            // A RAM recebe base-32 neste ciclo.
-            CUSTOM_LW2_REQ1:
-                pipe.custom_lw2_state <= CUSTOM_LW2_CAP1;
-
-            // read_data agora corresponde a MEM[base-32].
-            CUSTOM_LW2_CAP1:
+            CUSTOM_LW2_COMMIT:
             begin
-                pipe.custom_lw2_data1_latched <= pipe.dmem_read_data;
-                pipe.custom_lw2_state         <= CUSTOM_LW2_REQ2;
-            end
-
-            // A RAM recebe base-20 neste ciclo.
-            CUSTOM_LW2_REQ2:
-                pipe.custom_lw2_state <= CUSTOM_LW2_CAP2;
-
-            // read_data agora corresponde a MEM[base-20].
-            CUSTOM_LW2_CAP2:
-            begin
-                pipe.custom_lw2_data2_latched <= pipe.dmem_read_data;
-                pipe.custom_lw2_state         <= CUSTOM_LW2_WRITE1;
-            end
-
-            CUSTOM_LW2_WRITE1:
-                pipe.custom_lw2_state <= CUSTOM_LW2_WRITE2;
-
-            CUSTOM_LW2_WRITE2:
+                // A escrita em x14/x15 ocorre por custom_lw2_writeback_valid
+                // no bloco do banco de registradores de IF_ID.v.
                 pipe.custom_lw2_state <= CUSTOM_LW2_IDLE;
+            end
 
             default:
                 pipe.custom_lw2_state <= CUSTOM_LW2_IDLE;
         endcase
     end
 end
-
-
-
 
 
 // -----------------------------------------------------------------------------

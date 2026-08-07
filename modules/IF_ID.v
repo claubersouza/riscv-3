@@ -103,8 +103,7 @@ begin
                        (((pipe.custom_sw3 || pipe.custom_sw6) &&
                          !pipe.custom_sw_seen)) ||
                        pipe.custom_sw_busy ||
-                       ((pipe.instruction == 32'h00f47053) && !pipe.custom_lw2_seen) ||
-                       pipe.custom_lw2_busy || pipe.custom_lw3_busy ||
+                       pipe.custom_lw3_busy ||
                        ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_seen);
 end
 end
@@ -316,8 +315,8 @@ begin
 end
 else if (pipe.custom_lw2_writeback_valid)
 begin
-    if (pipe.custom_lw2_writeback_dest != 5'd0)
-        pipe.regs[pipe.custom_lw2_writeback_dest] <= pipe.custom_lw2_writeback_data;
+    pipe.regs[14] <= pipe.custom_lw2_writeback_data1;
+    pipe.regs[15] <= pipe.custom_lw2_writeback_data2;
 end
 else if (pipe.wb_custom_write_x10 &&
          !pipe.stall_read &&

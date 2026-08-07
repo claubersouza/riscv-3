@@ -17,6 +17,7 @@
     input                   inst_mem_is_valid,
     input           [31: 0] inst_mem_read_data,
     input           [31: 0] dmem_read_data_temp,
+    input           [31: 0] dmem_read2_data_temp,
     input                   dmem_write_valid,
     input                   dmem_read_valid
 );
@@ -26,10 +27,13 @@
     //Data Memory Wires
     
     wire          [31: 0] dmem_read_data;
+    wire          [31: 0] dmem_read2_data;
     wire                  dmem_write_ready;
     wire                  dmem_read_ready;
     wire          [31: 0] dmem_write_address;
     wire          [31: 0] dmem_read_address;
+    wire          [31: 0] dmem_read2_address;
+    wire                  dmem_read2_ready;
     wire          [31: 0] dmem_write_data;
     wire          [ 3: 0] dmem_write_byte;
     wire                  dmem_write2_ready;
@@ -155,9 +159,10 @@
     wire                   custom_lw2_busy;
     wire                   custom_lw2_read_valid;
     wire           [31:0]  custom_lw2_read_address;
+    wire           [31:0]  custom_lw2_read2_address;
     wire                   custom_lw2_writeback_valid;
-    wire           [4:0]   custom_lw2_writeback_dest;
-    wire           [31:0]  custom_lw2_writeback_data;
+    wire           [31:0]  custom_lw2_writeback_data1;
+    wire           [31:0]  custom_lw2_writeback_data2;
 
     // Controlador multiciclo genérico para CUSTOM_SW2/SW3/SW4/SW6
     reg            [1:0]  custom_sw_state;
@@ -193,6 +198,8 @@ assign dmem_read_address            = custom_lw3_read_valid ? custom_lw3_read_ad
                                       custom_lw2_read_valid ? custom_lw2_read_address :
                                                               (alu_operand1 + execute_immediate);
 assign dmem_read_ready              = custom_lw3_read_valid || custom_lw2_read_valid || mem_to_reg;
+assign dmem_read2_ready             = custom_lw2_read_valid;
+assign dmem_read2_address           = custom_lw2_read2_address;
 assign dmem_write_ready             = wb_custom_sw4 || custom_sw_write_valid || wb_mem_write;
 assign dmem_write_data              = wb_custom_sw4 ? wb_custom_sw4_data :
                                       custom_sw_write_valid ? custom_sw_write_data :
@@ -207,6 +214,7 @@ assign dmem_write2_address          = wb_custom_sw4_base - 32'd60;
 assign dmem_write2_data             = 32'd0;
 assign dmem_write2_byte             = wb_custom_sw4 ? 4'b1111 : 4'b0000;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory
+assign dmem_read2_data              = dmem_read2_data_temp;
 assign dmem_read_valid_checker      = 1'b1;
 // -----------------------------------------------------//
 

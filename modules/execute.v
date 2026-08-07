@@ -174,10 +174,6 @@ begin
                   (pipe.reg_rdata2 == 32'd32)) ||
                  (pipe.instruction == 32'h0010EFF1))
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
-        else if ((pipe.instruction == 32'h00f47053) &&
-            pipe.custom_lw2_seen &&
-            !pipe.custom_lw2_busy)
-            pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else if ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_busy)
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else
