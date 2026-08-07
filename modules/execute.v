@@ -168,7 +168,11 @@ begin
     // chega ao decode.
         // A 00f45053 é reconhecida diretamente na saída da IMEM.
         // O próximo fetch salta a segunda SW substituída sem stall e sem bolha.
-        if (pipe.instruction == 32'h0010EFF1)
+        if (pipe.instruction == 32'h00f47053)
+            // V30: CUSTOM_LW2 também executa o AND seguinte.
+            // Pula a palavra reservada e o AND original.
+            pipe.fetch_pc <= pipe.fetch_pc + 32'd12;
+        else if (pipe.instruction == 32'h0010EFF1)
             pipe.fetch_pc <= pipe.fetch_pc + 32'd8;
         else if (((pipe.instruction == 32'h00f46053) &&
                   (pipe.reg_rdata2 == 32'd32)) ||

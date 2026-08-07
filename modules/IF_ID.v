@@ -313,10 +313,17 @@ begin
     if (pipe.custom_lw3_writeback_dest != 5'd0)
         pipe.regs[pipe.custom_lw3_writeback_dest] <= pipe.custom_lw3_writeback_data;
 end
-else if (pipe.custom_lw2_writeback_valid)
+else if (pipe.custom_lw2)
 begin
-    pipe.regs[14] <= pipe.custom_lw2_writeback_data1;
-    pipe.regs[15] <= pipe.custom_lw2_writeback_data2;
+    // V30: fusão de:
+    //   sw x15,-28(x8) (imediatamente anterior)
+    //   lw x14,-28(x8)
+    //   lw x15,-36(x8)
+    //   and x14,x14,x15
+    // reg_rdata2 já contém o x15 mais recente via forwarding normal.
+    // Apenas MEM[x8-36] é lida de forma assíncrona.
+    pipe.regs[14] <= pipe.reg_rdata2 & pipe.dmem_fast_read_data;
+    pipe.regs[15] <= pipe.dmem_fast_read_data;
 end
 else if (pipe.wb_custom_write_x10 &&
          !pipe.stall_read &&

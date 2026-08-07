@@ -234,63 +234,14 @@ end
 localparam [1:0] CUSTOM_LW2_IDLE    = 2'd0;
 localparam [1:0] CUSTOM_LW2_COMMIT  = 2'd1;
 
-wire custom_lw2_request_now =
-    (pipe.custom_lw2_state == CUSTOM_LW2_IDLE) &&
-    pipe.custom_lw2 && !pipe.custom_lw2_seen;
-
-// Nao trava o pipeline: a segunda palavra do par permanece como NOP e fornece
-// naturalmente um ciclo para a RAM sincrona responder.
+// V30: CUSTOM_LW2 foi fundida com o AND seguinte e não usa mais a RAM síncrona/FSM.
 assign pipe.custom_lw2_busy = 1'b0;
-assign pipe.custom_lw2_read_valid = custom_lw2_request_now;
-assign pipe.custom_lw2_read_address = pipe.reg_rdata1 - 32'd28;
-assign pipe.custom_lw2_read2_address = pipe.reg_rdata1 - 32'd36;
-
-// Durante COMMIT, dmem_read_data/dmem_read2_data sao os resultados da
-// solicitacao feita no ciclo anterior.
-assign pipe.custom_lw2_writeback_valid =
-    (pipe.custom_lw2_state == CUSTOM_LW2_COMMIT);
-assign pipe.custom_lw2_writeback_data1 = pipe.dmem_read_data;
-assign pipe.custom_lw2_writeback_data2 = pipe.dmem_read2_data;
-
-always @(posedge clk or negedge reset)
-begin
-    if (!reset)
-    begin
-        pipe.custom_lw2_state         <= CUSTOM_LW2_IDLE;
-        pipe.custom_lw2_base_latched  <= 32'd0;
-        pipe.custom_lw2_dest_latched  <= 5'd0;
-        pipe.custom_lw2_data1_latched <= 32'd0;
-        pipe.custom_lw2_data2_latched <= 32'd0;
-        pipe.custom_lw2_seen          <= 1'b0;
-    end
-    else
-    begin
-        case (pipe.custom_lw2_state)
-            CUSTOM_LW2_IDLE:
-            begin
-                if (pipe.custom_lw2 && !pipe.custom_lw2_seen)
-                begin
-                    pipe.custom_lw2_base_latched <= pipe.reg_rdata1;
-                    pipe.custom_lw2_seen          <= 1'b1;
-                    pipe.custom_lw2_state         <= CUSTOM_LW2_COMMIT;
-                end
-                else if (!pipe.custom_lw2)
-                    pipe.custom_lw2_seen <= 1'b0;
-            end
-
-            CUSTOM_LW2_COMMIT:
-            begin
-                // A escrita em x14/x15 ocorre por custom_lw2_writeback_valid
-                // no bloco do banco de registradores de IF_ID.v.
-                pipe.custom_lw2_state <= CUSTOM_LW2_IDLE;
-            end
-
-            default:
-                pipe.custom_lw2_state <= CUSTOM_LW2_IDLE;
-        endcase
-    end
-end
-
+assign pipe.custom_lw2_read_valid = 1'b0;
+assign pipe.custom_lw2_read_address = 32'd0;
+assign pipe.custom_lw2_read2_address = 32'd0;
+assign pipe.custom_lw2_writeback_valid = 1'b0;
+assign pipe.custom_lw2_writeback_data1 = 32'd0;
+assign pipe.custom_lw2_writeback_data2 = 32'd0;
 
 // -----------------------------------------------------------------------------
 // CUSTOM_lw3 (0004075b)

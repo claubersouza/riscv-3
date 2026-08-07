@@ -18,6 +18,7 @@
     input           [31: 0] inst_mem_read_data,
     input           [31: 0] dmem_read_data_temp,
     input           [31: 0] dmem_read2_data_temp,
+    input           [31: 0] dmem_fast_read_data_temp,
     input                   dmem_write_valid,
     input                   dmem_read_valid
 );
@@ -42,6 +43,8 @@
     wire          [ 3: 0] dmem_write2_byte;
     wire                  inst_mem_is_ready;
     wire                  dmem_read_valid_checker;
+    wire          [31: 0] dmem_fast_read_address;
+    wire          [31: 0] dmem_fast_read_data;
     
     //Instruction Fetch/Decode Stage 
     
@@ -216,6 +219,9 @@ assign dmem_write2_byte             = wb_custom_sw4 ? 4'b1111 : 4'b0000;
 assign dmem_read_data               = dmem_read_data_temp;      // data read from the memory
 assign dmem_read2_data              = dmem_read2_data_temp;
 assign dmem_read_valid_checker      = 1'b1;
+// V30: endereço assíncrono do único load ainda necessário na fusão.
+assign dmem_fast_read_address = pipe.reg_rdata1 - 32'd36;
+assign dmem_fast_read_data = dmem_fast_read_data_temp;
 // -----------------------------------------------------//
 
 // instantiating Instruction fetch module -----------------------
