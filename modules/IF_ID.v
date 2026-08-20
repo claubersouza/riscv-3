@@ -122,7 +122,9 @@ begin
                          !pipe.custom_sw_seen)) ||
                        pipe.custom_sw_busy ||
                        pipe.custom_lw3_busy ||
-                       ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_seen);
+                       ((pipe.instruction == 32'h000407db) && !pipe.custom_lw3_seen)
+                       || ((pipe.instruction == 32'h02f47053) && !pipe.custom_lw2b_seen)
+                       || pipe.custom_lw2b_busy;
 end
 end
 
@@ -177,6 +179,7 @@ begin
     pipe.custom_sw4             <= 1'b0;
     pipe.custom_sw6             <= 1'b0;
     pipe.custom_lw2             <= 1'b0;
+    pipe.custom_lw2b            <= 1'b0;
     pipe.custom_write_x10       <= 1'b0;
      pipe.custom_write_x2       <= 1'b0;
     pipe.jal                    <= 1'b0;
@@ -195,7 +198,7 @@ end
 else if (!pipe.stall_read ||
          (pipe.instruction == 32'h0010EFF1) ||
          (pipe.instruction == 32'h00f46053) ||
-         ((pipe.instruction == 32'h00f47053) || (pipe.instruction == 32'h00f470d3)))
+         ((pipe.instruction == 32'h00f47053) || (pipe.instruction == 32'h02f47053) || (pipe.instruction == 32'h00f470d3)))
 begin
     //  $display("Valor:%b",pipe.instruction[`OPCODE]);    
                      // else take the values from the IF stage and decode it to pass values to corresponding wires
@@ -215,6 +218,8 @@ begin
     pipe.custom_sw6             <= (pipe.instruction == 32'h00f470d3);
     // 00f47053: lw x14,-28(x8) + lw x15,-36(x8)
     pipe.custom_lw2             <= (pipe.instruction == 32'h00f47053);
+    pipe.custom_lw2b            <= (pipe.instruction == 32'h04f47053);
+    pipe.custom_lw2b            <= (pipe.instruction == 32'h02f47053);
     pipe.custom_lw3 <= (pipe.instruction == 32'h000407db);
     // pipe.custom2                <= pipe.instruction[`OPCODE] == CUSTOM2;
     // Instrução customizada exata que escreve 4 em x10.
@@ -273,6 +278,14 @@ assign pipe.reg_rdata1 =
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
      pipe.src1_select == 5'd7)  ? 32'd0 :
 
+    // CUSTOM_LW2B: forwarding dos resultados da nova dupla.
+    (pipe.custom_lw2b_writeback_valid &&
+     pipe.src1_select == 5'd14) ?
+        pipe.custom_lw2b_writeback_data1 :
+    (pipe.custom_lw2b_writeback_valid &&
+     pipe.src1_select == 5'd15) ?
+        pipe.custom_lw2b_writeback_data2 :
+
     // V32: a instrucao seguinte (AND) pode consumir os dois resultados
     // diretamente durante o ciclo COMMIT da CUSTOM_LW2.
     (pipe.custom_lw2_writeback_valid && pipe.src1_select == 5'd14) ?
@@ -307,6 +320,14 @@ assign pipe.reg_rdata2 =
      pipe.src2_select == 5'd6)  ? pipe.regs[10] :
     (!pipe.wb_stall && pipe.wb_custom_write_x2 &&
      pipe.src2_select == 5'd7)  ? 32'd0 :
+
+    // CUSTOM_LW2B: forwarding src2.
+    (pipe.custom_lw2b_writeback_valid &&
+     pipe.src2_select == 5'd14) ?
+        pipe.custom_lw2b_writeback_data1 :
+    (pipe.custom_lw2b_writeback_valid &&
+     pipe.src2_select == 5'd15) ?
+        pipe.custom_lw2b_writeback_data2 :
 
     // V32: forwarding do segundo resultado da CUSTOM_LW2.
     (pipe.custom_lw2_writeback_valid && pipe.src2_select == 5'd14) ?
@@ -343,6 +364,11 @@ else if (pipe.custom_lw3_writeback_valid)
 begin
     if (pipe.custom_lw3_writeback_dest != 5'd0)
         pipe.regs[pipe.custom_lw3_writeback_dest] <= pipe.custom_lw3_writeback_data;
+end
+else if (pipe.custom_lw2b_writeback_valid)
+begin
+    pipe.regs[14] <= pipe.custom_lw2b_writeback_data1;
+    pipe.regs[15] <= pipe.custom_lw2b_writeback_data2;
 end
 else if (pipe.custom_lw2_writeback_valid)
 begin

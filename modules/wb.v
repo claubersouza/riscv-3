@@ -298,6 +298,93 @@ end
 
 
 // -----------------------------------------------------------------------------
+
+
+// -----------------------------------------------------------------------------
+// CUSTOM_LW2B (04f47053) - NOVA dupla 2 -> 1 SEM NOP
+//
+// NÃO altera a CUSTOM_LW2 antiga 00f47053.
+//
+// Original:
+//   fd442703 = lw x14,-44(x8)
+//   fe442783 = lw x15,-28(x8)
+//
+// Usa as duas portas síncronas em paralelo e stall interno.
+// -----------------------------------------------------------------------------
+localparam [1:0] CUSTOM_LW2B_IDLE   = 2'd0;
+localparam [1:0] CUSTOM_LW2B_COMMIT = 2'd1;
+
+wire custom_lw2b_request_now =
+    (pipe.custom_lw2b_state == CUSTOM_LW2B_IDLE) &&
+    pipe.custom_lw2b &&
+    !pipe.custom_lw2b_seen;
+
+assign pipe.custom_lw2b_busy =
+    custom_lw2b_request_now ||
+    (pipe.custom_lw2b_state == CUSTOM_LW2B_COMMIT);
+
+assign pipe.custom_lw2b_read_valid =
+    custom_lw2b_request_now;
+
+assign pipe.custom_lw2b_read_address =
+    (pipe.reg_rdata1 - 32'd44);
+
+assign pipe.custom_lw2b_read2_address =
+    (pipe.reg_rdata1 - 32'd28);
+
+assign pipe.custom_lw2b_writeback_valid =
+    (pipe.custom_lw2b_state == CUSTOM_LW2B_COMMIT);
+
+assign pipe.custom_lw2b_writeback_data1 =
+    pipe.dmem_read_data;
+
+assign pipe.custom_lw2b_writeback_data2 =
+    pipe.dmem_read2_data;
+
+always @(posedge clk or negedge reset)
+begin
+    if (!reset)
+    begin
+        pipe.custom_lw2b_state        <= CUSTOM_LW2B_IDLE;
+        pipe.custom_lw2b_base_latched <= 32'd0;
+        pipe.custom_lw2b_seen         <= 1'b0;
+    end
+    else
+    begin
+        case (pipe.custom_lw2b_state)
+
+            CUSTOM_LW2B_IDLE:
+            begin
+                if (pipe.custom_lw2b &&
+                    !pipe.custom_lw2b_seen)
+                begin
+                    pipe.custom_lw2b_base_latched <=
+                        pipe.reg_rdata1;
+
+                    pipe.custom_lw2b_seen <= 1'b1;
+                    pipe.custom_lw2b_state <=
+                        CUSTOM_LW2B_COMMIT;
+                end
+                else if (!pipe.custom_lw2b)
+                begin
+                    pipe.custom_lw2b_seen <= 1'b0;
+                end
+            end
+
+            CUSTOM_LW2B_COMMIT:
+            begin
+                pipe.custom_lw2b_state <=
+                    CUSTOM_LW2B_IDLE;
+            end
+
+            default:
+                pipe.custom_lw2b_state <=
+                    CUSTOM_LW2B_IDLE;
+        endcase
+    end
+end
+
+
 // CUSTOM_lw3 (0004075b)
 // Substitui:
 //   fe442703  // lw x14, -28(x8)
