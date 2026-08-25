@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CUSTOMIZADOR LW+LW, 2 -> 1, SEM NOP NO HEX.
+CUSTOMIZADOR LW+LW / ADDI+ADDI, 2 -> 1, SEM NOP NO HEX.
 
 Aceita somente pares:
   - LW + LW
@@ -54,7 +54,7 @@ def sext(v, bits):
     return (v ^ sign) - sign
 
 
-def decode_lw(h):
+def decode_inst(h):
     h = h.lower().replace("0x", "")
 
     if not re.fullmatch(r"[0-9a-f]{8}", h):
@@ -64,16 +64,25 @@ def decode_lw(h):
     opcode = w & 0x7f
     funct3 = (w >> 12) & 7
 
-    if opcode != 0x03 or funct3 != 0b010:
-        die(f"{h} não é LW RV32I.")
+    if opcode == 0x03 and funct3 == 0b010:
+        return {
+            "hex": h,
+            "type": "LW",
+            "rd": (w >> 7) & 31,
+            "rs1": (w >> 15) & 31,
+            "imm": sext((w >> 20) & 0xfff, 12),
+        }
 
-    return {
-        "hex": h,
-        "type": "LW",
-        "rd": (w >> 7) & 31,
-        "rs1": (w >> 15) & 31,
-        "imm": sext((w >> 20) & 0xfff, 12),
-    }
+    if opcode == 0x13 and funct3 == 0b000:
+        return {
+            "hex": h,
+            "type": "ADDI",
+            "rd": (w >> 7) & 31,
+            "rs1": (w >> 15) & 31,
+            "imm": sext((w >> 20) & 0xfff, 12),
+        }
+
+    die(f"{h} não é LW nem ADDI RV32I.")
 
 
 
@@ -1032,40 +1041,569 @@ def patch_pipeline(path, mappings):
 
     write(path, s)
 
-def patch_ifid(path, mappings):
-    s=read(path)
 
-    if "FUSED_LW_MASK" in s:
-        print("IF_ID.v: FUSED_LW já instalado; nenhuma alteração necessária.")
+
+def _extend_addir_match(s, custom):
+    pat = re.compile(
+        r"(assign\s+pipe\.addir_match\s*=\s*)(.*?)(;)",
+        re.DOTALL,
+    )
+    m = pat.search(s)
+
+    if not m:
+        die("IF_ID.v: assign pipe.addir_match não localizado.")
+
+    rhs = m.group(2).rstrip()
+    clause = f"(inst_mem_read_data == 32'h{custom})"
+
+    if clause in rhs:
+        die(f"CUSTOM ADDI {custom} já existe.")
+
+    rhs += "\n        || " + clause
+    return s[:m.start(2)] + rhs + s[m.end(2):]
+
+
+def patch_pipeline_addi(path, mappings):
+    """
+    ADDIR usa o pipeline normal. pipeline.v guarda somente estado/tabela.
+    """
+    if not mappings:
         return
 
-    # Mask the custom from the normal decoder. The fused hardware performs
-    # the architectural effect directly.
-    pat="assign pipe.instruction = pipe.stall_read ? NOP :"
-    if pat not in s:
-        die("IF_ID.v: assign pipe.instruction esperado não localizado.")
+    s = read(path)
 
-    s=s.replace(
-        pat,
-        """// FUSED_LW_MASK
-assign pipe.instruction = pipe.stall_read ? NOP :
-                          pipe.fused_lw_valid ? NOP :""",
-        1
+    if "addir_state" in s:
+        print("pipeline.v: ADDIR existente; reutilizando FSM.")
+        return
+
+    anchor = "    // PC"
+
+    if anchor not in s:
+        die("pipeline.v: seção // PC não localizada para ADDIR.")
+
+    block = """
+    // ================================================================
+    // ADDIR - ADDI+ADDI 2 -> 1 sem NOP no HEX
+    // Executa as ADDI pelo datapath normal para preservar ordem de WB.
+    // ================================================================
+    reg  [2:0] addir_state;
+    reg        addir_seen;
+    reg [31:0] addir_resume_pc;
+    reg [31:0] addir_addi1_word;
+    reg [31:0] addir_addi2_word;
+    reg  [4:0] addir_rd2;
+    wire       addir_match;
+    wire       addir_detect_now;
+    wire       addir_hold_fetch;
+    wire       addir_resume_valid;
+
+"""
+
+    s = s.replace(anchor, block + anchor, 1)
+    write(path, s)
+
+
+def patch_ifid_addi(path, mappings):
+    if not mappings:
+        return
+
+    s = read(path)
+
+    # ---------------------------------------------------------------
+    # Incremental extension of existing ADDIR.
+    # ---------------------------------------------------------------
+    if "ADDIR_MULTI_BEGIN" in s:
+        print("IF_ID.v: ADDIR existente; ampliando tabela.")
+
+        for mp in mappings:
+            custom = mp["custom"]
+
+            s = _extend_addir_match(s, custom)
+
+            marker = "                // ADDIR_PAIR_TABLE_END"
+            pos = s.find(marker)
+
+            if pos < 0:
+                die("IF_ID.v: ADDIR_PAIR_TABLE_END não localizado.")
+
+            pair = f"""                if(inst_mem_read_data == 32'h{custom})
+                begin
+                    pipe.addir_addi1_word <= 32'h{mp['inst1']};
+                    pipe.addir_addi2_word <= 32'h{mp['inst2']};
+                    pipe.addir_rd2 <= 5'd{mp['second']['rd']};
+                end
+
+"""
+
+            s = s[:pos] + pair + s[pos:]
+
+        write(path, s)
+        return
+
+    # ---------------------------------------------------------------
+    # First ADDIR installation.
+    # Wrap the CURRENT instruction RHS. It may already include FUSED_LW.
+    # ---------------------------------------------------------------
+    # Localiza a atribuição de pipe.instruction de forma tolerante.
+    # Aceita:
+    #   assign pipe.instruction = ...;
+    # e também variantes em que o gerador anterior inseriu comentários,
+    # quebras de linha ou espaços entre "assign" e "pipe.instruction".
+    pat = re.compile(
+        r"\bassign\s+"
+        r"pipe\s*\.\s*instruction\s*=\s*"
+        r"(?P<rhs>.*?)"
+        r";",
+        re.DOTALL | re.MULTILINE,
+    )
+    m = pat.search(s)
+
+    if not m:
+        # Fallback: procura somente "pipe.instruction =" e preserva
+        # tudo até o próximo ';'. Isso cobre IF_ID customizado anteriormente.
+        pat = re.compile(
+            r"pipe\s*\.\s*instruction\s*=\s*"
+            r"(?P<rhs>.*?)"
+            r";",
+            re.DOTALL | re.MULTILINE,
+        )
+        m = pat.search(s)
+
+    if not m:
+        # Diagnóstico útil em vez de simplesmente abortar.
+        candidates = [
+            line.strip()
+            for line in s.splitlines()
+            if "instruction" in line.lower()
+        ][:12]
+
+        die(
+            "IF_ID.v: não consegui localizar a atribuição de "
+            "pipe.instruction. Linhas candidatas: "
+            + " | ".join(candidates)
+        )
+
+    old_rhs = m.group("rhs").strip()
+
+    matches = " ||\n        ".join(
+        f"(inst_mem_read_data == 32'h{mp['custom']})"
+        for mp in mappings
     )
 
-    # Insert highest-priority register-file write after reset.
-    regpos=s.find("integer i;")
-    if regpos<0:
-        die("IF_ID.v: banco de registradores não localizado.")
+    pair_lines = []
 
-    # Find first else-if after the reset branch.
-    m=re.search(r"\nelse\s+if\s*\(",s[regpos:])
+    for mp in mappings:
+        pair_lines.append(
+            f"""                if(inst_mem_read_data == 32'h{mp['custom']})
+                begin
+                    pipe.addir_addi1_word <= 32'h{mp['inst1']};
+                    pipe.addir_addi2_word <= 32'h{mp['inst2']};
+                    pipe.addir_rd2 <= 5'd{mp['second']['rd']};
+                end"""
+        )
+
+    pairs = "\n".join(pair_lines)
+
+    block = f"""// ADDIR_MULTI_BEGIN
+assign pipe.addir_match =
+        {matches};
+
+assign pipe.addir_detect_now =
+    (pipe.addir_state == 3'd0) &&
+    !pipe.addir_seen &&
+    pipe.addir_match;
+
+assign pipe.addir_hold_fetch =
+    pipe.addir_detect_now ||
+    (pipe.addir_state == 3'd1) ||
+    (pipe.addir_state == 3'd2) ||
+    (pipe.addir_state == 3'd3) ||
+    (pipe.addir_state == 3'd4);
+
+assign pipe.addir_resume_valid =
+    (pipe.addir_state == 3'd5);
+
+assign pipe.instruction =
+    (pipe.addir_state == 3'd1) ? NOP :
+    (pipe.addir_state == 3'd2) ? pipe.addir_addi1_word :
+    (pipe.addir_state == 3'd3) ? pipe.addir_addi2_word :
+    ((pipe.addir_state == 3'd4) ||
+     (pipe.addir_state == 3'd5) ||
+     pipe.addir_detect_now ||
+     (pipe.addir_seen && pipe.addir_match)) ? NOP :
+    ({old_rhs});
+// ADDIR_MULTI_END"""
+
+    # Substitui a atribuição inteira. No fallback, garante que um possível
+    # "assign" imediatamente anterior também seja consumido.
+    replace_start = m.start()
+    prefix = s[max(0, replace_start - 16):replace_start]
+    if not s[replace_start:m.start("rhs")].lstrip().startswith("assign"):
+        am = re.search(r"assign\s*$", prefix)
+        if am:
+            replace_start = max(0, replace_start - 16) + am.start()
+
+    s = s[:replace_start] + block + s[m.end():]
+
+    insert = s.find("// Stall read assignment")
+
+    if insert < 0:
+        die("IF_ID.v: Stall read assignment não localizado para ADDIR.")
+
+    fsm = f"""
+// -----------------------------------------------------------------------------
+// ADDIR controller
+//
+// 0 IDLE
+// 1 WAIT_OLD_WB
+// 2 ISSUE1
+// 3 ISSUE2
+// 4 WAIT_WB2
+// 5 RESUME
+// -----------------------------------------------------------------------------
+always @(posedge clk or negedge reset)
+begin
+    if(!reset)
+    begin
+        pipe.addir_state <= 3'd0;
+        pipe.addir_seen <= 1'b0;
+        pipe.addir_resume_pc <= 32'd0;
+        pipe.addir_addi1_word <= 32'd0;
+        pipe.addir_addi2_word <= 32'd0;
+        pipe.addir_rd2 <= 5'd0;
+    end
+    else
+    begin
+        case(pipe.addir_state)
+
+        3'd0:
+        begin
+            if(pipe.addir_detect_now)
+            begin
+                pipe.addir_resume_pc <= pipe.fetch_pc + 32'd4;
+                pipe.addir_seen <= 1'b1;
+
+{pairs}
+                // ADDIR_PAIR_TABLE_END
+
+                pipe.addir_state <= 3'd1;
+
+                $display(
+                    "[ADDIR] detect fetch=%h resume=%h",
+                    pipe.fetch_pc,
+                    pipe.fetch_pc + 32'd4
+                );
+            end
+            else if(!pipe.addir_match)
+            begin
+                pipe.addir_seen <= 1'b0;
+            end
+        end
+
+        // Aguarda instruções antigas saírem do WB.
+        // Dois ciclos limpos são usados porque a CUSTOM é detectada
+        // enquanto instruções anteriores ainda podem estar em EX/WB.
+        3'd1:
+        begin
+            if(!pipe.wb_stall &&
+               !pipe.stall_read &&
+               !(pipe.wb_alu_to_reg && pipe.wb_dest_reg_sel != 5'd0))
+            begin
+                pipe.addir_state <= 3'd2;
+                $display("[ADDIR] pipeline anterior drenado");
+            end
+        end
+
+        // ADDI1 entra no decoder normal.
+        3'd2:
+        begin
+            pipe.addir_state <= 3'd3;
+            $display("[ADDIR] issue1=%h", pipe.addir_addi1_word);
+        end
+
+        // ADDI2 entra no decoder normal no ciclo seguinte.
+        3'd3:
+        begin
+            pipe.addir_state <= 3'd4;
+            $display("[ADDIR] issue2=%h", pipe.addir_addi2_word);
+        end
+
+        // Espera ADDI2 efetivamente chegar ao write-back.
+        3'd4:
+        begin
+            if(pipe.wb_alu_to_reg &&
+               !pipe.wb_mem_to_reg &&
+               !pipe.wb_stall &&
+               (pipe.wb_dest_reg_sel == pipe.addir_rd2))
+            begin
+                pipe.addir_state <= 3'd5;
+
+                $display(
+                    "[ADDIR] WB2 concluido rd=x%0d data=%h",
+                    pipe.addir_rd2,
+                    pipe.wb_result
+                );
+            end
+        end
+
+        3'd5:
+        begin
+            pipe.addir_state <= 3'd0;
+        end
+
+        default:
+            pipe.addir_state <= 3'd0;
+
+        endcase
+    end
+end
+
+"""
+
+    s = s[:insert] + fsm + s[insert:]
+
+    # Permit replayed instructions to advance through decode.
+    target = "else if (!pipe.stall_read ||"
+
+    if target in s:
+        s = s.replace(
+            target,
+            (
+                "else if (!pipe.stall_read || "
+                "(pipe.addir_state == 3'd2) || "
+                "(pipe.addir_state == 3'd3) ||"
+            ),
+            1,
+        )
+
+    write(path, s)
+
+
+def patch_execute_addi(path):
+    s = read(path)
+
+    if "pipe.addir_resume_valid" in s:
+        print("execute.v: ADDIR já instalado.")
+        return
+
+    # Insert priority immediately before the normal !stall_read PC update.
+    pat = re.compile(
+        r"(if\s*\(\s*!reset\s*\)\s*"
+        r"\n\s*begin\s*"
+        r"\n\s*pipe\.fetch_pc\s*<=\s*RESET\s*;"
+        r"\s*\n\s*end\s*)"
+        r"(else\s+if\s*\(\s*!pipe\.stall_read\s*\))",
+        re.DOTALL,
+    )
+
+    m = pat.search(s)
+
     if not m:
-        die("IF_ID.v: primeiro else-if do register file não localizado.")
+        die("execute.v: bloco fetch_pc original não localizado para ADDIR.")
 
-    at=regpos+m.start()
+    repl = (
+        m.group(1)
+        + """else if (pipe.addir_resume_valid)
+    begin
+        pipe.fetch_pc <= pipe.addir_resume_pc;
+    end
+    else if (pipe.addir_hold_fetch)
+    begin
+        pipe.fetch_pc <= pipe.fetch_pc;
+    end
+    else if (!pipe.stall_read)"""
+    )
 
-    wb="""else if (pipe.fused_lw_valid)
+    s = s[:m.start()] + repl + s[m.end():]
+
+    # Keep replayed ADDIs moving through EX even though fetch is held.
+    occurrences = list(
+        re.finditer(
+            r"else\s+if\s*\(!pipe\.stall_read\s*\|\|",
+            s,
+        )
+    )
+
+    if occurrences:
+        m2 = occurrences[-1]
+
+        s = (
+            s[:m2.start()]
+            + (
+                "else if (!pipe.stall_read || "
+                "(pipe.addir_state == 3'd2) || "
+                "(pipe.addir_state == 3'd3) ||"
+            )
+            + s[m2.end():]
+        )
+
+    write(path, s)
+
+
+def patch_wb_addi(path):
+    s = read(path)
+
+    if "pipe.addir_resume_valid" in s:
+        print("wb.v: ADDIR já instalado.")
+        return
+
+    pat = re.compile(
+        r"(if\s*\(\s*!reset\s*\)\s*"
+        r"\n\s*begin\s*"
+        r"\n\s*pipe\.inst_fetch_pc\s*<=\s*RESET\s*;[^\n]*"
+        r"\n\s*end\s*)"
+        r"(else\s+if\s*\(\s*!pipe\.stall_read\s*\))",
+        re.DOTALL,
+    )
+
+    m = pat.search(s)
+
+    if not m:
+        die("wb.v: bloco inst_fetch_pc não localizado para ADDIR.")
+
+    repl = (
+        m.group(1)
+        + """else if (pipe.addir_resume_valid)
+    begin
+        pipe.inst_fetch_pc <= pipe.addir_resume_pc;
+    end
+    else if (pipe.addir_hold_fetch)
+    begin
+        pipe.inst_fetch_pc <= pipe.inst_fetch_pc;
+    end
+    else if (!pipe.stall_read)"""
+    )
+
+    s = s[:m.start()] + repl + s[m.end():]
+    write(path, s)
+
+
+def validate_addi(dest, mappings):
+    if not mappings:
+        return
+
+    p = read(dest / "pipeline.v")
+    i = read(dest / "IF_ID.v")
+    e = read(dest / "execute.v")
+    w = read(dest / "wb.v")
+
+    checks = {
+        "ADDIR state": "addir_state" in p,
+        "ADDIR table": "ADDIR_MULTI_BEGIN" in i,
+        "normal datapath issue1": "pipe.addir_addi1_word" in i,
+        "normal datapath issue2": "pipe.addir_addi2_word" in i,
+        "wait normal WB": "!pipe.wb_mem_to_reg" in i,
+        "fetch hold": "pipe.addir_hold_fetch" in e,
+        "fetch resume": "pipe.fetch_pc <= pipe.addir_resume_pc;" in e,
+        "inst resume": "pipe.inst_fetch_pc <= pipe.addir_resume_pc;" in w,
+        "sem direct fused write": "FUSED_ADDI_WRITEBACK" not in i,
+    }
+
+    for mp in mappings:
+        checks[f"ADDI custom {mp['pair']}"] = (
+            f"32'h{mp['custom']}" in i
+        )
+
+    bad = [k for k, v in checks.items() if not v]
+
+    if bad:
+        die("validação ADDIR falhou: " + ", ".join(bad))
+
+    print("Validação ADDIR: OK")
+
+
+
+def patch_ifid(path, mappings):
+    s = read(path)
+
+    # ================================================================
+    # DETECÇÃO ROBUSTA DE FUSED_LW JÁ INSTALADA
+    #
+    # Versões anteriores podem não conter o comentário FUSED_LW_MASK.
+    # Portanto verificamos a lógica real, e não apenas o marcador textual.
+    # ================================================================
+    already_has_mask = (
+        "FUSED_LW_MASK" in s
+        or "pipe.fused_lw_valid ? NOP" in s
+        or "pipe.fused_lw_valid" in s
+    )
+
+    already_has_writeback = (
+        "pipe.fused_lw_rd1" in s
+        and "pipe.fused_lw_rd2" in s
+        and "pipe.fused_lw_data1" in s
+        and "pipe.fused_lw_data2" in s
+    )
+
+    if already_has_mask and already_has_writeback:
+        print(
+            "IF_ID.v: FUSED_LW já instalada "
+            "(detectada estruturalmente); reutilizando."
+        )
+        return
+
+    # ---------------------------------------------------------------
+    # Caso parcialmente instalado: não duplicar o que já existe.
+    # ---------------------------------------------------------------
+
+    # 1) Mascara CUSTOM LW no decoder normal.
+    if not already_has_mask:
+        pat = re.compile(
+            r"\bassign\s+pipe\s*\.\s*instruction\s*=\s*"
+            r"(?P<rhs>.*?)"
+            r";",
+            re.DOTALL | re.MULTILINE,
+        )
+
+        m = pat.search(s)
+
+        if not m:
+            candidates = [
+                line.strip()
+                for line in s.splitlines()
+                if "instruction" in line.lower()
+            ][:15]
+
+            die(
+                "IF_ID.v: pipe.instruction não localizado para instalar "
+                "FUSED_LW. Candidatas: "
+                + " | ".join(candidates)
+            )
+
+        old_rhs = m.group("rhs").strip()
+
+        new_assign = f"""// FUSED_LW_MASK
+assign pipe.instruction =
+    pipe.fused_lw_valid ? NOP :
+    ({old_rhs});"""
+
+        s = s[:m.start()] + new_assign + s[m.end():]
+
+    # 2) Writeback duplo.
+    if not already_has_writeback:
+        regpos = s.find("integer i;")
+
+        if regpos < 0:
+            die(
+                "IF_ID.v: banco de registradores não localizado "
+                "para FUSED_LW."
+            )
+
+        m = re.search(
+            r"\nelse\s+if\s*\(",
+            s[regpos:],
+        )
+
+        if not m:
+            die(
+                "IF_ID.v: primeiro else-if do register file "
+                "não localizado para FUSED_LW."
+            )
+
+        at = regpos + m.start()
+
+        wb = """// FUSED_LW_WRITEBACK
+else if (pipe.fused_lw_valid)
 begin
     if (pipe.fused_lw_rd1 != 5'd0)
         pipe.regs[pipe.fused_lw_rd1] <= pipe.fused_lw_data1;
@@ -1075,15 +1613,19 @@ begin
 
     $display(
         "[FUSED_LW] rd1=x%0d data1=%h addr1=%h rd2=x%0d data2=%h addr2=%h",
-        pipe.fused_lw_rd1, pipe.fused_lw_data1, pipe.fused_lw_fast_addr1,
-        pipe.fused_lw_rd2, pipe.fused_lw_data2, pipe.fused_lw_fast_addr2
+        pipe.fused_lw_rd1,
+        pipe.fused_lw_data1,
+        pipe.fused_lw_fast_addr1,
+        pipe.fused_lw_rd2,
+        pipe.fused_lw_data2,
+        pipe.fused_lw_fast_addr2
     );
 end
 """
 
-    s=s[:at]+"\n"+wb+s[at:]
-    write(path,s)
+        s = s[:at] + "\n" + wb + s[at:]
 
+    write(path, s)
 
 def validate(dest,mappings):
     p=read(dest/"pipeline.v")
@@ -1132,8 +1674,8 @@ def apply(base,dest):
 def main():
     ap = argparse.ArgumentParser(
         description=(
-            "Customizador LW+LW 2 -> 1 sem NOP, "
-            "com compactação GLOBAL e relocação segura."
+            "Customizador incremental LW+LW e ADDI+ADDI, "
+            "2 -> 1 sem NOP no HEX."
         )
     )
 
@@ -1144,7 +1686,10 @@ def main():
         "--originais",
         nargs="+",
         required=True,
-        help="Pares: LW1 LW2 LW3 LW4 ...",
+        help=(
+            "Pares LW+LW ou ADDI+ADDI. "
+            "Ex.: LW1 LW2 ADDI1 ADDI2"
+        ),
     )
 
     ap.add_argument(
@@ -1152,9 +1697,7 @@ def main():
         nargs="+",
         type=int,
         help=(
-            "Ocorrência 1-based de cada par no HEX original. "
-            "Use quando um mesmo par aparece mais de uma vez. "
-            "Ex.: --ocorrencias 2 1 3"
+            "Ocorrência 1-based de cada par no HEX atual."
         ),
     )
 
@@ -1171,15 +1714,6 @@ def main():
     if not args.base.is_dir():
         die(f"base inexistente: {args.base}")
 
-    ptxt = read(args.base / "pipeline.v")
-
-    if "replay2_state" in ptxt:
-        die(
-            "A base já contém REPLAY2. Para evitar acumular relocação incorreta, "
-            "use a base anterior à primeira REPLAY2 e passe TODOS os pares "
-            "LW/ADDI nesta mesma execução."
-        )
-
     if args.destino.exists():
         if not args.sobrescrever:
             die("destino existe; use --sobrescrever.")
@@ -1189,26 +1723,31 @@ def main():
 
     words = parse_hex(args.hex_entrada)
 
+    pair_count = len(args.originais) // 2
+
+    if args.ocorrencias is not None and len(args.ocorrencias) != pair_count:
+        die(
+            f"--ocorrencias deve possuir {pair_count} valor(es)."
+        )
+
     rtl = "".join(
         read(args.destino / n)
         for n in ("pipeline.v", "IF_ID.v", "execute.v", "wb.v")
     )
 
-    pair_count = len(args.originais) // 2
-
-    if args.ocorrencias is not None and len(args.ocorrencias) != pair_count:
-        die(
-            f"--ocorrencias deve ter exatamente {pair_count} valor(es), "
-            f"um para cada par."
-        )
-
     mappings = []
     custom_extra = set()
 
-    # Primeiro decodifica e escolhe TODAS as CUSTOMs, sem tocar no HEX.
     for i in range(0, len(args.originais), 2):
-        first = decode_lw(args.originais[i])
-        second = decode_lw(args.originais[i + 1])
+        first = decode_inst(args.originais[i])
+        second = decode_inst(args.originais[i + 1])
+
+        if first["type"] != second["type"]:
+            die(
+                f"Par {i//2+1}: tipos diferentes "
+                f"{first['type']} + {second['type']}. "
+                "Use LW+LW ou ADDI+ADDI."
+            )
 
         custom = choose_custom(
             words,
@@ -1226,31 +1765,26 @@ def main():
                     if args.ocorrencias is not None
                     else None
                 ),
-                "type": "LW",
+                "type": first["type"],
                 "inst1": first["hex"],
                 "inst2": second["hex"],
-                "rd1": first["rd"],
-                "rd2": second["rd"],
                 "custom": custom,
                 "first": first,
                 "second": second,
             }
         )
 
-    # Agora faz UMA compactação global.
+    # Compacta todos os pares NOVOS desta execução em uma única passagem.
     work, located, total_reloc = compact_all_global(words, mappings)
 
-    # Atualiza mappings com PCs reais localizados.
     by_custom = {x["custom"]: x for x in located}
 
     for m in mappings:
         loc = by_custom[m["custom"]]
-        m["index"] = loc["old_index"]
         m["old_pc"] = loc["old_pc"]
         m["new_pc"] = loc["new_pc"]
 
     args.hex_saida.parent.mkdir(parents=True, exist_ok=True)
-
     args.hex_saida.write_text(
         "\n".join(work) + "\n",
         encoding="utf-8",
@@ -1261,21 +1795,46 @@ def main():
     if args.hex_saida.resolve() != dest_hex.resolve():
         shutil.copy2(args.hex_saida, dest_hex)
 
-    patch_memory(args.destino / "memory.v")
-    patch_pipeline(args.destino / "pipeline.v", mappings)
-    patch_ifid(args.destino / "IF_ID.v", mappings)
-    patch_tb(args.destino / "tb_pipeline.v")
+    lw_maps = [m for m in mappings if m["type"] == "LW"]
+    addi_maps = [m for m in mappings if m["type"] == "ADDI"]
 
-    validate(args.destino, mappings)
+    # LW dual-port.
+    if lw_maps:
+        patch_memory(args.destino / "memory.v")
+        patch_pipeline(args.destino / "pipeline.v", lw_maps)
+        patch_ifid(args.destino / "IF_ID.v", lw_maps)
+        patch_tb(args.destino / "tb_pipeline.v")
+        validate(args.destino, lw_maps)
+
+    # ADDI usa replay pelo datapath normal para preservar ordem de WB.
+    if addi_maps:
+        patch_pipeline_addi(
+            args.destino / "pipeline.v",
+            addi_maps,
+        )
+        patch_ifid_addi(
+            args.destino / "IF_ID.v",
+            addi_maps,
+        )
+        patch_execute_addi(
+            args.destino / "execute.v",
+        )
+        patch_wb_addi(
+            args.destino / "wb.v",
+        )
+        validate_addi(
+            args.destino,
+            addi_maps,
+        )
 
     print()
     print("=" * 76)
-    print("FUSED_LW DUAL-PORT MULTI - LW+LW, 2 -> 1 SEM NOP")
+    print("FUSED MULTI - LW+LW / ADDI+ADDI, 2 -> 1 SEM NOP")
     print("=" * 76)
 
     for mp in mappings:
         print(
-            f"Par {mp['pair']:02d} [LW]: "
+            f"Par {mp['pair']:02d} [{mp['type']}]: "
             f"{mp['inst1']} + {mp['inst2']} "
             f"-> CUSTOM={mp['custom']} "
             f"PC antigo=0x{mp['old_pc']:08x} "
@@ -1284,10 +1843,9 @@ def main():
 
     print(f"HEX: {len(words)} -> {len(work)} palavras")
     print(f"Relocações BRANCH/JAL: {total_reloc}")
-    print("Validação de destinos BRANCH/JAL: OK")
     print("NOP inserido no HEX: NÃO")
-    print("Compactação: GLOBAL")
-    print("FSM: NÃO; duas leituras combinacionais em paralelo")
+    print("LW  : dual-port combinacional")
+    print("ADDI: replay pelo datapath normal, preservando ordem de write-back")
     print("=" * 76)
 
     if args.aplicar_no_base:
