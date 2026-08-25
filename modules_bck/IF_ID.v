@@ -59,27 +59,9 @@ endfunction
 // V32: quando a CUSTOM_LW2 e detectada, a segunda porta da IMEM ja
 // prebuscou a instrucao depois da palavra reservada. Durante um unico ciclo,
 // usamos esse dado no lugar do NOP, sem fundir a instrucao seguinte.
-// LWSLOT_MULTI_BEGIN
-assign pipe.lwslot_match =
-    (inst_mem_read_data == 32'h06006053) ||
-    (inst_mem_read_data == 32'h04006053) ||
-    (inst_mem_read_data == 32'h02006053);
-
-assign pipe.lwslot_lw1_selected =
-    (inst_mem_read_data == 32'h06006053) ? 32'hfe042683 :
-    (inst_mem_read_data == 32'h04006053) ? 32'hfec42703 :
-    (inst_mem_read_data == 32'h02006053) ? 32'hfe042703 :
-    32'h00000013;
-
-// Mantém exatamente a política original de stall.
-// A CUSTOM só é consumida quando stall_read=0.
-assign pipe.instruction =
-    pipe.stall_read ? NOP :
-    pipe.lwslot_pending ? pipe.lwslot_lw2_word :
-    pipe.lwslot_match ? pipe.lwslot_lw1_selected :
-    pipe.custom_lw2_imem_prefetch ? teste(inst_mem_read2_data) :
+assign pipe.instruction = pipe.stall_read ? NOP :
+                          pipe.custom_lw2_imem_prefetch ? teste(inst_mem_read2_data) :
                                                           teste(inst_mem_read_data);
-// LWSLOT_MULTI_END
 
 integer counter ;
 reg [31: 0] reg2;
@@ -114,64 +96,6 @@ begin
         pipe.custom_lw2_imem_prefetch <= (pipe.instruction == 32'h00f47053);
 end
 
-
-
-// -----------------------------------------------------------------------------
-// LWSLOT controller
-//
-// CUSTOM cycle:
-//   instruction mux emits LW1 and controller stores LW2.
-//
-// Next non-stalled cycle:
-//   instruction mux emits stored LW2 and clears pending.
-//
-// fetch_pc/inst_fetch_pc are NOT modified.
-// -----------------------------------------------------------------------------
-always @(posedge clk or negedge reset)
-begin
-    if (!reset)
-    begin
-        pipe.lwslot_pending  <= 1'b0;
-        pipe.lwslot_lw2_word <= 32'h00000013;
-    end
-    else
-    begin
-        if (!pipe.stall_read)
-        begin
-            if (pipe.lwslot_pending)
-            begin
-                // LW2 foi emitida neste ciclo.
-                pipe.lwslot_pending <= 1'b0;
-
-                $display(
-                    "[LWSLOT] issue LW2=%h fetch_pc=%h",
-                    pipe.lwslot_lw2_word,
-                    pipe.fetch_pc
-                );
-            end
-            else if (pipe.lwslot_match)
-            begin
-                // LW1 está sendo emitida pelo mux neste mesmo ciclo.
-            if (inst_mem_read_data == 32'h02006053)
-                pipe.lwslot_lw2_word <= 32'hfe842783;
-
-            if (inst_mem_read_data == 32'h04006053)
-                pipe.lwslot_lw2_word <= 32'hfe842783;
-
-            if (inst_mem_read_data == 32'h06006053)
-                pipe.lwslot_lw2_word <= 32'hfec42783;
-
-                pipe.lwslot_pending <= 1'b1;
-
-                $display(
-                    "[LWSLOT] issue LW1=%h fetch_pc=%h",
-                    pipe.lwslot_lw1_selected,
-                    pipe.fetch_pc
-                );
-            end
-        end
-    end
-end
 
 // Stall read assignment for stalling while reading 
 

@@ -1,0 +1,6 @@
+tb_pipeline.v
+memory.v
+pipeline.v
+IF_ID.v
+execute.v
+wb.v

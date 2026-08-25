@@ -87,15 +87,6 @@
     reg           [31: 0] regs [31: 1];
     reg           [31: 0] teste;
     
-
-    // ================================================================
-    // LWSLOT - replay de LW1/LW2 sem alterar timing/fetch
-    // ================================================================
-    reg        lwslot_pending;
-    reg [31:0] lwslot_lw2_word;
-    wire       lwslot_match;
-    wire [31:0] lwslot_lw1_selected;
-
     // PC
 
     reg            [31: 0] pc;
