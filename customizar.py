@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CUSTOMIZADOR LW+LW / ADDI+ADDI, 2 -> 1, SEM NOP NO HEX.
+CUSTOMIZADOR FINAL LW+LW / ADDI+ADDI / SW+SW, 2 -> 1, SEM NOP NO HEX.
 
 Aceita somente pares:
   - LW + LW
@@ -54,7 +54,7 @@ def sext(v, bits):
     return (v ^ sign) - sign
 
 
-def decode_inst(h):
+def decode_sw(h):
     h = h.lower().replace("0x", "")
 
     if not re.fullmatch(r"[0-9a-f]{8}", h):
@@ -64,25 +64,19 @@ def decode_inst(h):
     opcode = w & 0x7f
     funct3 = (w >> 12) & 7
 
-    if opcode == 0x03 and funct3 == 0b010:
-        return {
-            "hex": h,
-            "type": "LW",
-            "rd": (w >> 7) & 31,
-            "rs1": (w >> 15) & 31,
-            "imm": sext((w >> 20) & 0xfff, 12),
-        }
+    if opcode != 0x23 or funct3 != 0b010:
+        die(f"{h} não é SW RV32I.")
 
-    if opcode == 0x13 and funct3 == 0b000:
-        return {
-            "hex": h,
-            "type": "ADDI",
-            "rd": (w >> 7) & 31,
-            "rs1": (w >> 15) & 31,
-            "imm": sext((w >> 20) & 0xfff, 12),
-        }
+    imm12 = (((w >> 25) & 0x7f) << 5) | ((w >> 7) & 0x1f)
 
-    die(f"{h} não é LW nem ADDI RV32I.")
+    return {
+        "hex": h,
+        "type": "SW",
+        "rd": 0,
+        "rs1": (w >> 15) & 31,
+        "rs2": (w >> 20) & 31,
+        "imm": sext(imm12, 12),
+    }
 
 
 
@@ -519,250 +513,33 @@ def choose_custom(words, rtl, extras):
 # pipeline.v
 # ============================================================================
 
-def patch_memory(path):
-    s = read(path)
-
-    # ---------------------------------------------------------------
-    # 1) Portas adicionais
-    # ---------------------------------------------------------------
-    if "fast_read1_address" not in s:
-        port_re = re.compile(
-            r"(?P<line>"
-            r"input\s+\[\s*31\s*:\s*2\s*\]\s+read2_address\s*"
-            r")"
-            r"(?P<close>\n\s*\)\s*;)",
-            re.MULTILINE,
-        )
-
-        m = port_re.search(s)
-
-        if not m:
-            die(
-                "memory.v: porta read2_address/fim da lista de portas "
-                "não localizada."
-            )
-
-        replacement = (
-            m.group("line").rstrip()
-            + ",\n"
-            + "    input       [31: 2] fast_read1_address,\n"
-            + "    input       [31: 2] fast_read2_address,\n"
-            + "    output      [31: 0] fast_read1_data,\n"
-            + "    output      [31: 0] fast_read2_data"
-            + m.group("close")
-        )
-
-        s = s[:m.start()] + replacement + s[m.end():]
-
-    # ---------------------------------------------------------------
-    # 2) Declarações internas dos índices.
-    #
-    # Não dependemos mais especificamente de "write2_addr".
-    # Procuramos a última declaração wire [ADDR-1:0] *_addr existente
-    # e acrescentamos os wires logo depois.
-    # ---------------------------------------------------------------
-    if not re.search(r"\bfast_read1_addr\b\s*;", s):
-        addr_wire_re = re.compile(
-            r"(?P<line>"
-            r"\bwire\s+"
-            r"\[\s*ADDR\s*-\s*1\s*:\s*0\s*\]\s+"
-            r"[A-Za-z_][A-Za-z0-9_]*_addr\s*;"
-            r")"
-        )
-
-        matches = list(addr_wire_re.finditer(s))
-
-        if matches:
-            m = matches[-1]
-            insertion = (
-                m.group("line")
-                + "\n"
-                + "    wire        [ADDR-1: 0] fast_read1_addr;\n"
-                + "    wire        [ADDR-1: 0] fast_read2_addr;"
-            )
-            s = s[:m.start()] + insertion + s[m.end():]
-        else:
-            # Fallback: insere antes do primeiro assign de endereço.
-            assign_pos = re.search(r"\n\s*assign\s+", s)
-
-            if not assign_pos:
-                die(
-                    "memory.v: não encontrei região para declarar "
-                    "fast_read1_addr/fast_read2_addr."
-                )
-
-            decl = (
-                "\n    wire        [ADDR-1: 0] fast_read1_addr;\n"
-                "    wire        [ADDR-1: 0] fast_read2_addr;\n"
-            )
-
-            s = s[:assign_pos.start()] + decl + s[assign_pos.start():]
-
-    # Validação imediata das declarações.
-    if not re.search(
-        r"\bwire\s+\[\s*ADDR\s*-\s*1\s*:\s*0\s*\]\s+fast_read1_addr\s*;",
-        s,
-    ):
-        die("memory.v: falha ao declarar fast_read1_addr.")
-
-    if not re.search(
-        r"\bwire\s+\[\s*ADDR\s*-\s*1\s*:\s*0\s*\]\s+fast_read2_addr\s*;",
-        s,
-    ):
-        die("memory.v: falha ao declarar fast_read2_addr.")
-
-    # ---------------------------------------------------------------
-    # 3) Assigns dos índices e leituras combinacionais.
-    # ---------------------------------------------------------------
-    if "assign fast_read1_addr" not in s:
-        # Usa como âncora qualquer assign de *_addr derivado de *_address.
-        candidates = list(
-            re.finditer(
-                r"assign\s+"
-                r"[A-Za-z_][A-Za-z0-9_]*_addr"
-                r"(?:\s*\[\s*ADDR\s*-\s*1\s*:\s*0\s*\])?"
-                r"\s*=\s*"
-                r"[A-Za-z_][A-Za-z0-9_]*_address"
-                r"\s*\[\s*ADDR\s*\+\s*1\s*:\s*2\s*\]\s*;",
-                s,
-            )
-        )
-
-        if not candidates:
-            die(
-                "memory.v: nenhum assign *_addr = *_address[ADDR+1:2] "
-                "localizado."
-            )
-
-        m = candidates[-1]
-
-        extra = (
-            m.group(0)
-            + "\n"
-            + "assign fast_read1_addr[ADDR-1:0] = "
-              "fast_read1_address[ADDR+1:2];\n"
-            + "assign fast_read2_addr[ADDR-1:0] = "
-              "fast_read2_address[ADDR+1:2];\n"
-            + "assign fast_read1_data = memory[fast_read1_addr];\n"
-            + "assign fast_read2_data = memory[fast_read2_addr];"
-        )
-
-        s = s[:m.start()] + extra + s[m.end():]
-
-    # ---------------------------------------------------------------
-    # 4) Sanidade final do memory.v gerado.
-    # ---------------------------------------------------------------
-    required = (
-        "fast_read1_address",
-        "fast_read2_address",
-        "fast_read1_data",
-        "fast_read2_data",
-        "fast_read1_addr",
-        "fast_read2_addr",
-        "assign fast_read1_addr",
-        "assign fast_read2_addr",
+def _extend_fused_sw_match(s, custom):
+    pat = re.compile(
+        r"(assign\s+fused_sw_match\s*=\s*)(.*?)(;)",
+        re.DOTALL,
     )
+    m = pat.search(s)
 
-    missing = [x for x in required if x not in s]
+    if not m:
+        die("pipeline.v: assign fused_sw_match não localizado.")
 
-    if missing:
-        die(
-            "memory.v: validação das portas rápidas falhou: "
-            + ", ".join(missing)
-        )
+    rhs = m.group(2).rstrip()
+    clause = f"(inst_mem_read_data == 32'h{custom})"
 
-    write(path, s)
+    if clause in rhs:
+        die(f"CUSTOM SW {custom} já existe.")
 
-def patch_tb(path):
-    s=read(path)
+    rhs += "\n        || " + clause
 
-    # Wires.
-    if "dmem_fast_read1_data_temp" not in s:
-        needle="    wire    [31: 0] dmem_read2_data_temp;\n"
-        if needle not in s:
-            die("tb_pipeline.v: dmem_read2_data_temp não localizado.")
-        s=s.replace(
-            needle,
-            needle+
-            "    wire    [31: 0] dmem_fast_read1_data_temp;\n"
-            "    wire    [31: 0] dmem_fast_read2_data_temp;\n",
-            1
-        )
-
-    # Data-memory instance.
-    if ".fast_read1_address" not in s:
-        needle="""        .read2_data(dmem_read2_data_temp),
-        .read2_address(pipe.dmem_read2_address[31:2]),"""
-        if needle not in s:
-            die("tb_pipeline.v: portas read2 da DMEM não localizadas.")
-        s=s.replace(
-            needle,
-            needle+
-            """
-        .fast_read1_address(pipe.fused_lw_fast_addr1[31:2]),
-        .fast_read2_address(pipe.fused_lw_fast_addr2[31:2]),
-        .fast_read1_data(dmem_fast_read1_data_temp),
-        .fast_read2_data(dmem_fast_read2_data_temp),""",
-            1
-        )
-
-        # Instruction-memory instance must also satisfy the new memory ports.
-        needle="""        .read2_data(inst_mem_read2_data),
-        .read2_address(pipe.inst_mem_port2_address[31:2]),"""
-        if needle not in s:
-            die("tb_pipeline.v: portas read2 da IMEM não localizadas.")
-        s=s.replace(
-            needle,
-            needle+
-            """
-        .fast_read1_address(30'h0),
-        .fast_read2_address(30'h0),
-        .fast_read1_data(),
-        .fast_read2_data(),""",
-            1
-        )
-
-    # Pipeline instance.
-    if ".dmem_fast_read1_data_temp" not in s:
-        needle="""    .dmem_read2_data_temp(dmem_read2_data_temp),"""
-        if needle not in s:
-            die("tb_pipeline.v: porta dmem_read2_data_temp não localizada.")
-        s=s.replace(
-            needle,
-            needle+
-            """
-    .dmem_fast_read1_data_temp(dmem_fast_read1_data_temp),
-    .dmem_fast_read2_data_temp(dmem_fast_read2_data_temp),""",
-            1
-        )
-
-    write(path,s)
+    return s[:m.start(2)] + rhs + s[m.end(2):]
 
 
-def _ternary_map(mappings, key, fmt, default):
-    parts=[]
-    for mp in mappings:
-        parts.append(
-            f"(inst_mem_read_data == 32'h{mp['custom']}) ? {fmt(mp)} :"
-        )
-    return "\n        ".join(parts) + f"\n        {default}"
-
-
-def verilog_s32(value):
-    value = int(value)
-    if value < 0:
-        return f"-32'sd{abs(value)}"
-    return f"32'sd{value}"
-
-
-def _prepend_ternary(s, signal, custom, value):
+def _wrap_assign_rhs(s, signal, new_rhs_builder):
     """
-    Acrescenta:
-       (inst_mem_read_data == CUSTOM) ? VALUE :
-    no início do RHS de um assign existente.
+    Localiza 'assign signal = RHS;' e substitui somente o RHS.
     """
     pat = re.compile(
-        rf"(assign\s+{re.escape(signal)}\s*=\s*)(.*?)(;)",
+        rf"(assign\s+{re.escape(signal)}\s*=\s*)(?P<rhs>.*?)(;)",
         re.DOTALL,
     )
     m = pat.search(s)
@@ -770,388 +547,209 @@ def _prepend_ternary(s, signal, custom, value):
     if not m:
         die(f"pipeline.v: assign {signal} não localizado.")
 
-    rhs = m.group(2)
+    old_rhs = m.group("rhs").strip()
+    new_rhs = new_rhs_builder(old_rhs)
 
-    clause = (
-        f"(inst_mem_read_data == 32'h{custom}) ? {value} :\n        "
-    )
+    return s[:m.start("rhs")] + new_rhs + s[m.end("rhs"):]
 
-    new_rhs = clause + rhs.lstrip()
 
-    return s[:m.start(2)] + new_rhs + s[m.end(2):]
-
-
-def _extend_match(s, custom):
-    pat = re.compile(
-        r"(assign\s+fused_lw_match\s*=\s*)(.*?)(;)",
-        re.DOTALL,
-    )
-    m = pat.search(s)
-
-    if not m:
-        die("pipeline.v: assign fused_lw_match não localizado.")
-
-    rhs = m.group(2).rstrip()
-
-    clause = f"(inst_mem_read_data == 32'h{custom})"
-
-    if clause in rhs:
-        die(f"CUSTOM {custom} já está em fused_lw_match.")
-
-    new_rhs = rhs + "\n        || " + clause
-
-    return s[:m.start(2)] + new_rhs + s[m.end(2):]
-
-
-def patch_pipeline(path, mappings):
-    s = read(path)
-
-    # ================================================================
-    # MODO INCREMENTAL:
-    # FUSED_LW já existe -> somente amplia as tabelas.
-    # ================================================================
-    if "fused_lw_valid" in s:
-        print("pipeline.v: FUSED_LW existente; ampliando tabela de CUSTOMs.")
-
-        for m in mappings:
-            custom = m["custom"]
-
-            s = _extend_match(
-                s,
-                custom,
-            )
-
-            s = _prepend_ternary(
-                s,
-                "fused_lw_rs1_1",
-                custom,
-                f"5'd{m['first']['rs1']}",
-            )
-
-            s = _prepend_ternary(
-                s,
-                "fused_lw_rs1_2",
-                custom,
-                f"5'd{m['second']['rs1']}",
-            )
-
-            s = _prepend_ternary(
-                s,
-                "fused_lw_rd1",
-                custom,
-                f"5'd{m['first']['rd']}",
-            )
-
-            s = _prepend_ternary(
-                s,
-                "fused_lw_rd2",
-                custom,
-                f"5'd{m['second']['rd']}",
-            )
-
-            s = _prepend_ternary(
-                s,
-                "fused_lw_imm1",
-                custom,
-                verilog_s32(m["first"]["imm"]),
-            )
-
-            s = _prepend_ternary(
-                s,
-                "fused_lw_imm2",
-                custom,
-                verilog_s32(m["second"]["imm"]),
-            )
-
-        bad_signed = re.search(r"\d+'sd-\d+", s)
-
-        if bad_signed:
-            die(
-                "pipeline.v: literal signed inválido após extensão: "
-                + bad_signed.group(0)
-            )
-
-        write(path, s)
-        return
-
-    # ================================================================
-    # PRIMEIRA INSTALAÇÃO
-    # ================================================================
-
-    # Add input ports for combinational dual-read data.
-    needle = """    input           [31: 0] dmem_read2_data_temp,"""
-
-    if needle not in s:
-        die(
-            "pipeline.v: dmem_read2_data_temp não localizado "
-            "na lista de portas."
-        )
-
-    s = s.replace(
-        needle,
-        needle
-        + """
-    input           [31: 0] dmem_fast_read1_data_temp,
-    input           [31: 0] dmem_fast_read2_data_temp,""",
-        1,
-    )
-
-    anchor = "    // PC"
-
-    if anchor not in s:
-        die("pipeline.v: seção // PC não localizada.")
-
-    rs11 = _ternary_map(
-        mappings,
-        "rs11",
-        lambda m: f"5'd{m['first']['rs1']}",
-        "5'd0",
-    )
-
-    rs12 = _ternary_map(
-        mappings,
-        "rs12",
-        lambda m: f"5'd{m['second']['rs1']}",
-        "5'd0",
-    )
-
-    rd1 = _ternary_map(
-        mappings,
-        "rd1",
-        lambda m: f"5'd{m['first']['rd']}",
-        "5'd0",
-    )
-
-    rd2 = _ternary_map(
-        mappings,
-        "rd2",
-        lambda m: f"5'd{m['second']['rd']}",
-        "5'd0",
-    )
-
-    imm1 = _ternary_map(
-        mappings,
-        "imm1",
-        lambda m: verilog_s32(m["first"]["imm"]),
-        "32'sd0",
-    )
-
-    imm2 = _ternary_map(
-        mappings,
-        "imm2",
-        lambda m: verilog_s32(m["second"]["imm"]),
-        "32'sd0",
-    )
-
-    matches = " ||\n        ".join(
-        f"(inst_mem_read_data == 32'h{m['custom']})"
-        for m in mappings
-    )
-
-    block = f"""
-    // ================================================================
-    // FUSED_LW - CUSTOM LW+LW real, dual-port, sem replay/sem NOP no HEX
-    // ================================================================
-    wire fused_lw_match;
-    wire fused_lw_valid;
-    wire [4:0] fused_lw_rs1_1;
-    wire [4:0] fused_lw_rs1_2;
-    wire [4:0] fused_lw_rd1;
-    wire [4:0] fused_lw_rd2;
-    wire signed [31:0] fused_lw_imm1;
-    wire signed [31:0] fused_lw_imm2;
-    wire [31:0] fused_lw_base1;
-    wire [31:0] fused_lw_base2;
-    wire [31:0] fused_lw_fast_addr1;
-    wire [31:0] fused_lw_fast_addr2;
-    wire [31:0] fused_lw_data1;
-    wire [31:0] fused_lw_data2;
-
-    assign fused_lw_match =
-        {matches};
-
-    assign fused_lw_valid =
-        fused_lw_match &&
-        !stall_read &&
-        !branch_stall;
-
-    assign fused_lw_rs1_1 =
-        {rs11};
-
-    assign fused_lw_rs1_2 =
-        {rs12};
-
-    assign fused_lw_rd1 =
-        {rd1};
-
-    assign fused_lw_rd2 =
-        {rd2};
-
-    assign fused_lw_imm1 =
-        {imm1};
-
-    assign fused_lw_imm2 =
-        {imm2};
-
-    assign fused_lw_base1 =
-        (fused_lw_rs1_1 == 5'd0) ? 32'd0 :
-        (!wb_stall &&
-         wb_alu_to_reg &&
-         wb_dest_reg_sel != 5'd0 &&
-         wb_dest_reg_sel == fused_lw_rs1_1) ?
-            (wb_mem_to_reg ? wb_read_data : wb_result) :
-            regs[fused_lw_rs1_1];
-
-    assign fused_lw_base2 =
-        (fused_lw_rs1_2 == 5'd0) ? 32'd0 :
-        (!wb_stall &&
-         wb_alu_to_reg &&
-         wb_dest_reg_sel != 5'd0 &&
-         wb_dest_reg_sel == fused_lw_rs1_2) ?
-            (wb_mem_to_reg ? wb_read_data : wb_result) :
-            regs[fused_lw_rs1_2];
-
-    assign fused_lw_fast_addr1 =
-        fused_lw_base1 + fused_lw_imm1;
-
-    assign fused_lw_fast_addr2 =
-        fused_lw_base2 + fused_lw_imm2;
-
-    assign fused_lw_data1 = dmem_fast_read1_data_temp;
-    assign fused_lw_data2 = dmem_fast_read2_data_temp;
-
-"""
-
-    s = s.replace(
-        anchor,
-        block + anchor,
-        1,
-    )
-
-    bad_signed = re.search(
-        r"\d+'sd-\d+",
-        s,
-    )
-
-    if bad_signed:
-        die(
-            "pipeline.v: literal Verilog signed inválido gerado: "
-            + bad_signed.group(0)
-        )
-
-    write(path, s)
-
-
-
-def _extend_addir_match(s, custom):
-    pat = re.compile(
-        r"(assign\s+pipe\.addir_match\s*=\s*)(.*?)(;)",
-        re.DOTALL,
-    )
-    m = pat.search(s)
-
-    if not m:
-        die("IF_ID.v: assign pipe.addir_match não localizado.")
-
-    rhs = m.group(2).rstrip()
-    clause = f"(inst_mem_read_data == 32'h{custom})"
-
-    if clause in rhs:
-        die(f"CUSTOM ADDI {custom} já existe.")
-
-    rhs += "\n        || " + clause
-    return s[:m.start(2)] + rhs + s[m.end(2):]
-
-
-def patch_pipeline_addi(path, mappings):
+def verilog_s32(value):
     """
-    ADDIR usa o pipeline normal. pipeline.v guarda somente estado/tabela.
+    Formata inteiro Python como constante signed de 32 bits em Verilog.
+    Exemplos:
+        12  -> 32'sd12
+        -20 -> -32'sd20
+    """
+    value = int(value)
+
+    if value < 0:
+        return f"-32'sd{-value}"
+
+    return f"32'sd{value}"
+
+
+def _ternary_map(mappings, key, fmt, default):
+    """
+    Gera uma cadeia ternária Verilog baseada na CUSTOM atual.
+
+    Exemplo:
+        (inst_mem_read_data == 32'hXXXXXXXX) ? VALOR :
+        (inst_mem_read_data == 32'hYYYYYYYY) ? VALOR :
+        DEFAULT
+    """
+    parts = []
+
+    for mp in mappings:
+        parts.append(
+            f"(inst_mem_read_data == 32'h{mp['custom']}) ? {fmt(mp)} :"
+        )
+
+    return "\n        ".join(parts) + f"\n        {default}"
+
+
+def patch_pipeline_sw(path, mappings):
+    """
+    SWR_NORMAL:
+      CUSTOM no HEX substitui SW1+SW2.
+      As duas SW são reexecutadas pelo datapath RV32I NORMAL.
+
+      Fluxo:
+        DETECT
+        -> DRAIN (espera instruções anteriores terminarem)
+        -> ISSUE1
+        -> ISSUE2
+        -> WAIT_WRITE (espera 2 writes reais na DMEM)
+        -> RESUME
+
+    Não calcula endereço/dado da SW em hardware customizado.
     """
     if not mappings:
         return
 
     s = read(path)
 
-    if "addir_state" in s:
-        print("pipeline.v: ADDIR existente; reutilizando FSM.")
+    if "swr_state" in s:
+        print("pipeline.v: SWR_NORMAL já instalada; reutilizando FSM.")
         return
 
     anchor = "    // PC"
-
     if anchor not in s:
-        die("pipeline.v: seção // PC não localizada para ADDIR.")
+        die("pipeline.v: seção // PC não localizada.")
 
     block = """
     // ================================================================
-    // ADDIR - ADDI+ADDI 2 -> 1 sem NOP no HEX
-    // Executa as ADDI pelo datapath normal para preservar ordem de WB.
+    // SWR_NORMAL - SW+SW 2 -> 1 no HEX, execução pelo datapath normal
     // ================================================================
-    reg  [2:0] addir_state;
-    reg        addir_seen;
-    reg [31:0] addir_resume_pc;
-    reg [31:0] addir_addi1_word;
-    reg [31:0] addir_addi2_word;
-    reg  [4:0] addir_rd2;
-    wire       addir_match;
-    wire       addir_detect_now;
-    wire       addir_hold_fetch;
-    wire       addir_resume_valid;
+    reg  [2:0]  swr_state;
+    reg         swr_seen;
+    reg  [1:0]  swr_write_count;
+    reg  [31:0] swr_resume_pc;
+    reg  [31:0] swr_inst2;
+
+    wire [31:0] swr_inst1_selected;
+    wire swr_match;
+    wire swr_detect;
+    wire swr_hold_fetch;
+    wire swr_resume_valid;
 
 """
-
     s = s.replace(anchor, block + anchor, 1)
     write(path, s)
 
 
-def patch_ifid_addi(path, mappings):
-    if not mappings:
-        return
+def _extend_assign_or(s, signal, custom):
+    pat = re.compile(
+        rf"(assign\s+pipe\.{re.escape(signal)}\s*=\s*)(.*?)(;)",
+        re.DOTALL,
+    )
+    m = pat.search(s)
 
+    if not m:
+        die(f"IF_ID.v: assign pipe.{signal} não localizado.")
+
+    rhs = m.group(2).rstrip()
+    clause = f"(inst_mem_read_data == 32'h{custom})"
+
+    if clause in rhs:
+        die(f"CUSTOM {custom} já existe em pipe.{signal}.")
+
+    rhs = rhs + "\n        || " + clause
+    return s[:m.start(2)] + rhs + s[m.end(2):]
+
+
+def _prepend_inst1_selector(s, custom, inst1):
+    pat = re.compile(
+        r"(assign\s+pipe\.swr_inst1_selected\s*=\s*)(.*?)(;)",
+        re.DOTALL,
+    )
+    m = pat.search(s)
+
+    if not m:
+        die("IF_ID.v: assign pipe.swr_inst1_selected não localizado.")
+
+    rhs = m.group(2).lstrip()
+
+    clause = (
+        f"(inst_mem_read_data == 32'h{custom}) ? "
+        f"32'h{inst1} :\n        "
+    )
+
+    if f"32'h{custom}" in rhs:
+        die(f"CUSTOM {custom} já existe no seletor SW1.")
+
+    rhs = clause + rhs
+    return s[:m.start(2)] + rhs + s[m.end(2):]
+
+
+def patch_ifid_sw(path, mappings):
     s = read(path)
 
-    # ---------------------------------------------------------------
-    # Incremental extension of existing ADDIR.
-    # ---------------------------------------------------------------
-    if "ADDIR_MULTI_BEGIN" in s:
-        print("IF_ID.v: ADDIR existente; ampliando tabela.")
+    # ================================================================
+    # INCREMENTAL: SWR_EXACT já existe.
+    # ================================================================
+    if "SWR_EXACT_BEGIN" in s:
+        print("IF_ID.v: SWR_EXACT existente; ampliando tabela de CUSTOMs.")
 
         for mp in mappings:
             custom = mp["custom"]
 
-            s = _extend_addir_match(s, custom)
+            # 1) Amplia match.
+            s = _extend_assign_or(
+                s,
+                "swr_match",
+                custom,
+            )
 
-            marker = "                // ADDIR_PAIR_TABLE_END"
+            # 2) Amplia seletor da primeira SW.
+            s = _prepend_inst1_selector(
+                s,
+                custom,
+                mp["inst1"],
+            )
+
+            # 3) Acrescenta SW2 na tabela do controller.
+            marker = "                // SWR_PAIR_TABLE_END"
             pos = s.find(marker)
 
             if pos < 0:
-                die("IF_ID.v: ADDIR_PAIR_TABLE_END não localizado.")
+                # Upgrade de uma V13 antiga que ainda não tinha marcador.
+                # Insere o marcador antes de:
+                # pipe.swr_state <= 3'd1;
+                detect_marker = "                pipe.swr_state <= 3'd1;"
 
-            pair = f"""                if(inst_mem_read_data == 32'h{custom})
+                pos2 = s.find(detect_marker)
+
+                if pos2 < 0:
+                    die(
+                        "IF_ID.v: ponto de inserção da tabela SW2 "
+                        "não localizado."
+                    )
+
+                s = (
+                    s[:pos2]
+                    + "                // SWR_PAIR_TABLE_END\n\n"
+                    + s[pos2:]
+                )
+
+                pos = s.find(marker)
+
+            entry = f"""                if(inst_mem_read_data == 32'h{custom})
                 begin
-                    pipe.addir_addi1_word <= 32'h{mp['inst1']};
-                    pipe.addir_addi2_word <= 32'h{mp['inst2']};
-                    pipe.addir_rd2 <= 5'd{mp['second']['rd']};
+                    pipe.swr_inst2 <= 32'h{mp['inst2']};
                 end
 
 """
 
-            s = s[:pos] + pair + s[pos:]
+            s = s[:pos] + entry + s[pos:]
 
         write(path, s)
         return
 
-    # ---------------------------------------------------------------
-    # First ADDIR installation.
-    # Wrap the CURRENT instruction RHS. It may already include FUSED_LW.
-    # ---------------------------------------------------------------
-    # Localiza a atribuição de pipe.instruction de forma tolerante.
-    # Aceita:
-    #   assign pipe.instruction = ...;
-    # e também variantes em que o gerador anterior inseriu comentários,
-    # quebras de linha ou espaços entre "assign" e "pipe.instruction".
+    # ================================================================
+    # PRIMEIRA INSTALAÇÃO.
+    # ================================================================
     pat = re.compile(
-        r"\bassign\s+"
-        r"pipe\s*\.\s*instruction\s*=\s*"
+        r"\bassign\s+pipe\s*\.\s*instruction\s*=\s*"
         r"(?P<rhs>.*?)"
         r";",
         re.DOTALL | re.MULTILINE,
@@ -1159,29 +757,7 @@ def patch_ifid_addi(path, mappings):
     m = pat.search(s)
 
     if not m:
-        # Fallback: procura somente "pipe.instruction =" e preserva
-        # tudo até o próximo ';'. Isso cobre IF_ID customizado anteriormente.
-        pat = re.compile(
-            r"pipe\s*\.\s*instruction\s*=\s*"
-            r"(?P<rhs>.*?)"
-            r";",
-            re.DOTALL | re.MULTILINE,
-        )
-        m = pat.search(s)
-
-    if not m:
-        # Diagnóstico útil em vez de simplesmente abortar.
-        candidates = [
-            line.strip()
-            for line in s.splitlines()
-            if "instruction" in line.lower()
-        ][:12]
-
-        die(
-            "IF_ID.v: não consegui localizar a atribuição de "
-            "pipe.instruction. Linhas candidatas: "
-            + " | ".join(candidates)
-        )
+        die("IF_ID.v: pipe.instruction não localizado.")
 
     old_rhs = m.group("rhs").strip()
 
@@ -1190,169 +766,160 @@ def patch_ifid_addi(path, mappings):
         for mp in mappings
     )
 
+    inst1_select = "\n        ".join(
+        f"(inst_mem_read_data == 32'h{mp['custom']}) ? "
+        f"32'h{mp['inst1']} :"
+        for mp in mappings
+    ) + "\n        32'h00000000"
+
     pair_lines = []
 
     for mp in mappings:
         pair_lines.append(
             f"""                if(inst_mem_read_data == 32'h{mp['custom']})
                 begin
-                    pipe.addir_addi1_word <= 32'h{mp['inst1']};
-                    pipe.addir_addi2_word <= 32'h{mp['inst2']};
-                    pipe.addir_rd2 <= 5'd{mp['second']['rd']};
+                    pipe.swr_inst2 <= 32'h{mp['inst2']};
                 end"""
         )
 
     pairs = "\n".join(pair_lines)
 
-    block = f"""// ADDIR_MULTI_BEGIN
-assign pipe.addir_match =
+    new_assign = f"""// SWR_EXACT_BEGIN
+assign pipe.swr_match =
         {matches};
 
-assign pipe.addir_detect_now =
-    (pipe.addir_state == 3'd0) &&
-    !pipe.addir_seen &&
-    pipe.addir_match;
+assign pipe.swr_detect =
+    (pipe.swr_state == 3'd0) &&
+    !pipe.swr_seen &&
+    pipe.swr_match &&
+    !pipe.stall_read;
 
-assign pipe.addir_hold_fetch =
-    pipe.addir_detect_now ||
-    (pipe.addir_state == 3'd1) ||
-    (pipe.addir_state == 3'd2) ||
-    (pipe.addir_state == 3'd3) ||
-    (pipe.addir_state == 3'd4);
+assign pipe.swr_inst1_selected =
+        {inst1_select};
 
-assign pipe.addir_resume_valid =
-    (pipe.addir_state == 3'd5);
+assign pipe.swr_hold_fetch =
+    pipe.swr_detect ||
+    (pipe.swr_state == 3'd1) ||
+    (pipe.swr_state == 3'd2);
+
+assign pipe.swr_resume_valid =
+    (pipe.swr_state == 3'd3);
 
 assign pipe.instruction =
-    (pipe.addir_state == 3'd1) ? NOP :
-    (pipe.addir_state == 3'd2) ? pipe.addir_addi1_word :
-    (pipe.addir_state == 3'd3) ? pipe.addir_addi2_word :
-    ((pipe.addir_state == 3'd4) ||
-     (pipe.addir_state == 3'd5) ||
-     pipe.addir_detect_now ||
-     (pipe.addir_seen && pipe.addir_match)) ? NOP :
+    pipe.swr_detect ? pipe.swr_inst1_selected :
+    (pipe.swr_state == 3'd1) ? pipe.swr_inst2 :
+    // SWR_ORIGINAL_FALLBACK_BEGIN
     ({old_rhs});
-// ADDIR_MULTI_END"""
+    // SWR_ORIGINAL_FALLBACK_END
+// SWR_EXACT_END"""
 
-    # Substitui a atribuição inteira. No fallback, garante que um possível
-    # "assign" imediatamente anterior também seja consumido.
-    replace_start = m.start()
-    prefix = s[max(0, replace_start - 16):replace_start]
-    if not s[replace_start:m.start("rhs")].lstrip().startswith("assign"):
-        am = re.search(r"assign\s*$", prefix)
-        if am:
-            replace_start = max(0, replace_start - 16) + am.start()
-
-    s = s[:replace_start] + block + s[m.end():]
+    s = s[:m.start()] + new_assign + s[m.end():]
 
     insert = s.find("// Stall read assignment")
 
     if insert < 0:
-        die("IF_ID.v: Stall read assignment não localizado para ADDIR.")
+        die("IF_ID.v: seção Stall read assignment não localizada.")
 
     fsm = f"""
-// -----------------------------------------------------------------------------
-// ADDIR controller
-//
-// 0 IDLE
-// 1 WAIT_OLD_WB
-// 2 ISSUE1
-// 3 ISSUE2
-// 4 WAIT_WB2
-// 5 RESUME
-// -----------------------------------------------------------------------------
+// ================================================================
+// SWR_EXACT controller
+// ================================================================
 always @(posedge clk or negedge reset)
 begin
     if(!reset)
     begin
-        pipe.addir_state <= 3'd0;
-        pipe.addir_seen <= 1'b0;
-        pipe.addir_resume_pc <= 32'd0;
-        pipe.addir_addi1_word <= 32'd0;
-        pipe.addir_addi2_word <= 32'd0;
-        pipe.addir_rd2 <= 5'd0;
+        pipe.swr_state <= 3'd0;
+        pipe.swr_seen <= 1'b0;
+        pipe.swr_write_count <= 2'd0;
+        pipe.swr_resume_pc <= 32'd0;
+        pipe.swr_inst2 <= 32'd0;
     end
     else
     begin
-        case(pipe.addir_state)
+        case(pipe.swr_state)
 
         3'd0:
         begin
-            if(pipe.addir_detect_now)
+            if(pipe.swr_detect)
             begin
-                pipe.addir_resume_pc <= pipe.fetch_pc + 32'd4;
-                pipe.addir_seen <= 1'b1;
+                pipe.swr_seen <= 1'b1;
+                pipe.swr_write_count <= 2'd0;
+                pipe.swr_resume_pc <= pipe.fetch_pc + 32'd8;
 
 {pairs}
-                // ADDIR_PAIR_TABLE_END
 
-                pipe.addir_state <= 3'd1;
+                // SWR_PAIR_TABLE_END
+
+                // SW1 já está sendo decodificada neste ciclo.
+                pipe.swr_state <= 3'd1;
 
                 $display(
-                    "[ADDIR] detect fetch=%h resume=%h",
+                    "[SWR] DETECT+ISSUE1 pc=%h inst1=%h resume=%h",
                     pipe.fetch_pc,
-                    pipe.fetch_pc + 32'd4
+                    pipe.swr_inst1_selected,
+                    pipe.fetch_pc + 32'd8
                 );
             end
-            else if(!pipe.addir_match)
+            else if(!pipe.swr_match)
             begin
-                pipe.addir_seen <= 1'b0;
+                pipe.swr_seen <= 1'b0;
             end
         end
 
-        // Aguarda instruções antigas saírem do WB.
-        // Dois ciclos limpos são usados porque a CUSTOM é detectada
-        // enquanto instruções anteriores ainda podem estar em EX/WB.
         3'd1:
         begin
-            if(!pipe.wb_stall &&
-               !pipe.stall_read &&
-               !(pipe.wb_alu_to_reg && pipe.wb_dest_reg_sel != 5'd0))
+            pipe.swr_state <= 3'd2;
+
+            if(pipe.dmem_write_ready)
             begin
-                pipe.addir_state <= 3'd2;
-                $display("[ADDIR] pipeline anterior drenado");
-            end
-        end
-
-        // ADDI1 entra no decoder normal.
-        3'd2:
-        begin
-            pipe.addir_state <= 3'd3;
-            $display("[ADDIR] issue1=%h", pipe.addir_addi1_word);
-        end
-
-        // ADDI2 entra no decoder normal no ciclo seguinte.
-        3'd3:
-        begin
-            pipe.addir_state <= 3'd4;
-            $display("[ADDIR] issue2=%h", pipe.addir_addi2_word);
-        end
-
-        // Espera ADDI2 efetivamente chegar ao write-back.
-        3'd4:
-        begin
-            if(pipe.wb_alu_to_reg &&
-               !pipe.wb_mem_to_reg &&
-               !pipe.wb_stall &&
-               (pipe.wb_dest_reg_sel == pipe.addir_rd2))
-            begin
-                pipe.addir_state <= 3'd5;
+                pipe.swr_write_count <= pipe.swr_write_count + 2'd1;
 
                 $display(
-                    "[ADDIR] WB2 concluido rd=x%0d data=%h",
-                    pipe.addir_rd2,
-                    pipe.wb_result
+                    "[SWR] WRITE count=%0d addr=%h data=%h",
+                    pipe.swr_write_count + 2'd1,
+                    pipe.dmem_write_address,
+                    pipe.dmem_write_data
                 );
+            end
+
+            $display("[SWR] ISSUE2=%h", pipe.swr_inst2);
+        end
+
+        3'd2:
+        begin
+            if(pipe.dmem_write_ready)
+            begin
+                $display(
+                    "[SWR] WRITE count=%0d addr=%h data=%h",
+                    pipe.swr_write_count + 2'd1,
+                    pipe.dmem_write_address,
+                    pipe.dmem_write_data
+                );
+
+                if(pipe.swr_write_count >= 2'd1)
+                begin
+                    pipe.swr_write_count <= 2'd0;
+                    pipe.swr_state <= 3'd3;
+
+                    $display(
+                        "[SWR] duas SW concluidas; resume=%h",
+                        pipe.swr_resume_pc
+                    );
+                end
+                else
+                begin
+                    pipe.swr_write_count <= 2'd1;
+                end
             end
         end
 
-        3'd5:
+        3'd3:
         begin
-            pipe.addir_state <= 3'd0;
+            pipe.swr_state <= 3'd0;
         end
 
         default:
-            pipe.addir_state <= 3'd0;
+            pipe.swr_state <= 3'd0;
 
         endcase
     end
@@ -1362,31 +929,34 @@ end
 
     s = s[:insert] + fsm + s[insert:]
 
-    # Permit replayed instructions to advance through decode.
     target = "else if (!pipe.stall_read ||"
 
-    if target in s:
-        s = s.replace(
-            target,
-            (
-                "else if (!pipe.stall_read || "
-                "(pipe.addir_state == 3'd2) || "
-                "(pipe.addir_state == 3'd3) ||"
-            ),
-            1,
+    if target not in s:
+        die(
+            "IF_ID.v: condição principal do decode "
+            "'else if (!pipe.stall_read ||' não localizada."
         )
+
+    s = s.replace(
+        target,
+        "else if (!pipe.stall_read || "
+        "pipe.swr_detect || "
+        "(pipe.swr_state == 3'd1) ||",
+        1,
+    )
 
     write(path, s)
 
 
-def patch_execute_addi(path):
+
+def patch_execute_sw(path):
     s = read(path)
 
-    if "pipe.addir_resume_valid" in s:
-        print("execute.v: ADDIR já instalado.")
+    if "pipe.swr_resume_valid" in s:
+        print("execute.v: SWR_NORMAL já instalado.")
         return
 
-    # Insert priority immediately before the normal !stall_read PC update.
+    # Fetch PC priority.
     pat = re.compile(
         r"(if\s*\(\s*!reset\s*\)\s*"
         r"\n\s*begin\s*"
@@ -1397,17 +967,16 @@ def patch_execute_addi(path):
     )
 
     m = pat.search(s)
-
     if not m:
-        die("execute.v: bloco fetch_pc original não localizado para ADDIR.")
+        die("execute.v: bloco fetch_pc não localizado.")
 
     repl = (
         m.group(1)
-        + """else if (pipe.addir_resume_valid)
+        + """else if (pipe.swr_resume_valid)
     begin
-        pipe.fetch_pc <= pipe.addir_resume_pc;
+        pipe.fetch_pc <= pipe.swr_resume_pc;
     end
-    else if (pipe.addir_hold_fetch)
+    else if (pipe.swr_hold_fetch)
     begin
         pipe.fetch_pc <= pipe.fetch_pc;
     end
@@ -1416,35 +985,28 @@ def patch_execute_addi(path):
 
     s = s[:m.start()] + repl + s[m.end():]
 
-    # Keep replayed ADDIs moving through EX even though fetch is held.
-    occurrences = list(
-        re.finditer(
-            r"else\s+if\s*\(!pipe\.stall_read\s*\|\|",
-            s,
-        )
-    )
-
-    if occurrences:
-        m2 = occurrences[-1]
-
+    # Ensure replayed SWs progress into WB.
+    # Find the WB pipeline always block condition and permit states 2/3.
+    marker = "else if (!pipe.stall_read ||"
+    pos = s.rfind(marker)
+    if pos >= 0:
         s = (
-            s[:m2.start()]
-            + (
-                "else if (!pipe.stall_read || "
-                "(pipe.addir_state == 3'd2) || "
-                "(pipe.addir_state == 3'd3) ||"
-            )
-            + s[m2.end():]
+            s[:pos]
+            + "else if (!pipe.stall_read || "
+              "(pipe.swr_state == 3'd1) || "
+              "(pipe.swr_state == 3'd2) || "
+              "(pipe.swr_state == 3'd3) ||"
+            + s[pos + len(marker):]
         )
 
     write(path, s)
 
 
-def patch_wb_addi(path):
+def patch_wb_sw(path):
     s = read(path)
 
-    if "pipe.addir_resume_valid" in s:
-        print("wb.v: ADDIR já instalado.")
+    if "pipe.swr_resume_valid" in s:
+        print("wb.v: SWR_NORMAL já instalado.")
         return
 
     pat = re.compile(
@@ -1457,17 +1019,16 @@ def patch_wb_addi(path):
     )
 
     m = pat.search(s)
-
     if not m:
-        die("wb.v: bloco inst_fetch_pc não localizado para ADDIR.")
+        die("wb.v: bloco inst_fetch_pc não localizado.")
 
     repl = (
         m.group(1)
-        + """else if (pipe.addir_resume_valid)
+        + """else if (pipe.swr_resume_valid)
     begin
-        pipe.inst_fetch_pc <= pipe.addir_resume_pc;
+        pipe.inst_fetch_pc <= pipe.swr_resume_pc;
     end
-    else if (pipe.addir_hold_fetch)
+    else if (pipe.swr_hold_fetch)
     begin
         pipe.inst_fetch_pc <= pipe.inst_fetch_pc;
     end
@@ -1478,204 +1039,187 @@ def patch_wb_addi(path):
     write(path, s)
 
 
-def validate_addi(dest, mappings):
-    if not mappings:
-        return
-
+def validate_sw(dest, mappings):
     p = read(dest / "pipeline.v")
     i = read(dest / "IF_ID.v")
     e = read(dest / "execute.v")
     w = read(dest / "wb.v")
 
     checks = {
-        "ADDIR state": "addir_state" in p,
-        "ADDIR table": "ADDIR_MULTI_BEGIN" in i,
-        "normal datapath issue1": "pipe.addir_addi1_word" in i,
-        "normal datapath issue2": "pipe.addir_addi2_word" in i,
-        "wait normal WB": "!pipe.wb_mem_to_reg" in i,
-        "fetch hold": "pipe.addir_hold_fetch" in e,
-        "fetch resume": "pipe.fetch_pc <= pipe.addir_resume_pc;" in e,
-        "inst resume": "pipe.inst_fetch_pc <= pipe.addir_resume_pc;" in w,
-        "sem direct fused write": "FUSED_ADDI_WRITEBACK" not in i,
+        "state": "swr_state" in p,
+        "exact block": "SWR_EXACT_BEGIN" in i,
+        "SW1 no detect": "pipe.swr_detect ? pipe.swr_inst1_selected" in i,
+        "SW2 no ciclo seguinte":
+            "(pipe.swr_state == 3'd1) ? pipe.swr_inst2" in i,
+        "sem drain": "swr_drain_count" not in p,
+        "2 writes reais": "duas SW concluidas" in i,
+        "hold fetch": "pipe.swr_hold_fetch" in e,
+        "resume fetch": "pipe.fetch_pc <= pipe.swr_resume_pc;" in e,
+        "resume wb": "pipe.inst_fetch_pc <= pipe.swr_resume_pc;" in w,
     }
 
     for mp in mappings:
-        checks[f"ADDI custom {mp['pair']}"] = (
+        checks[f"custom {mp['pair']}"] = (
             f"32'h{mp['custom']}" in i
         )
+
+    b = i.find("// SWR_EXACT_BEGIN")
+    fallback = i.find("// SWR_ORIGINAL_FALLBACK_BEGIN", b)
+
+    if b >= 0 and fallback > b:
+        custom_region = i[b:fallback]
+        checks["sem NOP custom"] = (
+            "? NOP" not in custom_region
+            and "32'h00000013" not in custom_region
+        )
+    else:
+        checks["sem NOP custom"] = False
 
     bad = [k for k, v in checks.items() if not v]
 
     if bad:
-        die("validação ADDIR falhou: " + ", ".join(bad))
+        die("validação SWR_EXACT falhou: " + ", ".join(bad))
 
-    print("Validação ADDIR: OK")
+    print("Validação SWR_EXACT: OK")
 
 
 
-def patch_ifid(path, mappings):
-    s = read(path)
-
-    # ================================================================
-    # DETECÇÃO ROBUSTA DE FUSED_LW JÁ INSTALADA
-    #
-    # Versões anteriores podem não conter o comentário FUSED_LW_MASK.
-    # Portanto verificamos a lógica real, e não apenas o marcador textual.
-    # ================================================================
-    already_has_mask = (
-        "FUSED_LW_MASK" in s
-        or "pipe.fused_lw_valid ? NOP" in s
-        or "pipe.fused_lw_valid" in s
-    )
-
-    already_has_writeback = (
-        "pipe.fused_lw_rd1" in s
-        and "pipe.fused_lw_rd2" in s
-        and "pipe.fused_lw_data1" in s
-        and "pipe.fused_lw_data2" in s
-    )
-
-    if already_has_mask and already_has_writeback:
-        print(
-            "IF_ID.v: FUSED_LW já instalada "
-            "(detectada estruturalmente); reutilizando."
-        )
-        return
-
-    # ---------------------------------------------------------------
-    # Caso parcialmente instalado: não duplicar o que já existe.
-    # ---------------------------------------------------------------
-
-    # 1) Mascara CUSTOM LW no decoder normal.
-    if not already_has_mask:
-        pat = re.compile(
-            r"\bassign\s+pipe\s*\.\s*instruction\s*=\s*"
-            r"(?P<rhs>.*?)"
-            r";",
-            re.DOTALL | re.MULTILINE,
-        )
-
-        m = pat.search(s)
-
-        if not m:
-            candidates = [
-                line.strip()
-                for line in s.splitlines()
-                if "instruction" in line.lower()
-            ][:15]
-
-            die(
-                "IF_ID.v: pipe.instruction não localizado para instalar "
-                "FUSED_LW. Candidatas: "
-                + " | ".join(candidates)
-            )
-
-        old_rhs = m.group("rhs").strip()
-
-        new_assign = f"""// FUSED_LW_MASK
-assign pipe.instruction =
-    pipe.fused_lw_valid ? NOP :
-    ({old_rhs});"""
-
-        s = s[:m.start()] + new_assign + s[m.end():]
-
-    # 2) Writeback duplo.
-    if not already_has_writeback:
-        regpos = s.find("integer i;")
-
-        if regpos < 0:
-            die(
-                "IF_ID.v: banco de registradores não localizado "
-                "para FUSED_LW."
-            )
-
-        m = re.search(
-            r"\nelse\s+if\s*\(",
-            s[regpos:],
-        )
-
-        if not m:
-            die(
-                "IF_ID.v: primeiro else-if do register file "
-                "não localizado para FUSED_LW."
-            )
-
-        at = regpos + m.start()
-
-        wb = """// FUSED_LW_WRITEBACK
-else if (pipe.fused_lw_valid)
-begin
-    if (pipe.fused_lw_rd1 != 5'd0)
-        pipe.regs[pipe.fused_lw_rd1] <= pipe.fused_lw_data1;
-
-    if (pipe.fused_lw_rd2 != 5'd0)
-        pipe.regs[pipe.fused_lw_rd2] <= pipe.fused_lw_data2;
-
-    $display(
-        "[FUSED_LW] rd1=x%0d data1=%h addr1=%h rd2=x%0d data2=%h addr2=%h",
-        pipe.fused_lw_rd1,
-        pipe.fused_lw_data1,
-        pipe.fused_lw_fast_addr1,
-        pipe.fused_lw_rd2,
-        pipe.fused_lw_data2,
-        pipe.fused_lw_fast_addr2
-    );
-end
-"""
-
-        s = s[:at] + "\n" + wb + s[at:]
-
-    write(path, s)
-
-def validate(dest,mappings):
-    p=read(dest/"pipeline.v")
-    i=read(dest/"IF_ID.v")
-    m=read(dest/"memory.v")
-    t=read(dest/"tb_pipeline.v")
-
-    checks={
-        "dual memory":"fast_read1_data" in m and "fast_read2_data" in m,
-        "pipeline fast inputs":"dmem_fast_read1_data_temp" in p,
-        "fused valid":"fused_lw_valid" in p,
-        "mask normal decode":"FUSED_LW_MASK" in i,
-        "dual writeback":"pipe.fused_lw_rd1" in i and "pipe.fused_lw_rd2" in i,
-        "tb dmem fast":".fast_read1_address(pipe.fused_lw_fast_addr1[31:2])" in t,
-        "sem replay":"replay2_state" not in p,
-    }
-
-    for mp in mappings:
-        checks[f"custom {mp['pair']}"]=f"32'h{mp['custom']}" in p
-
-    bad=[k for k,v in checks.items() if not v]
-    if bad:
-        die("validação FUSED_LW falhou: "+", ".join(bad))
-
-    print("Validação FUSED_LW: OK")
-def apply(base,dest):
+def apply(base, dest):
+    """
+    Aplica todos os arquivos necessários para LW/ADDI/SW.
+    """
     for name in (
         "pipeline.v",
         "IF_ID.v",
+        "execute.v",
+        "wb.v",
         "memory.v",
         "tb_pipeline.v",
         "imem_custom.hex",
     ):
-        src=dest/name
+        src = dest / name
         if not src.exists():
             continue
-        dst=base/name
+
+        dst = base / name
+
         if dst.exists():
-            bak=base/f"{name}.pre_fused_lw"
+            bak = base / f"{name}.pre_custom_multi"
             if not bak.exists():
-                shutil.copy2(dst,bak)
-        shutil.copy2(src,dst)
+                shutil.copy2(dst, bak)
+
+        shutil.copy2(src, dst)
         print(f"aplicado: {src} -> {dst}")
+
+
+
+def verify_generated_hex(old_words, new_words, mappings):
+    """
+    Garante que cada par selecionado virou uma CUSTOM no HEX final.
+    """
+    errors = []
+
+    for mp in mappings:
+        custom = mp["custom"]
+        inst1 = mp["inst1"]
+        inst2 = mp["inst2"]
+
+        if custom not in new_words:
+            errors.append(
+                f"Par {mp['pair']} [{mp['type']}]: CUSTOM {custom} não apareceu no HEX final."
+            )
+
+        # Se o mesmo par continuar consecutivo, algo deu errado na compactação.
+        if any(
+            new_words[i] == inst1 and new_words[i + 1] == inst2
+            for i in range(len(new_words) - 1)
+        ):
+            errors.append(
+                f"Par {mp['pair']} [{mp['type']}]: "
+                f"{inst1} {inst2} ainda aparece consecutivo no HEX final."
+            )
+
+    if errors:
+        die(
+            "validação do HEX customizado falhou:\n  "
+            + "\n  ".join(errors)
+        )
+
+    print("Validação do HEX 2->1: OK")
+    for mp in mappings:
+        print(
+            f"  Par {mp['pair']:02d} [{mp['type']}]: "
+            f"{mp['inst1']} + {mp['inst2']} -> {mp['custom']}"
+        )
+
+
+def replace_pairs_in_place(words, mappings):
+    work = list(words)
+    located = []
+
+    for mp in mappings:
+        a = mp["inst1"]
+        b = mp["inst2"]
+        occurrence = mp.get("occurrence")
+
+        matches = [
+            i for i in range(len(work) - 1)
+            if work[i] == a and work[i + 1] == b
+        ]
+
+        if not matches:
+            die(
+                f"Par {mp['pair']} [SW] não encontrado no HEX: "
+                f"{a} + {b}"
+            )
+
+        if occurrence is None:
+            if len(matches) != 1:
+                die(
+                    f"Par {mp['pair']} ocorre {len(matches)} vezes. "
+                    "Informe --ocorrencias."
+                )
+            idx = matches[0]
+        else:
+            if occurrence < 1 or occurrence > len(matches):
+                die(
+                    f"Par {mp['pair']}: ocorrência {occurrence} inválida."
+                )
+            idx = matches[occurrence - 1]
+
+        work[idx] = mp["custom"]
+
+        located.append(
+            {
+                "custom": mp["custom"],
+                "old_pc": idx * 4,
+                "new_pc": idx * 4,
+                "second_pc": (idx + 1) * 4,
+            }
+        )
+
+    return work, located
+
+
+def verify_in_place_hex(old_words, new_words, mappings):
+    if len(old_words) != len(new_words):
+        die("HEX in-place alterou o tamanho.")
+
+    for mp in mappings:
+        if mp["custom"] not in new_words:
+            die(f"CUSTOM {mp['custom']} não apareceu no HEX final.")
+
+    print("Validação HEX in-place: OK")
+    print("PCs preservados; BRANCH/JAL não foram relocados.")
 
 
 def main():
     ap = argparse.ArgumentParser(
         description=(
-            "Customizador incremental LW+LW e ADDI+ADDI, "
-            "2 -> 1 sem NOP no HEX."
+            "Customizador SW+SW 2 -> 1 sem NOP no HEX e sem NOP na FSM. "
+            "Captura operandos com forwarding EX->WB->REG, "
+            "espera stores antigas, executa WRITE1 e WRITE2 em sequência "
+            "e então retoma o fluxo."
         )
     )
 
@@ -1686,10 +1230,7 @@ def main():
         "--originais",
         nargs="+",
         required=True,
-        help=(
-            "Pares LW+LW ou ADDI+ADDI. "
-            "Ex.: LW1 LW2 ADDI1 ADDI2"
-        ),
+        help="Pares SW1 SW2 SW3 SW4 ...",
     )
 
     ap.add_argument(
@@ -1697,7 +1238,8 @@ def main():
         nargs="+",
         type=int,
         help=(
-            "Ocorrência 1-based de cada par no HEX atual."
+            "Ocorrência 1-based de cada par SW no HEX atual. "
+            "Use quando o mesmo par aparece mais de uma vez."
         ),
     )
 
@@ -1709,7 +1251,7 @@ def main():
     args = ap.parse_args()
 
     if len(args.originais) < 2 or len(args.originais) % 2:
-        die("--originais precisa conter quantidade PAR de instruções.")
+        die("--originais precisa conter uma quantidade PAR de SW.")
 
     if not args.base.is_dir():
         die(f"base inexistente: {args.base}")
@@ -1722,12 +1264,12 @@ def main():
     shutil.copytree(args.base, args.destino)
 
     words = parse_hex(args.hex_entrada)
-
     pair_count = len(args.originais) // 2
 
     if args.ocorrencias is not None and len(args.ocorrencias) != pair_count:
         die(
-            f"--ocorrencias deve possuir {pair_count} valor(es)."
+            f"--ocorrencias deve possuir {pair_count} valor(es), "
+            "um para cada par SW."
         )
 
     rtl = "".join(
@@ -1739,22 +1281,10 @@ def main():
     custom_extra = set()
 
     for i in range(0, len(args.originais), 2):
-        first = decode_inst(args.originais[i])
-        second = decode_inst(args.originais[i + 1])
+        first = decode_sw(args.originais[i])
+        second = decode_sw(args.originais[i + 1])
 
-        if first["type"] != second["type"]:
-            die(
-                f"Par {i//2+1}: tipos diferentes "
-                f"{first['type']} + {second['type']}. "
-                "Use LW+LW ou ADDI+ADDI."
-            )
-
-        custom = choose_custom(
-            words,
-            rtl,
-            custom_extra,
-        )
-
+        custom = choose_custom(words, rtl, custom_extra)
         custom_extra.add(custom)
 
         mappings.append(
@@ -1765,7 +1295,7 @@ def main():
                     if args.ocorrencias is not None
                     else None
                 ),
-                "type": first["type"],
+                "type": "SW",
                 "inst1": first["hex"],
                 "inst2": second["hex"],
                 "custom": custom,
@@ -1774,8 +1304,10 @@ def main():
             }
         )
 
-    # Compacta todos os pares NOVOS desta execução em uma única passagem.
-    work, located, total_reloc = compact_all_global(words, mappings)
+    work, located = replace_pairs_in_place(words, mappings)
+    verify_in_place_hex(words, work, mappings)
+
+    total_reloc = 0
 
     by_custom = {x["custom"]: x for x in located}
 
@@ -1783,6 +1315,7 @@ def main():
         loc = by_custom[m["custom"]]
         m["old_pc"] = loc["old_pc"]
         m["new_pc"] = loc["new_pc"]
+        m["second_pc"] = loc["second_pc"]
 
     args.hex_saida.parent.mkdir(parents=True, exist_ok=True)
     args.hex_saida.write_text(
@@ -1791,61 +1324,35 @@ def main():
     )
 
     dest_hex = args.destino / "imem_custom.hex"
-
     if args.hex_saida.resolve() != dest_hex.resolve():
         shutil.copy2(args.hex_saida, dest_hex)
 
-    lw_maps = [m for m in mappings if m["type"] == "LW"]
-    addi_maps = [m for m in mappings if m["type"] == "ADDI"]
-
-    # LW dual-port.
-    if lw_maps:
-        patch_memory(args.destino / "memory.v")
-        patch_pipeline(args.destino / "pipeline.v", lw_maps)
-        patch_ifid(args.destino / "IF_ID.v", lw_maps)
-        patch_tb(args.destino / "tb_pipeline.v")
-        validate(args.destino, lw_maps)
-
-    # ADDI usa replay pelo datapath normal para preservar ordem de WB.
-    if addi_maps:
-        patch_pipeline_addi(
-            args.destino / "pipeline.v",
-            addi_maps,
-        )
-        patch_ifid_addi(
-            args.destino / "IF_ID.v",
-            addi_maps,
-        )
-        patch_execute_addi(
-            args.destino / "execute.v",
-        )
-        patch_wb_addi(
-            args.destino / "wb.v",
-        )
-        validate_addi(
-            args.destino,
-            addi_maps,
-        )
+    patch_pipeline_sw(args.destino / "pipeline.v", mappings)
+    patch_ifid_sw(args.destino / "IF_ID.v", mappings)
+    patch_execute_sw(args.destino / "execute.v")
+    patch_wb_sw(args.destino / "wb.v")
+    validate_sw(args.destino, mappings)
 
     print()
     print("=" * 76)
-    print("FUSED MULTI - LW+LW / ADDI+ADDI, 2 -> 1 SEM NOP")
+    print("SW CUSTOM MULTI - SW+SW -> 1 CUSTOM SEM NOP")
     print("=" * 76)
 
     for mp in mappings:
         print(
-            f"Par {mp['pair']:02d} [{mp['type']}]: "
+            f"Par {mp['pair']:02d} [SW]: "
             f"{mp['inst1']} + {mp['inst2']} "
             f"-> CUSTOM={mp['custom']} "
-            f"PC antigo=0x{mp['old_pc']:08x} "
-            f"PC novo=0x{mp['new_pc']:08x}"
+            f"PC CUSTOM=0x{mp['new_pc']:08x} "
+            f"SW2 mantida em=0x{mp['second_pc']:08x}"
         )
 
-    print(f"HEX: {len(words)} -> {len(work)} palavras")
-    print(f"Relocações BRANCH/JAL: {total_reloc}")
+    print(f"HEX: {len(words)} -> {len(work)} palavras (tamanho preservado)")
+    print("Relocações BRANCH/JAL: 0 (PCs preservados)")
     print("NOP inserido no HEX: NÃO")
-    print("LW  : dual-port combinacional")
-    print("ADDI: replay pelo datapath normal, preservando ordem de write-back")
+    print("SW2 permanece no HEX e é pulada com resume=PC+8")
+    print("SW: DETECT+ISSUE1 -> ISSUE2 -> 2xDMEM_WRITE -> RESUME")
+    print("Operandos SW: datapath/forwarding normal do processador")
     print("=" * 76)
 
     if args.aplicar_no_base:
