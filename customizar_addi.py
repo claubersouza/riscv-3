@@ -40,13 +40,16 @@ python3 customizar_addi2x_sem_nop.py BASE DESTINO \
     --originais ADDI1 ADDI2 \
     --sobrescrever
 
-Para vários pares na mesma execução:
+Para vários pares na mesma execução (também continua suportado):
 
     --originais ADDI1 ADDI2 ADDI3 ADDI4 ...
 
 Opcional:
     --ocorrencias 1 1 ...
     --aplicar-no-base
+
+Também aceita novas execuções sobre uma base que já contém ADDI2X_V1.
+Nesse caso entra automaticamente em modo incremental.
 """
 
 from __future__ import annotations
@@ -526,6 +529,69 @@ def patch_pipeline(path: Path, mappings: list[dict]):
     print("pipeline.v: datapath ADDI2X instalado.")
 
 
+
+def _append_before_assignment_default(s: str, signal: str, new_lines: list[str]) -> str:
+    """Adiciona novos termos a um assign ADDI2X já existente, antes do valor default."""
+    pat = re.compile(rf"assign\s+{re.escape(signal)}\s*=", re.MULTILINE)
+    m = pat.search(s)
+    if not m:
+        die(f"pipeline.v incremental: assign {signal} não localizado.")
+    semi = s.find(";", m.end())
+    if semi < 0:
+        die(f"pipeline.v incremental: fim de {signal} não localizado.")
+    body = s[m.end():semi]
+    # Todas as tabelas geradas originalmente terminam em um default simples.
+    lines = body.rstrip().splitlines()
+    if not lines:
+        die(f"pipeline.v incremental: corpo vazio em {signal}.")
+    # Última linha não vazia é o default (5'd0, 32'sd0, 1'b0 etc.).
+    last_i = len(lines) - 1
+    while last_i >= 0 and not lines[last_i].strip():
+        last_i -= 1
+    default_line = lines[last_i]
+    indent = re.match(r"\s*", default_line).group(0)
+    insertion = "\n".join(indent + x for x in new_lines)
+    new_body = "\n".join(lines[:last_i])
+    if new_body:
+        new_body += "\n"
+    new_body += insertion + "\n" + default_line
+    return s[:m.end()] + new_body + s[semi:]
+
+
+def patch_pipeline_incremental(path: Path, mappings: list[dict]):
+    """Reutiliza ADDI2X_V1 já instalado e acrescenta somente novos mapeamentos."""
+    s = read(path)
+    if MARK not in s:
+        die("pipeline.v incremental: ADDI2X_V1 não encontrado.")
+
+    # 1) Match das novas CUSTOMs.
+    pat = re.compile(r"assign\s+addi2x_fetch_match\s*=", re.MULTILINE)
+    m = pat.search(s)
+    if not m:
+        die("pipeline.v incremental: addi2x_fetch_match não localizado.")
+    semi = s.find(";", m.end())
+    if semi < 0:
+        die("pipeline.v incremental: fim de addi2x_fetch_match não localizado.")
+    body = s[m.end():semi].rstrip()
+    extras = "".join(f" ||\n        (instruction == 32'h{mp['custom']})" for mp in mappings)
+    s = s[:m.end()] + body + extras + s[semi:]
+
+    # 2) Acrescenta linhas nas tabelas, antes dos defaults existentes.
+    specs = [
+        ("addi2x_fetch_rs1a", lambda x: f"(instruction == 32'h{x['custom']}) ? 5'd{x['first']['rs1']} :"),
+        ("addi2x_fetch_rs1b", lambda x: f"(instruction == 32'h{x['custom']}) ? 5'd{x['second']['rs1']} :"),
+        ("addi2x_fetch_rd1",  lambda x: f"(instruction == 32'h{x['custom']}) ? 5'd{x['first']['rd']} :"),
+        ("addi2x_fetch_rd2",  lambda x: f"(instruction == 32'h{x['custom']}) ? 5'd{x['second']['rd']} :"),
+        ("addi2x_fetch_imm1", lambda x: f"(instruction == 32'h{x['custom']}) ? {v_s32(x['first']['imm'])} :"),
+        ("addi2x_fetch_imm2", lambda x: f"(instruction == 32'h{x['custom']}) ? {v_s32(x['second']['imm'])} :"),
+        ("addi2x_fetch_dep",  lambda x: f"(instruction == 32'h{x['custom']}) ? " + ("1'b1" if (x['first']['rd'] != 0 and x['second']['rs1'] == x['first']['rd']) else "1'b0") + " :"),
+    ]
+    for signal, fn in specs:
+        s = _append_before_assignment_default(s, signal, [fn(mp) for mp in mappings])
+
+    write(path, s)
+    print(f"pipeline.v: {len(mappings)} novo(s) mapeamento(s) ADDI2X acrescentado(s) ao RTL existente.")
+
 # ============================================================================
 # IF_ID.v
 # ============================================================================
@@ -844,11 +910,10 @@ def main():
             die(f"base sem arquivo obrigatório: {name}")
 
     base_all = "\n".join(read(args.base / x) for x in required)
-    if MARK in base_all:
-        die(
-            "a base já contém ADDI2X_V1. "
-            "Passe todos os pares ADDI na mesma execução."
-        )
+    incremental = MARK in base_all
+    if incremental:
+        print("ADDI2X_V1 já existe na base: modo incremental ativado.")
+        print("O RTL existente será reutilizado; somente os novos pares serão adicionados.")
 
     if args.destino.exists():
         if not args.sobrescrever:
@@ -909,9 +974,14 @@ def main():
     args.hex_saida.parent.mkdir(parents=True, exist_ok=True)
     args.hex_saida.write_text("\n".join(new_words) + "\n", encoding="utf-8")
 
-    patch_pipeline(args.destino / "pipeline.v", mappings)
-    patch_ifid(args.destino / "IF_ID.v")
-    patch_execute(args.destino / "execute.v")
+    if incremental:
+        patch_pipeline_incremental(args.destino / "pipeline.v", mappings)
+        print("IF_ID.v: ADDI2X existente reutilizado.")
+        print("execute.v: ADDI2X existente reutilizado.")
+    else:
+        patch_pipeline(args.destino / "pipeline.v", mappings)
+        patch_ifid(args.destino / "IF_ID.v")
+        patch_execute(args.destino / "execute.v")
 
     dest_hex = args.destino / args.hex_saida.name
     if args.hex_saida.resolve() != dest_hex.resolve():
