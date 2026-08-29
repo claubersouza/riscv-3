@@ -9,6 +9,7 @@ import re
 import subprocess
 import sys
 import threading
+import time
 import tkinter as tk
 from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
@@ -203,6 +204,17 @@ class OptimizerGUI(tk.Tk):
 
         self.decoder = carregar_decoder()
         self.executando = False
+        self.cards = []
+        self.fila_otimizacao = []
+        self.modo_otimizar_todos = False
+        self.total_otimizacoes_lote = 0
+        self.otimizacoes_lote_concluidas = 0
+        self.inicio_lote = None
+        self.timer_lote_after_id = None
+        self.loading_after_id = None
+        self.loading_frame = 0
+        self.popup_progresso = None
+        self.simulando = False
 
         self.var_base = tk.StringVar()
         self.var_destino = tk.StringVar()
@@ -210,6 +222,9 @@ class OptimizerGUI(tk.Tk):
         self.var_saida = tk.StringVar()
         self.var_aplicar_base = tk.BooleanVar(value=True)
         self.var_status = tk.StringVar(value="Selecione a pasta RTL e o arquivo HEX.")
+        self.var_tempo_lote = tk.StringVar(value="Tempo: 00:00:00")
+        self.var_restantes_lote = tk.StringVar(value="Restam: 0 grupos")
+        self.var_loading_lote = tk.StringVar(value="")
 
         self._montar_ui()
         self._preencher_defaults()
@@ -239,6 +254,21 @@ class OptimizerGUI(tk.Tk):
         acoes.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(8, 0))
         self.btn_analisar = ttk.Button(acoes, text="Analisar / Recarregar grupos", command=self.carregar_grupos)
         self.btn_analisar.pack(side="left")
+
+        self.btn_otimizar_todos = ttk.Button(
+            acoes,
+            text="Otimizar todos os grupos",
+            command=self.otimizar_todos_os_grupos,
+        )
+        self.btn_otimizar_todos.pack(side="left", padx=(8, 0))
+
+        self.btn_simulacao = ttk.Button(
+            acoes,
+            text="Rodar simulação",
+            command=self.rodar_simulacao,
+        )
+        self.btn_simulacao.pack(side="left", padx=(8, 0))
+
         ttk.Checkbutton(
             acoes,
             text="Aplicar alterações RTL de volta na pasta base",
@@ -350,7 +380,7 @@ class OptimizerGUI(tk.Tk):
             w.destroy()
 
     def carregar_grupos(self):
-        if self.executando:
+        if self.executando or self.simulando:
             return
         try:
             hex_path = Path(self.var_hex.get()).expanduser().resolve()
@@ -361,6 +391,7 @@ class OptimizerGUI(tk.Tk):
             grupos = self.decoder.agrupar_instrucoes(linhas, minimo_grupo=self.decoder.MINIMO_GRUPO)
 
             self._limpar_cards()
+            self.cards = []
             self.var_contagem_grupos.set(f"{len(grupos)} grupo(s) encontrado(s)")
             if not grupos:
                 ttk.Label(self.scroll.inner, text="Nenhum grupo consecutivo foi encontrado.", padding=20).pack(fill="x")
@@ -371,6 +402,7 @@ class OptimizerGUI(tk.Tk):
             for i, grupo in enumerate(grupos, 1):
                 card = GrupoCard(self.scroll.inner, self, i, grupo)
                 card.pack(fill="x", expand=True, padx=5, pady=5)
+                self.cards.append(card)
                 if card.tipo in {"addi", "lw", "sw"}:
                     compativeis += 1
 
@@ -381,6 +413,476 @@ class OptimizerGUI(tk.Tk):
         except Exception as exc:
             messagebox.showerror("Erro ao analisar", str(exc))
             self.var_status.set("Erro durante a análise.")
+
+    def _abrir_popup_progresso(self):
+        if self.popup_progresso is not None and self.popup_progresso.winfo_exists():
+            self.popup_progresso.lift()
+            return
+
+        pop = tk.Toplevel(self)
+        self.popup_progresso = pop
+        pop.title("Otimização em andamento")
+        pop.geometry("470x270")
+        pop.resizable(False, False)
+        pop.transient(self)
+        pop.protocol("WM_DELETE_WINDOW", lambda: None)
+
+        # Centraliza sobre a janela principal.
+        self.update_idletasks()
+        x = self.winfo_rootx() + max(0, (self.winfo_width() - 470) // 2)
+        y = self.winfo_rooty() + max(0, (self.winfo_height() - 270) // 2)
+        pop.geometry(f"+{x}+{y}")
+
+        frame = ttk.Frame(pop, padding=20)
+        frame.pack(fill="both", expand=True)
+
+        self.lbl_popup_loading = ttk.Label(
+            frame,
+            textvariable=self.var_loading_lote,
+            font=("TkDefaultFont", 16, "bold"),
+            anchor="center",
+        )
+        self.lbl_popup_loading.pack(fill="x", pady=(0, 12))
+
+        self.var_popup_grupo = tk.StringVar(value="Preparando...")
+        ttk.Label(
+            frame,
+            textvariable=self.var_popup_grupo,
+            font=("TkDefaultFont", 11, "bold"),
+            anchor="center",
+        ).pack(fill="x", pady=(0, 10))
+
+        info = ttk.Frame(frame)
+        info.pack(fill="x", pady=8)
+        info.columnconfigure(0, weight=1)
+        info.columnconfigure(1, weight=1)
+
+        ttk.Label(
+            info,
+            textvariable=self.var_tempo_lote,
+            font=("TkDefaultFont", 11),
+            anchor="center",
+        ).grid(row=0, column=0, sticky="ew", padx=5)
+
+        ttk.Label(
+            info,
+            textvariable=self.var_restantes_lote,
+            font=("TkDefaultFont", 11),
+            anchor="center",
+        ).grid(row=0, column=1, sticky="ew", padx=5)
+
+        self.var_popup_concluidos = tk.StringVar(value="Concluídos: 0")
+        ttk.Label(
+            frame,
+            textvariable=self.var_popup_concluidos,
+            anchor="center",
+        ).pack(fill="x", pady=(6, 10))
+
+        self.popup_progress = ttk.Progressbar(
+            frame,
+            mode="determinate",
+            maximum=max(1, self.total_otimizacoes_lote),
+            value=0,
+        )
+        self.popup_progress.pack(fill="x", pady=(4, 0))
+
+        pop.grab_set()
+        pop.lift()
+
+    def _atualizar_popup_progresso(self, tipo=None, grupo_indice=None):
+        if self.popup_progresso is None or not self.popup_progresso.winfo_exists():
+            return
+
+        concluidos = self.otimizacoes_lote_concluidas
+        total = self.total_otimizacoes_lote
+        restantes = max(0, total - concluidos)
+
+        self.var_popup_concluidos.set(
+            f"Concluídos: {concluidos}/{total}"
+        )
+
+        if hasattr(self, "popup_progress"):
+            self.popup_progress.configure(maximum=max(1, total))
+            self.popup_progress["value"] = concluidos
+
+        if tipo is not None and grupo_indice is not None:
+            atual = min(total, concluidos + 1)
+            self.var_popup_grupo.set(
+                f"Grupo atual: {grupo_indice} ({tipo.upper()})  •  "
+                f"{atual}/{total}"
+            )
+        elif restantes == 0 and total > 0:
+            self.var_popup_grupo.set("Todos os grupos foram processados.")
+
+    def _finalizar_popup_progresso(self, sucesso=True):
+        if self.popup_progresso is None or not self.popup_progresso.winfo_exists():
+            return
+
+        pop = self.popup_progresso
+
+        if sucesso:
+            self.var_loading_lote.set("✓ Concluído")
+            self.var_popup_grupo.set("Todos os grupos foram processados.")
+            self.var_restantes_lote.set("Restam: 0 grupos")
+            self.var_popup_concluidos.set(
+                f"Concluídos: {self.otimizacoes_lote_concluidas}/"
+                f"{self.total_otimizacoes_lote}"
+            )
+            if hasattr(self, "popup_progress"):
+                self.popup_progress["value"] = self.total_otimizacoes_lote
+        else:
+            self.var_loading_lote.set("Falha na otimização")
+
+        # Libera o modal e oferece botão para fechar.
+        try:
+            pop.grab_release()
+        except Exception:
+            pass
+
+        if not hasattr(self, "btn_fechar_popup") or not self.btn_fechar_popup.winfo_exists():
+            self.btn_fechar_popup = ttk.Button(
+                pop,
+                text="Fechar",
+                command=self._fechar_popup_progresso,
+            )
+            self.btn_fechar_popup.pack(pady=(0, 14))
+
+    def _fechar_popup_progresso(self):
+        if self.popup_progresso is not None:
+            try:
+                self.popup_progresso.grab_release()
+            except Exception:
+                pass
+            try:
+                self.popup_progresso.destroy()
+            except Exception:
+                pass
+        self.popup_progresso = None
+
+    def _formatar_tempo(self, segundos: float) -> str:
+        total = max(0, int(segundos))
+        horas, resto = divmod(total, 3600)
+        minutos, segundos = divmod(resto, 60)
+        return f"{horas:02d}:{minutos:02d}:{segundos:02d}"
+
+    def _iniciar_indicadores_lote(self):
+        self.inicio_lote = time.monotonic()
+        self.loading_frame = 0
+        self.var_tempo_lote.set("Tempo: 00:00:00")
+        self._atualizar_restantes_lote()
+        self._abrir_popup_progresso()
+        self._atualizar_popup_progresso()
+        self._atualizar_timer_lote()
+        self._animar_loading_lote()
+
+    def _parar_indicadores_lote(self, manter_tempo: bool = True):
+        if self.timer_lote_after_id is not None:
+            try:
+                self.after_cancel(self.timer_lote_after_id)
+            except Exception:
+                pass
+            self.timer_lote_after_id = None
+
+        if self.loading_after_id is not None:
+            try:
+                self.after_cancel(self.loading_after_id)
+            except Exception:
+                pass
+            self.loading_after_id = None
+
+        if manter_tempo and self.inicio_lote is not None:
+            decorrido = time.monotonic() - self.inicio_lote
+            self.var_tempo_lote.set(
+                f"Tempo total: {self._formatar_tempo(decorrido)}"
+            )
+
+        if not self.modo_otimizar_todos:
+            pass
+        self.inicio_lote = None
+
+    def _atualizar_timer_lote(self):
+        if not self.modo_otimizar_todos or self.inicio_lote is None:
+            self.timer_lote_after_id = None
+            return
+
+        decorrido = time.monotonic() - self.inicio_lote
+        self.var_tempo_lote.set(
+            f"Tempo: {self._formatar_tempo(decorrido)}"
+        )
+        self._atualizar_popup_progresso()
+        self.timer_lote_after_id = self.after(
+            250,
+            self._atualizar_timer_lote,
+        )
+
+    def _animar_loading_lote(self):
+        if not self.modo_otimizar_todos:
+            self.var_loading_lote.set("")
+            self.loading_after_id = None
+            return
+
+        frames = ("⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏")
+        self.var_loading_lote.set(
+            f"{frames[self.loading_frame % len(frames)]} Processando"
+        )
+        self.loading_frame += 1
+        self.loading_after_id = self.after(
+            100,
+            self._animar_loading_lote,
+        )
+
+    def _atualizar_restantes_lote(self):
+        restantes = max(
+            0,
+            self.total_otimizacoes_lote - self.otimizacoes_lote_concluidas,
+        )
+
+        if self.total_otimizacoes_lote > 0:
+            self.var_restantes_lote.set(
+                f"Restam: {restantes}/{self.total_otimizacoes_lote} grupos"
+            )
+        else:
+            self.var_restantes_lote.set("Restam: 0 grupos")
+
+        self._atualizar_popup_progresso()
+
+    def otimizar_todos_os_grupos(self):
+        """Otimiza todos os grupos compatíveis em sequência."""
+        if self.simulando:
+            messagebox.showinfo(
+                "Simulação em andamento",
+                "Aguarde a simulação terminar antes de otimizar os grupos.",
+            )
+            return
+
+        if self.executando:
+            messagebox.showinfo("Em execução", "Já existe uma otimização em andamento.")
+            return
+
+        if not self.cards:
+            self.carregar_grupos()
+            if not self.cards:
+                return
+
+        fila = []
+        for card in self.cards:
+            if card.tipo not in {"addi", "lw", "sw"}:
+                continue
+
+            qtd = len(card.hexes) - (len(card.hexes) % 2)
+            originais = card.hexes[:qtd]
+            if len(originais) < 2:
+                continue
+
+            fila.append((card.tipo, list(originais), card.indice))
+
+        if not fila:
+            messagebox.showwarning(
+                "Nenhum grupo",
+                "Não há grupos ADDI/LW/SW com pelo menos um par para otimizar.",
+            )
+            return
+
+        try:
+            self._validar_config()
+        except Exception as exc:
+            messagebox.showerror("Configuração inválida", str(exc))
+            return
+
+        scripts = {"addi": SCRIPT_ADDI, "lw": SCRIPT_LW, "sw": SCRIPT_SW}
+        ausentes = [
+            str(scripts[tipo])
+            for tipo in {tipo for tipo, _originais, _indice in fila}
+            if not scripts[tipo].exists()
+        ]
+        if ausentes:
+            messagebox.showerror(
+                "Script ausente",
+                "Os seguintes customizadores não foram encontrados:\n\n"
+                + "\n".join(ausentes),
+            )
+            return
+
+        self.fila_otimizacao = fila
+        self.modo_otimizar_todos = True
+        self.total_otimizacoes_lote = len(fila)
+        self.otimizacoes_lote_concluidas = 0
+        self._iniciar_indicadores_lote()
+
+        self.log.insert("end", "\n" + "#" * 80 + "\n")
+        self.log.insert(
+            "end",
+            f"OTIMIZAÇÃO EM LOTE: {len(fila)} grupo(s) serão processados em sequência.\n",
+        )
+        self.log.insert(
+            "end",
+            "A saída de cada otimização será usada como entrada da próxima.\n",
+        )
+        self.log.insert("end", "#" * 80 + "\n")
+        self.log.see("end")
+
+        self.btn_otimizar_todos.configure(state="disabled")
+        self._executar_proximo_grupo_lote()
+
+    def _executar_proximo_grupo_lote(self):
+        if not self.modo_otimizar_todos:
+            return
+
+        if not self.fila_otimizacao:
+            self.modo_otimizar_todos = False
+            self.executando = False
+            self.progress.stop()
+            self.btn_analisar.configure(state="normal")
+            self.btn_otimizar_todos.configure(state="normal")
+            self.btn_simulacao.configure(state="normal")
+
+            total = self.otimizacoes_lote_concluidas
+            self._atualizar_restantes_lote()
+            self._parar_indicadores_lote(manter_tempo=True)
+            self._finalizar_popup_progresso(sucesso=True)
+            self.var_status.set(
+                f"Otimização em lote concluída: {total} grupo(s) processado(s)."
+            )
+            self.carregar_grupos()
+
+            messagebox.showinfo(
+                "Otimização concluída",
+                f"Todos os grupos compatíveis foram processados.\n\n"
+                f"Total otimizado: {total} grupo(s).",
+            )
+            return
+
+        tipo, originais, grupo_indice = self.fila_otimizacao.pop(0)
+        atual = self.otimizacoes_lote_concluidas + 1
+
+        self._atualizar_restantes_lote()
+        self._atualizar_popup_progresso(tipo, grupo_indice)
+        self.var_status.set(
+            f"Otimização em lote {atual}/{self.total_otimizacoes_lote}: "
+            f"grupo {grupo_indice} ({tipo.upper()})..."
+        )
+
+        self.executar_otimizacao(
+            tipo,
+            originais,
+            grupo_indice,
+            permitir_lote=True,
+        )
+
+    def rodar_simulacao(self):
+        """Executa `make addition` na pasta simulation e envia a saída ao log."""
+        if self.executando:
+            messagebox.showinfo(
+                "Otimização em andamento",
+                "Aguarde a otimização terminar antes de rodar a simulação.",
+            )
+            return
+
+        if self.simulando:
+            messagebox.showinfo(
+                "Simulação em andamento",
+                "Já existe uma simulação em execução.",
+            )
+            return
+
+        simulation_dir = Path("~/lab/lab16/riscv-3/simulation").expanduser().resolve()
+
+        if not simulation_dir.is_dir():
+            messagebox.showerror(
+                "Pasta de simulação não encontrada",
+                f"Não foi encontrada a pasta:\n{simulation_dir}",
+            )
+            return
+
+        makefile = simulation_dir / "Makefile"
+        if not makefile.exists():
+            messagebox.showerror(
+                "Makefile não encontrado",
+                f"Não foi encontrado Makefile em:\n{simulation_dir}",
+            )
+            return
+
+        self.log.insert("end", "\n" + "=" * 80 + "\n")
+        self.log.insert("end", "RODANDO SIMULAÇÃO\n")
+        self.log.insert("end", f"Pasta: {simulation_dir}\n")
+        self.log.insert("end", "Comando: make addition\n")
+        self.log.insert("end", "=" * 80 + "\n\n")
+        self.log.see("end")
+
+        self.simulando = True
+        self.btn_simulacao.configure(state="disabled")
+        self.btn_analisar.configure(state="disabled")
+        self.btn_otimizar_todos.configure(state="disabled")
+        self.btn_simulacao.configure(state="disabled")
+        self.progress.start(10)
+        self.var_status.set("Rodando simulação: make addition...")
+
+        threading.Thread(
+            target=self._worker_simulacao,
+            args=(simulation_dir,),
+            daemon=True,
+        ).start()
+
+    def _worker_simulacao(self, simulation_dir: Path):
+        try:
+            proc = subprocess.Popen(
+                ["make", "addition"],
+                cwd=str(simulation_dir),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                bufsize=1,
+            )
+
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                self.after(0, self._append_log, line)
+
+            rc = proc.wait()
+            self.after(0, self._fim_simulacao, rc)
+
+        except Exception as exc:
+            self.after(0, self._erro_simulacao, str(exc))
+
+    def _erro_simulacao(self, erro: str):
+        self.simulando = False
+        self.progress.stop()
+        self.btn_simulacao.configure(state="normal")
+        self.btn_analisar.configure(state="normal")
+        self.btn_otimizar_todos.configure(state="normal")
+        self.var_status.set("Falha ao executar a simulação.")
+
+        self.log.insert("end", "\n[ERRO AO RODAR SIMULAÇÃO]\n")
+        self.log.insert("end", erro + "\n")
+        self.log.see("end")
+
+        messagebox.showerror("Erro na simulação", erro)
+
+    def _fim_simulacao(self, rc: int):
+        self.simulando = False
+        self.progress.stop()
+        self.btn_simulacao.configure(state="normal")
+        self.btn_analisar.configure(state="normal")
+        self.btn_otimizar_todos.configure(state="normal")
+
+        self.log.insert("end", "\n" + "-" * 80 + "\n")
+
+        if rc == 0:
+            self.log.insert("end", "SIMULAÇÃO CONCLUÍDA COM SUCESSO\n")
+            self.var_status.set("Simulação concluída com sucesso.")
+        else:
+            self.log.insert(
+                "end",
+                f"SIMULAÇÃO TERMINOU COM ERRO - código de retorno {rc}\n",
+            )
+            self.var_status.set(
+                f"Simulação terminou com erro (código {rc})."
+            )
+
+        self.log.insert("end", "-" * 80 + "\n")
+        self.log.see("end")
 
     def _validar_config(self):
         base = Path(self.var_base.get()).expanduser().resolve()
@@ -409,8 +911,21 @@ class OptimizerGUI(tk.Tk):
         saida.parent.mkdir(parents=True, exist_ok=True)
         return base, destino, entrada, saida
 
-    def executar_otimizacao(self, tipo: str, originais: list[str], grupo_indice: int):
-        if self.executando:
+    def executar_otimizacao(
+        self,
+        tipo: str,
+        originais: list[str],
+        grupo_indice: int,
+        permitir_lote: bool = False,
+    ):
+        if self.simulando:
+            messagebox.showinfo(
+                "Simulação em andamento",
+                "Aguarde a simulação terminar antes de iniciar uma otimização.",
+            )
+            return
+
+        if self.executando and not permitir_lote:
             messagebox.showinfo("Em execução", "Já existe uma otimização em andamento.")
             return
 
@@ -451,6 +966,7 @@ class OptimizerGUI(tk.Tk):
 
         self.executando = True
         self.btn_analisar.configure(state="disabled")
+        self.btn_otimizar_todos.configure(state="disabled")
         self.progress.start(10)
         self.var_status.set(f"Otimizando grupo {grupo_indice} como {tipo.upper()}...")
 
@@ -487,6 +1003,14 @@ class OptimizerGUI(tk.Tk):
         self.executando = False
         self.progress.stop()
         self.btn_analisar.configure(state="normal")
+        self.btn_otimizar_todos.configure(state="normal")
+        self.btn_simulacao.configure(state="normal")
+        self.fila_otimizacao = []
+        estava_em_lote = self.modo_otimizar_todos
+        self.modo_otimizar_todos = False
+        if estava_em_lote:
+            self._parar_indicadores_lote(manter_tempo=True)
+            self._finalizar_popup_progresso(sucesso=False)
         self.var_status.set("Falha ao executar o customizador.")
         messagebox.showerror("Erro", erro)
 
@@ -494,12 +1018,29 @@ class OptimizerGUI(tk.Tk):
         self.executando = False
         self.progress.stop()
         self.btn_analisar.configure(state="normal")
+        if not self.modo_otimizar_todos:
+            self.btn_otimizar_todos.configure(state="normal")
+            self.btn_simulacao.configure(state="normal")
 
         if rc != 0:
+            estava_em_lote = self.modo_otimizar_todos
+            self.fila_otimizacao = []
+            self.modo_otimizar_todos = False
+            self.btn_otimizar_todos.configure(state="normal")
+            self.btn_simulacao.configure(state="normal")
+            if estava_em_lote:
+                self._parar_indicadores_lote(manter_tempo=True)
+                self._finalizar_popup_progresso(sucesso=False)
             self.var_status.set(f"Falha ao otimizar grupo {grupo_indice} ({tipo.upper()}).")
             messagebox.showerror(
                 "Otimização falhou",
-                "O customizador retornou erro. Veja o log na parte inferior da janela.",
+                (
+                    "O customizador retornou erro. Veja o log na parte inferior da janela."
+                    + (
+                        "\n\nA otimização em lote foi interrompida neste grupo."
+                        if estava_em_lote else ""
+                    )
+                ),
             )
             return
 
@@ -533,6 +1074,19 @@ class OptimizerGUI(tk.Tk):
             proxima = saida.with_name(saida.stem + "_next.hex")
             self.var_saida.set(str(proxima))
             hex_atual = saida
+
+        if self.modo_otimizar_todos:
+            self.otimizacoes_lote_concluidas += 1
+            self._atualizar_restantes_lote()
+            self._atualizar_popup_progresso()
+            self.log.insert(
+                "end",
+                f"\n[Lote] Grupo {grupo_indice} ({tipo.upper()}) concluído "
+                f"({self.otimizacoes_lote_concluidas}/{self.total_otimizacoes_lote}).\n",
+            )
+            self.log.see("end")
+            self.after(50, self._executar_proximo_grupo_lote)
+            return
 
         self.var_status.set(f"Grupo {grupo_indice} otimizado como {tipo.upper()}. Reanalisando HEX...")
         self.carregar_grupos()
