@@ -215,6 +215,10 @@ class OptimizerGUI(tk.Tk):
         self.loading_frame = 0
         self.popup_progresso = None
         self.simulando = False
+        self.tempo_simulacao_antes = None
+        self.tempo_simulacao_depois = None
+        self.modo_simulacao_atual = None
+        self.ultimo_time_simulacao = None
 
         self.var_base = tk.StringVar()
         self.var_destino = tk.StringVar()
@@ -252,7 +256,11 @@ class OptimizerGUI(tk.Tk):
 
         acoes = ttk.Frame(topo)
         acoes.grid(row=4, column=0, columnspan=3, sticky="ew", pady=(8, 0))
-        self.btn_analisar = ttk.Button(acoes, text="Analisar / Recarregar grupos", command=self.carregar_grupos)
+        self.btn_analisar = ttk.Button(
+            acoes,
+            text="Analisar / Recarregar grupos",
+            command=self.analisar_recarregar_e_simular,
+        )
         self.btn_analisar.pack(side="left")
 
         self.btn_otimizar_todos = ttk.Button(
@@ -379,9 +387,39 @@ class OptimizerGUI(tk.Tk):
         for w in self.scroll.inner.winfo_children():
             w.destroy()
 
+    def analisar_recarregar_e_simular(self):
+        """Analisa os grupos e roda automaticamente a simulação de referência."""
+        if self.executando:
+            messagebox.showinfo(
+                "Otimização em andamento",
+                "Aguarde a otimização terminar antes de analisar.",
+            )
+            return
+
+        if self.simulando:
+            messagebox.showinfo(
+                "Simulação em andamento",
+                "Já existe uma simulação em execução.",
+            )
+            return
+
+        ok = self.carregar_grupos()
+        if not ok:
+            return
+
+        self.tempo_simulacao_antes = None
+        self.tempo_simulacao_depois = None
+
+        self.log.insert("end", "\n" + "#" * 80 + "\n")
+        self.log.insert("end", "SIMULAÇÃO DE REFERÊNCIA (ANTES DA OTIMIZAÇÃO)\n")
+        self.log.insert("end", "#" * 80 + "\n")
+        self.log.see("end")
+
+        self._iniciar_simulacao("antes")
+
     def carregar_grupos(self):
         if self.executando or self.simulando:
-            return
+            return False
         try:
             hex_path = Path(self.var_hex.get()).expanduser().resolve()
             if not hex_path.exists():
@@ -396,7 +434,7 @@ class OptimizerGUI(tk.Tk):
             if not grupos:
                 ttk.Label(self.scroll.inner, text="Nenhum grupo consecutivo foi encontrado.", padding=20).pack(fill="x")
                 self.var_status.set("Nenhum grupo encontrado.")
-                return
+                return True
 
             compativeis = 0
             for i, grupo in enumerate(grupos, 1):
@@ -410,9 +448,11 @@ class OptimizerGUI(tk.Tk):
             self.scroll.canvas.configure(scrollregion=self.scroll.canvas.bbox("all"))
             self.scroll.canvas.yview_moveto(0.0)
             self.var_status.set(f"{len(grupos)} grupo(s) encontrado(s); {compativeis} compatível(is) com ADDI/LW/SW.")
+            return True
         except Exception as exc:
             messagebox.showerror("Erro ao analisar", str(exc))
             self.var_status.set("Erro durante a análise.")
+            return False
 
     def _abrir_popup_progresso(self):
         if self.popup_progresso is not None and self.popup_progresso.winfo_exists():
@@ -770,7 +810,19 @@ class OptimizerGUI(tk.Tk):
         )
 
     def rodar_simulacao(self):
-        """Executa `make addition` na pasta simulation e envia a saída ao log."""
+        """Roda a simulação DEPOIS e compara com a referência capturada."""
+        if self.tempo_simulacao_antes is None:
+            messagebox.showwarning(
+                "Tempo de referência ausente",
+                "Clique primeiro em 'Analisar / Recarregar grupos'.\n\n"
+                "A GUI rodará automaticamente a simulação inicial e capturará "
+                "o tempo ANTES da otimização.",
+            )
+            return
+        self._iniciar_simulacao("depois")
+
+    def _iniciar_simulacao(self, modo: str):
+        """Executa `make addition` e captura o último campo time= da saída."""
         if self.executando:
             messagebox.showinfo(
                 "Otimização em andamento",
@@ -783,6 +835,10 @@ class OptimizerGUI(tk.Tk):
                 "Simulação em andamento",
                 "Já existe uma simulação em execução.",
             )
+            return
+
+        if modo not in {"antes", "depois"}:
+            messagebox.showerror("Erro", f"Modo de simulação inválido: {modo}")
             return
 
         simulation_dir = Path("~/lab/lab16/riscv-3/simulation").expanduser().resolve()
@@ -802,13 +858,19 @@ class OptimizerGUI(tk.Tk):
             )
             return
 
+        titulo_modo = (
+            "ANTES DA OTIMIZAÇÃO" if modo == "antes" else "DEPOIS DA OTIMIZAÇÃO"
+        )
+
         self.log.insert("end", "\n" + "=" * 80 + "\n")
-        self.log.insert("end", "RODANDO SIMULAÇÃO\n")
+        self.log.insert("end", f"RODANDO SIMULAÇÃO - {titulo_modo}\n")
         self.log.insert("end", f"Pasta: {simulation_dir}\n")
         self.log.insert("end", "Comando: make addition\n")
         self.log.insert("end", "=" * 80 + "\n\n")
         self.log.see("end")
 
+        self.modo_simulacao_atual = modo
+        self.ultimo_time_simulacao = None
         self.simulando = True
         self.btn_simulacao.configure(state="disabled")
         self.btn_analisar.configure(state="disabled")
@@ -819,11 +881,11 @@ class OptimizerGUI(tk.Tk):
 
         threading.Thread(
             target=self._worker_simulacao,
-            args=(simulation_dir,),
+            args=(simulation_dir, modo),
             daemon=True,
         ).start()
 
-    def _worker_simulacao(self, simulation_dir: Path):
+    def _worker_simulacao(self, simulation_dir: Path, modo: str):
         try:
             proc = subprocess.Popen(
                 ["make", "addition"],
@@ -837,11 +899,21 @@ class OptimizerGUI(tk.Tk):
             )
 
             assert proc.stdout is not None
+            ultimo_time = None
+            time_re = re.compile(
+                r"\btime=(\d+)\s+PC=[0-9a-fA-FxX]+\s+"
+                r"instruction=[0-9a-fA-FxX]+\s+"
+                r"x10=[0-9a-fA-FxX]+\s+x15=[0-9a-fA-FxX]+"
+            )
+
             for line in proc.stdout:
+                match = time_re.search(line)
+                if match:
+                    ultimo_time = int(match.group(1))
                 self.after(0, self._append_log, line)
 
             rc = proc.wait()
-            self.after(0, self._fim_simulacao, rc)
+            self.after(0, self._fim_simulacao, rc, modo, ultimo_time)
 
         except Exception as exc:
             self.after(0, self._erro_simulacao, str(exc))
@@ -860,8 +932,9 @@ class OptimizerGUI(tk.Tk):
 
         messagebox.showerror("Erro na simulação", erro)
 
-    def _fim_simulacao(self, rc: int):
+    def _fim_simulacao(self, rc: int, modo: str, tempo_capturado):
         self.simulando = False
+        self.modo_simulacao_atual = None
         self.progress.stop()
         self.btn_simulacao.configure(state="normal")
         self.btn_analisar.configure(state="normal")
@@ -869,20 +942,185 @@ class OptimizerGUI(tk.Tk):
 
         self.log.insert("end", "\n" + "-" * 80 + "\n")
 
-        if rc == 0:
-            self.log.insert("end", "SIMULAÇÃO CONCLUÍDA COM SUCESSO\n")
-            self.var_status.set("Simulação concluída com sucesso.")
-        else:
+        if rc != 0:
             self.log.insert(
                 "end",
                 f"SIMULAÇÃO TERMINOU COM ERRO - código de retorno {rc}\n",
             )
-            self.var_status.set(
-                f"Simulação terminou com erro (código {rc})."
-            )
+            self.var_status.set(f"Simulação terminou com erro (código {rc}).")
+            self.log.insert("end", "-" * 80 + "\n")
+            self.log.see("end")
+            return
 
+        if tempo_capturado is None:
+            self.log.insert(
+                "end",
+                "SIMULAÇÃO CONCLUÍDA, MAS O TIME FINAL NÃO FOI ENCONTRADO.\n",
+            )
+            self.var_status.set(
+                "Simulação concluída, mas o campo time final não foi encontrado."
+            )
+            self.log.insert("end", "-" * 80 + "\n")
+            self.log.see("end")
+            messagebox.showwarning(
+                "Time não encontrado",
+                "Formato esperado, por exemplo:\n\n"
+                "time=29010 PC=0000143c instruction=00000013 "
+                "x10=81dc9bdb x15=81dc9bdb",
+            )
+            return
+
+        self.ultimo_time_simulacao = tempo_capturado
+
+        if modo == "antes":
+            self.tempo_simulacao_antes = tempo_capturado
+            self.tempo_simulacao_depois = None
+            self.log.insert("end", f"TIME ANTES CAPTURADO: {tempo_capturado}\n")
+            self.var_status.set(
+                f"Referência capturada: time={tempo_capturado}. "
+                "Agora faça as otimizações e clique em 'Rodar simulação'."
+            )
+        else:
+            self.tempo_simulacao_depois = tempo_capturado
+            self.log.insert("end", f"TIME DEPOIS CAPTURADO: {tempo_capturado}\n")
+            self.var_status.set(f"Simulação final concluída: time={tempo_capturado}.")
+
+        self.log.insert("end", "SIMULAÇÃO CONCLUÍDA COM SUCESSO\n")
         self.log.insert("end", "-" * 80 + "\n")
         self.log.see("end")
+
+        if modo == "depois":
+            self._mostrar_grafico_comparacao()
+
+    def _mostrar_grafico_comparacao(self):
+        antes = self.tempo_simulacao_antes
+        depois = self.tempo_simulacao_depois
+        if antes is None or depois is None:
+            return
+
+        diferenca = antes - depois
+        percentual = (diferenca / antes * 100.0) if antes else 0.0
+
+        pop = tk.Toplevel(self)
+        pop.title("Comparação de desempenho")
+        pop.geometry("650x470")
+        pop.minsize(560, 420)
+        pop.transient(self)
+
+        frame = ttk.Frame(pop, padding=16)
+        frame.pack(fill="both", expand=True)
+
+        ttk.Label(
+            frame,
+            text="Comparação do tempo de simulação",
+            font=("TkDefaultFont", 14, "bold"),
+        ).pack(pady=(0, 8))
+
+        resumo = ttk.Frame(frame)
+        resumo.pack(fill="x", pady=(0, 10))
+
+        ttk.Label(
+            resumo,
+            text=f"Antes: {antes}",
+            font=("TkDefaultFont", 11, "bold"),
+        ).pack(side="left", expand=True)
+
+        ttk.Label(
+            resumo,
+            text=f"Depois: {depois}",
+            font=("TkDefaultFont", 11, "bold"),
+        ).pack(side="left", expand=True)
+
+        if diferenca > 0:
+            resultado = (
+                f"Redução: {diferenca} unidades de tempo  •  "
+                f"Ganho: {percentual:.2f}%"
+            )
+        elif diferenca < 0:
+            resultado = (
+                f"Aumento: {abs(diferenca)} unidades de tempo  •  "
+                f"Piora: {abs(percentual):.2f}%"
+            )
+        else:
+            resultado = "Sem alteração no tempo de processamento."
+
+        ttk.Label(
+            frame,
+            text=resultado,
+            font=("TkDefaultFont", 11, "bold"),
+            anchor="center",
+        ).pack(fill="x", pady=(0, 10))
+
+        canvas = tk.Canvas(
+            frame,
+            height=280,
+            highlightthickness=1,
+            highlightbackground="#888888",
+            background="white",
+        )
+        canvas.pack(fill="both", expand=True, pady=(4, 10))
+
+        def desenhar(_event=None):
+            canvas.delete("all")
+            w = max(canvas.winfo_width(), 400)
+            h = max(canvas.winfo_height(), 240)
+
+            ml, mr, mt, mb = 70, 30, 25, 55
+            y_base = h - mb
+            area_h = y_base - mt
+            maximo = max(antes, depois, 1)
+
+            canvas.create_line(ml, mt, ml, y_base, fill="#555555", width=2)
+            canvas.create_line(ml, y_base, w - mr, y_base, fill="#555555", width=2)
+
+            valores = [("Antes", antes), ("Depois", depois)]
+            area_w = w - ml - mr
+            bar_w = min(120, int(area_w * 0.22))
+            centers = [ml + area_w * 0.30, ml + area_w * 0.70]
+            fills = ["#6c8ebf", "#82b366"]
+
+            for i, ((rotulo, valor), cx) in enumerate(zip(valores, centers)):
+                altura = (valor / maximo) * (area_h * 0.88)
+                x1, x2 = cx - bar_w / 2, cx + bar_w / 2
+                y1 = y_base - altura
+                canvas.create_rectangle(
+                    x1, y1, x2, y_base,
+                    fill=fills[i], outline="#444444"
+                )
+                canvas.create_text(
+                    cx, y1 - 12,
+                    text=str(valor),
+                    font=("TkDefaultFont", 11, "bold"),
+                    fill="#222222",
+                )
+                canvas.create_text(
+                    cx, y_base + 22,
+                    text=rotulo,
+                    font=("TkDefaultFont", 11, "bold"),
+                    fill="#222222",
+                )
+
+            canvas.create_text(
+                16,
+                (mt + y_base) / 2,
+                text="time",
+                angle=90,
+                font=("TkDefaultFont", 10, "bold"),
+                fill="#333333",
+            )
+
+        canvas.bind("<Configure>", desenhar)
+        pop.after(50, desenhar)
+
+        ttk.Button(frame, text="Fechar", command=pop.destroy).pack()
+
+        self.update_idletasks()
+        pop.update_idletasks()
+        x = self.winfo_rootx() + max(0, (self.winfo_width() - pop.winfo_width()) // 2)
+        y = self.winfo_rooty() + max(0, (self.winfo_height() - pop.winfo_height()) // 2)
+        pop.geometry(f"+{x}+{y}")
+        pop.lift()
+
 
     def _validar_config(self):
         base = Path(self.var_base.get()).expanduser().resolve()
